@@ -4,4 +4,4 @@
 
 
 
-XDXDXDXDXDXDXDXDXDXDXDXDXDXXDXDXDXDXDXDXDXDXX
+ВСЕ ЛЮДИ НА 100% СОСТОЯТ ИЗ ВОДЫ ТУПО Я КОТОРЫЙ НА 100% СОСТОИТ ИЗ КОФЕ
