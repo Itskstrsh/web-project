@@ -27,19 +27,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # c кешем, если есть package-lock.json
-      - name: Setup Node (with cache)
-        if: ${{ hashFiles('frontend/package-lock.json') != '' }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      # без кеша, если lock нет
-      - name: Setup Node (no cache)
-        if: ${{ hashFiles('frontend/package-lock.json') == '' }}
-        uses: actions/setup-node@v4
+      # без кэша — чтобы не падать, если нет package-lock.json
+      - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
 
@@ -48,7 +37,8 @@ jobs:
           if [ -f package.json ]; then
             if [ -f package-lock.json ]; then npm ci; else npm install; fi
           else
-            echo "No package.json — nothing to install"; fi
+            echo "No package.json — skipping install"
+          fi
 
       - name: ESLint
         run: |
@@ -60,7 +50,7 @@ jobs:
 
       - name: Stylelint (optional)
         run: |
-          if [ -f "./.stylelintrc.json" ] || [ -f "./.stylelintrc" ]; then
+          if [ -f ".stylelintrc" ] || [ -f ".stylelintrc.json" ]; then
             if npm run | grep -q "stylelint"; then npm run stylelint; else echo "no stylelint script — skipping"; fi
           else
             echo "stylelint config not found — skipping"
