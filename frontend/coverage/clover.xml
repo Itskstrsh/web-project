@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1760469776554" clover="3.2.0">
+  <project timestamp="1760469776554" name="All files">
+    <metrics statements="20" coveredstatements="16" conditionals="4" coveredconditionals="2" methods="9" coveredmethods="3" elements="33" coveredelements="21" complexity="0" loc="20" ncloc="20" packages="2" files="2" classes="2"/>
+    <package name="components.Header">
+      <metrics statements="13" coveredstatements="11" conditionals="4" coveredconditionals="2" methods="7" coveredmethods="3"/>
+      <file name="Header.tsx" path="/Users/tiwhite/Desktop/web/src/components/Header/Header.tsx">
+        <metrics statements="13" coveredstatements="11" conditionals="4" coveredconditionals="2" methods="7" coveredmethods="3"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="72" count="6" type="stmt"/>
+        <line num="87" count="6" type="stmt"/>
+        <line num="107" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="store.slices">
+      <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <file name="menuSlice.ts" path="/Users/tiwhite/Desktop/web/src/store/slices/menuSlice.ts">
+        <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
