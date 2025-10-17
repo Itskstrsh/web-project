@@ -1,17 +1,26 @@
-name: front-tests
+# .github/workflows/frontend-unit-tests.yml
+name: frontend-unit-tests
 
 on:
   pull_request:
     branches: [dev, main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-unit-tests.yml'
   push:
     branches: [dev]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-unit-tests.yml'
 
 jobs:
-  test:
+  frontend-unit-tests:
+    name: frontend-unit-tests
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend   # ⬅️ все run из папки frontend
+        working-directory: frontend
+
     steps:
       - uses: actions/checkout@v4
 
@@ -20,24 +29,32 @@ jobs:
         with:
           node-version: 'lts/*'
           cache: npm
-          cache-dependency-path: frontend/package-lock.json  # ⬅️ правильный путь к lock
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
-
-      - name: Run tests
-        run: |
-          if npm run | grep -q "^  test$"; then
-            npm test -- --ci
+          if [ -f package-lock.json ]; then
+            npm ci
           else
-            echo "no test script — skipping"
+            npm install
           fi
 
-      - name: Run tests with coverage
+      - name: Run unit tests
         run: |
-          if npm run | grep -q "test:coverage"; then
+          TEST_SCRIPT=$(npm pkg get scripts.test | tr -d '"')
+          if [ "$TEST_SCRIPT" != "null" ]; then
+            echo "Running: npm test -- --ci"
+            npm test -- --ci
+          else
+            echo "No 'test' script in package.json — skipping"
+          fi
+
+      - name: Run tests with coverage (optional)
+        run: |
+          COV_SCRIPT=$(npm pkg get scripts.'test:coverage' | tr -d '"')
+          if [ "$COV_SCRIPT" != "null" ]; then
+            echo "Running: npm run test:coverage"
             npm run test:coverage
           else
-            echo "no test:coverage script — skipping"
+            echo "No 'test:coverage' script — skipping"
           fi
