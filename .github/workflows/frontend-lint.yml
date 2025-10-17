@@ -3,19 +3,27 @@ name: frontend-lint
 on:
   pull_request:
     branches: [dev, main]
+    paths:
+      - frontend/**
+      - .github/workflows/frontend-lint.yml
   push:
     branches: [dev]
+    paths:
+      - frontend/**
+      - .github/workflows/frontend-lint.yml
+  workflow_dispatch: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  frontend-lint:
+  lint:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
+
     steps:
       - uses: actions/checkout@v4
 
@@ -23,14 +31,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-          cache: 'npm'
-          cache-dependency-path: 'frontend/package-lock.json'  # ✅ указываем правильный путь
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          if [ -f package-lock.json ]; then npm ci; else npm i; fi
 
-      - name: Run ESLint (only src)
+      - name: ESLint (only src)
         run: |
           if npx --yes eslint -v >/dev/null 2>&1; then
             npx eslint "src/**/*.{ts,tsx,js,jsx}" \
@@ -41,18 +49,18 @@ jobs:
             echo "eslint not installed — skipping"
           fi
 
-      - name: Run Prettier (check)
+      - name: Prettier check
         run: |
-          if npm run | grep -q "format:check"; then
+          if npm run | grep -q "^  format:check$"; then
             npm run format:check
           else
-            echo "no format:check script — skipping"
+            echo "no format:check — skipping"
           fi
 
-      - name: Run Stylelint (optional)
+      - name: Stylelint (optional)
         run: |
-          if npm run | grep -q "stylelint"; then
+          if npm run | grep -q "^  stylelint$"; then
             npm run stylelint
           else
-            echo "no stylelint script — skipping"
+            echo "no stylelint — skipping"
           fi

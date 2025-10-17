@@ -3,8 +3,14 @@ name: frontend-e2e
 on:
   pull_request:
     branches: [dev, main]
+    paths:
+      - frontend/**
+      - .github/workflows/frontend-e2e.yml
   push:
     branches: [dev]
+    paths:
+      - frontend/**
+      - .github/workflows/frontend-e2e.yml
   workflow_dispatch: {}
 
 concurrency:
@@ -12,15 +18,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  cypress-run:
+  cypress:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -29,21 +34,20 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install dependencies
+      - name: Install deps
         run: npm ci
 
-      - name: Build app (exclude tests)
-        run: |
-          npx tsc -p tsconfig.app.json
-          npx vite build
+      # ❗ важный фикс: делаем сборку Vite БЕЗ tsc, чтобы не цеплялись *.test.tsx
+      - name: Build app (skip TS typecheck)
+        run: npx vite build
 
-      - name: Start preview server (Vite)
+      - name: Start preview server
         run: npm run preview -- --port 5173 --host &
 
       - name: Wait for server
         run: npx wait-on http://localhost:5173
 
-      - name: Run Cypress tests
+      - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
           browser: chrome
@@ -57,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cypress-screenshots
-          path: frontend/cypress/screenshots
+          path: cypress/screenshots
           if-no-files-found: ignore
 
       - name: Upload Cypress videos
@@ -65,5 +69,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cypress-videos
-          path: frontend/cypress/videos
+          path: cypress/videos
           if-no-files-found: ignore

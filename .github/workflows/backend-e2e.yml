@@ -3,14 +3,20 @@ name: backend-e2e
 on:
   pull_request:
     branches: [dev, main]
-    paths: ["backend/**", ".github/workflows/**"]
+    paths:
+      - backend/**
+      - .github/workflows/backend-e2e.yml
   push:
     branches: [dev]
-    paths: ["backend/**", ".github/workflows/**"]
+    paths:
+      - backend/**
+      - .github/workflows/backend-e2e.yml
+  workflow_dispatch: {}
 
 jobs:
-  backend-e2e:
+  e2e:
     runs-on: ubuntu-latest
+
     services:
       db:
         image: postgres:16-alpine
@@ -29,22 +35,23 @@ jobs:
       SPRING_DATASOURCE_PASSWORD: secret
       SPRING_PROFILES_ACTIVE: docker
 
-    defaults:
-      run:
-        working-directory: backend/pekarnya
-
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "21"
+          java-version: '21'
           cache: maven
+
       - name: Run integration/e2e tests (Failsafe)
+        working-directory: backend/pekarnya
         run: mvn -B -DskipITs=false verify
+
       - name: Upload failsafe reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: failsafe-reports
+          name: backend-failsafe-reports
           path: backend/pekarnya/**/failsafe-reports/**
+          if-no-files-found: ignore

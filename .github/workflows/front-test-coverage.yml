@@ -4,20 +4,21 @@ on:
   pull_request:
     branches: [dev, main]
     paths:
-      - 'frontend/**'
-      - '.github/workflows/frontend-coverage-80.yml'
+      - frontend/**
+      - .github/workflows/frontend-coverage-80.yml
   push:
     branches: [dev]
     paths:
-      - 'frontend/**'
-      - '.github/workflows/frontend-coverage-80.yml'
+      - frontend/**
+      - .github/workflows/frontend-coverage-80.yml
+  workflow_dispatch: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  frontend-coverage-80:
+  coverage:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -26,8 +27,7 @@ jobs:
       CI: true
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -38,15 +38,14 @@ jobs:
 
       - name: Install deps
         run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          if [ -f package-lock.json ]; then npm ci; else npm i; fi
 
-      # Трансформеры для Jest (TS/TSX/JSX) + jsdom + моки
+      # трансформеры для TS/TSX/JSX + jsdom
       - name: Add Jest/Babel transformers (if missing)
         run: |
           npm i -D @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript \
                  babel-jest jest-environment-jsdom identity-obj-proxy @testing-library/jest-dom
 
-      # Генерим babel.config.cjs и jest.ci.config.cjs с порогом 80%
       - name: Create Babel & Jest CI config (80% threshold)
         run: |
           cat > babel.config.cjs <<'EOF'
@@ -75,9 +74,7 @@ jobs:
           cat > jest.ci.config.cjs <<EOF
           module.exports = {
             testEnvironment: 'jest-environment-jsdom',
-            transform: {
-              '^.+\\.(t|j)sx?\$': ['babel-jest', { rootMode: 'upward' }],
-            },
+            transform: { '^.+\\.(t|j)sx?\$': ['babel-jest', { rootMode: 'upward' }] },
             moduleFileExtensions: ['ts','tsx','js','jsx','json'],
             moduleNameMapper: {
               '\\\\.(css|less|sass|scss)\$': 'identity-obj-proxy',
@@ -87,9 +84,7 @@ jobs:
             collectCoverage: true,
             coverageDirectory: 'coverage/unit',
             coverageReporters: ['text','lcov','html'],
-            coverageThreshold: {
-              global: { statements: 80, branches: 80, functions: 80, lines: 80 },
-            },
+            coverageThreshold: { global: { statements: 80, branches: 80, functions: 80, lines: 80 } },
           };
           EOF
 
@@ -101,5 +96,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage-report
-          path: frontend/coverage/unit
+          path: coverage/unit
           if-no-files-found: ignore
