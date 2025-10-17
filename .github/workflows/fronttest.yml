@@ -1,4 +1,3 @@
-# .github/workflows/frontend-unit-tests.yml
 name: frontend-unit-tests
 
 on:
@@ -12,15 +11,14 @@ on:
     paths:
       - 'frontend/**'
       - '.github/workflows/frontend-unit-tests.yml'
+  workflow_dispatch: {}   # ← позволит запустить руками
 
 jobs:
   frontend-unit-tests:
-    name: frontend-unit-tests
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
-
     steps:
       - uses: actions/checkout@v4
 
@@ -33,27 +31,21 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
-      - name: Run unit tests
+      - name: Run tests
         run: |
           TEST_SCRIPT=$(npm pkg get scripts.test | tr -d '"')
           if [ "$TEST_SCRIPT" != "null" ]; then
-            echo "Running: npm test -- --ci"
             npm test -- --ci
           else
-            echo "No 'test' script in package.json — skipping"
+            echo "No 'test' script — skipping"
           fi
 
       - name: Run tests with coverage (optional)
         run: |
           COV_SCRIPT=$(npm pkg get scripts.'test:coverage' | tr -d '"')
           if [ "$COV_SCRIPT" != "null" ]; then
-            echo "Running: npm run test:coverage"
             npm run test:coverage
           else
             echo "No 'test:coverage' script — skipping"
