@@ -37,7 +37,7 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      # ❗ важный фикс: делаем сборку Vite БЕЗ tsc, чтобы не цеплялись *.test.tsx
+      # ❗ важный фикс: делаем сборку Vite БЕЗ tsc, чтобы не цеплялись *ff.test.tsx
       - name: Build app (skip TS typecheck)
         run: npx vite build
 
