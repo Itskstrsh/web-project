@@ -2,10 +2,10 @@ name: frontend-e2e
 
 on:
   pull_request:
-    branches: [dev, main]     # триггерится на любой PR в dev/main
+    branches: [dev, main]
   push:
-    branches: [dev]           # и на пуши в dev
-  workflow_dispatch: {}       # можно запустить руками при нужде
+    branches: [dev]
+  workflow_dispatch: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend   # всё делаем из папки фронта
+        working-directory: frontend
 
     steps:
       - name: Checkout
@@ -33,11 +33,9 @@ jobs:
         run: npm ci
 
       - name: Build app (exclude tests)
-  working-directory: frontend
-  run: |
-    npx tsc -p tsconfig.app.json
-    npx vite build
-
+        run: |
+          npx tsc -p tsconfig.app.json
+          npx vite build
 
       - name: Start preview server (Vite)
         run: npm run preview -- --port 5173 --host &
@@ -50,18 +48,17 @@ jobs:
         with:
           browser: chrome
           config: baseUrl=http://localhost:5173
-          # ниже не обязательно, сервер уже запущен, но удобно для локального повторного запуска
           wait-on: 'http://localhost:5173'
         env:
           CI: true
 
-      # артефакты — новые v4 (v3 уже депрекейтнут)
       - name: Upload Cypress screenshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-screenshots
           path: frontend/cypress/screenshots
+          if-no-files-found: ignore
 
       - name: Upload Cypress videos
         if: always()
@@ -69,3 +66,4 @@ jobs:
         with:
           name: cypress-videos
           path: frontend/cypress/videos
+          if-no-files-found: ignore
