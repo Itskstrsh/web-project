@@ -1,24 +1,23 @@
 name: backend-unit-tests
 
 on:
-  push:
-    branches: [dev, main]
-    paths:
-      - 'backend/**'
-      - '.github/workflows/backend-unit-tests.yml'
   pull_request:
     branches: [dev, main]
-    paths:
-      - 'backend/**'
-      - '.github/workflows/backend-unit-tests.yml'
+  push:
+    branches: [dev]
 
 jobs:
   backend-unit-tests:
     runs-on: ubuntu-latest
-    defaults: { run: { working-directory: backend/pekarnya } }
+    defaults:
+      run:
+        working-directory: backend/pekarnya
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: '21', cache: maven }
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
       - name: Run unit tests
         run: mvn -B -DskipITs=true test
