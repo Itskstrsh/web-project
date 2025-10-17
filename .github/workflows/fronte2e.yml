@@ -1,52 +1,67 @@
-name: E2E Tests
+name: frontend-e2e
 
 on:
-  push:
-    branches: [ main, dev ]
   pull_request:
-    branches: [ dev ]
+    branches: [dev, main]     # триггерится на любой PR в dev/main
+  push:
+    branches: [dev]           # и на пуши в dev
+  workflow_dispatch: {}       # можно запустить руками при нужде
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend   # всё делаем из папки фронта
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-          
+          node-version: 18
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Build application
         run: npm run build
-        
-      - name: Start server
-        run: npm run preview &
-        
+
+      - name: Start preview server (Vite)
+        run: npm run preview -- --port 5173 --host &
+
       - name: Wait for server
-        run: npx wait-on http://localhost:4173
-        
+        run: npx wait-on http://localhost:5173
+
       - name: Run Cypress tests
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
-          start: npm run preview
-          wait-on: 'http://localhost:4173'
-          
+          browser: chrome
+          config: baseUrl=http://localhost:5173
+          # ниже не обязательно, сервер уже запущен, но удобно для локального повторного запуска
+          wait-on: 'http://localhost:5173'
+        env:
+          CI: true
+
+      # артефакты — новые v4 (v3 уже депрекейтнут)
       - name: Upload Cypress screenshots
-        uses: actions/upload-artifact@v3
         if: failure()
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-screenshots
-          path: cypress/screenshots
-          
+          path: frontend/cypress/screenshots
+
       - name: Upload Cypress videos
-        uses: actions/upload-artifact@v3
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-videos
-          path: cypress/videos
+          path: frontend/cypress/videos
