@@ -1,52 +1,54 @@
-name: E2E Tests
+name: frontend-e2e
 
 on:
-  push:
-    branches: [ main, dev ]
   pull_request:
-    branches: [ dev ]
+    branches: [dev, main]
+  push:
+    branches: [dev]
 
 jobs:
-  cypress-run:
+  frontend-e2e:
     runs-on: ubuntu-latest
+    env:
+      CI: true
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
+      - uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-          
+          node-version: 'lts/*'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
       - name: Install dependencies
-        run: npm ci
-        
-      - name: Build application
-        run: npm run build
-        
-      - name: Start server
-        run: npm run preview &
-        
-      - name: Wait for server
-        run: npx wait-on http://localhost:4173
-        
-      - name: Run Cypress tests
-        uses: cypress-io/github-action@v5
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Run Cypress on dev server
+        uses: cypress-io/github-action@v6
         with:
-          start: npm run preview
-          wait-on: 'http://localhost:4173'
-          
+          working-directory: frontend
+          start: npm run dev -- --port 5173 --host
+          wait-on: 'http://localhost:5173'
+          browser: chrome
+
       - name: Upload Cypress screenshots
-        uses: actions/upload-artifact@v3
         if: failure()
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-screenshots
-          path: cypress/screenshots
-          
+          path: frontend/cypress/screenshots
+          if-no-files-found: ignore
+
       - name: Upload Cypress videos
-        uses: actions/upload-artifact@v3
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-videos
-          path: cypress/videos
+          path: frontend/cypress/videos
+          if-no-files-found: ignore
