@@ -32,8 +32,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build application
-        run: npm run build
+      - name: Build app (exclude tests)
+  working-directory: frontend
+  run: |
+    npx tsc -p tsconfig.app.json
+    npx vite build
+
 
       - name: Start preview server (Vite)
         run: npm run preview -- --port 5173 --host &
