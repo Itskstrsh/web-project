@@ -2,9 +2,9 @@ name: front-tests
 
 on:
   push:
-    branches: [ main, master, dev ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ dev ]
 
 jobs:
   test:
