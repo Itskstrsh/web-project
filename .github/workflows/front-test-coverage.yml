@@ -3,8 +3,18 @@ name: frontend-coverage-80
 on:
   pull_request:
     branches: [dev, main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-coverage-80.yml'
   push:
     branches: [dev]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-coverage-80.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   frontend-coverage-80:
@@ -12,9 +22,12 @@ jobs:
     defaults:
       run:
         working-directory: frontend
+    env:
+      CI: true
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -27,18 +40,58 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
-      # создаём CI-конфиг для Jest с coverage threshold 80%
-      - name: Create Jest CI config (80% threshold)
+      # Трансформеры для Jest (TS/TSX/JSX) + jsdom + моки
+      - name: Add Jest/Babel transformers (if missing)
         run: |
-          echo "module.exports = {
+          npm i -D @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript \
+                 babel-jest jest-environment-jsdom identity-obj-proxy @testing-library/jest-dom
+
+      # Генерим babel.config.cjs и jest.ci.config.cjs с порогом 80%
+      - name: Create Babel & Jest CI config (80% threshold)
+        run: |
+          cat > babel.config.cjs <<'EOF'
+          module.exports = {
+            presets: [
+              ['@babel/preset-env', { targets: { node: 'current' } }],
+              ['@babel/preset-react', { runtime: 'automatic' }],
+              '@babel/preset-typescript',
+            ],
+          };
+          EOF
+
+          if [ -f jest.setup.ts ]; then
+            SETUP_LINE="setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],"
+          elif [ -f jest.setup.js ]; then
+            SETUP_LINE="setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],"
+          elif [ -f jest.setup.cjs ]; then
+            SETUP_LINE="setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],"
+          else
+            SETUP_LINE="setupFilesAfterEnv: ['@testing-library/jest-dom'],"
+          fi
+
+          mkdir -p __mocks__
+          echo "module.exports = 'file-mock';" > __mocks__/fileMock.js
+
+          cat > jest.ci.config.cjs <<EOF
+          module.exports = {
+            testEnvironment: 'jest-environment-jsdom',
+            transform: {
+              '^.+\\.(t|j)sx?\$': ['babel-jest', { rootMode: 'upward' }],
+            },
+            moduleFileExtensions: ['ts','tsx','js','jsx','json'],
+            moduleNameMapper: {
+              '\\\\.(css|less|sass|scss)\$': 'identity-obj-proxy',
+              '\\\\.(jpg|jpeg|png|gif|webp|svg)\$': '<rootDir>/__mocks__/fileMock.js',
+            },
+            ${SETUP_LINE}
             collectCoverage: true,
             coverageDirectory: 'coverage/unit',
-            coverageReporters: ['text', 'lcov', 'html'],
+            coverageReporters: ['text','lcov','html'],
             coverageThreshold: {
-              global: { statements: 80, branches: 80, functions: 80, lines: 80 }
+              global: { statements: 80, branches: 80, functions: 80, lines: 80 },
             },
-            testEnvironment: 'jsdom',
-          };" > jest.ci.config.cjs
+          };
+          EOF
 
       - name: Run unit tests with coverage (fails <80%)
         run: npx jest --config jest.ci.config.cjs --runInBand
