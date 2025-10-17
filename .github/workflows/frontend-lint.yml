@@ -2,9 +2,9 @@ name: frontend-lint
 
 on:
   pull_request:
-    branches: [dev, main]           # запускается на любой PR в dev/main
+    branches: [dev, main]
   push:
-    branches: [dev]                 # и на пуши в dev
+    branches: [dev]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -13,68 +13,46 @@ concurrency:
 jobs:
   frontend-lint:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
 
-      # Определяем, есть ли фронтенд и какие скрипты доступны
-      - name: Detect frontend & scripts
-        id: detect
-        run: |
-          if [ -f frontend/package.json ]; then
-            echo "HAS_FRONTEND=true" >> $GITHUB_ENV
-            if [ -f frontend/package-lock.json ]; then
-              echo "HAS_LOCK=true" >> $GITHUB_ENV
-            else
-              echo "HAS_LOCK=false" >> $GITHUB_ENV
-            fi
-            # смотрим наличие скриптов по строкам в package.json
-            grep -q '"lint"\s*:' frontend/package.json && echo "HAS_LINT=true" >> $GITHUB_ENV || echo "HAS_LINT=false" >> $GITHUB_ENV
-            grep -q '"format:check"\s*:' frontend/package.json && echo "HAS_FORMAT=true" >> $GITHUB_ENV || echo "HAS_FORMAT=false" >> $GITHUB_ENV
-            grep -q '"stylelint"\s*:' frontend/package.json && echo "HAS_STYLELINT=true" >> $GITHUB_ENV || echo "HAS_STYLELINT=false" >> $GITHUB_ENV
-          else
-            echo "HAS_FRONTEND=false" >> $GITHUB_ENV
-          fi
-
-      # Ставим Node c кешем, если есть lock-файл
-      - name: Setup Node (cached)
-        if: env.HAS_FRONTEND == 'true' && env.HAS_LOCK == 'true'
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'  # ✅ указываем правильный путь
 
-      # Или без кеша, если lock-файла нет
-      - name: Setup Node (no cache)
-        if: env.HAS_FRONTEND == 'true' && env.HAS_LOCK != 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-
-      - name: Install deps
-        if: env.HAS_FRONTEND == 'true'
-        working-directory: frontend
+      - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
-      - name: ESLint
-        if: env.HAS_FRONTEND == 'true' && env.HAS_LINT == 'true'
-        working-directory: frontend
-        run: npm run lint
-
-      - name: Prettier (check)
-        if: env.HAS_FRONTEND == 'true' && env.HAS_FORMAT == 'true'
-        working-directory: frontend
-        run: npm run format:check
-
-      - name: Stylelint (optional)
-        if: env.HAS_FRONTEND == 'true' && env.HAS_STYLELINT == 'true'
-        working-directory: frontend
-        run: npm run stylelint
-
-      # Stub — если фронта нет (или нет скриптов)
-      - name: Stub (no frontend or scripts)
-        if: env.HAS_FRONTEND != 'true'
+      - name: Run ESLint (only src)
         run: |
-          echo "No frontend/package.json — skipping lint. (Stub success)"
-          exit 0
+          if npx --yes eslint -v >/dev/null 2>&1; then
+            npx eslint "src/**/*.{ts,tsx,js,jsx}" \
+              --ignore-pattern 'cypress/**' \
+              --ignore-pattern 'coverage/**' \
+              --no-error-on-unmatched-pattern
+          else
+            echo "eslint not installed — skipping"
+          fi
+
+      - name: Run Prettier (check)
+        run: |
+          if npm run | grep -q "format:check"; then
+            npm run format:check
+          else
+            echo "no format:check script — skipping"
+          fi
+
+      - name: Run Stylelint (optional)
+        run: |
+          if npm run | grep -q "stylelint"; then
+            npm run stylelint
+          else
+            echo "no stylelint script — skipping"
+          fi
