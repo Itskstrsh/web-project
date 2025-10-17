@@ -1,0 +1,59 @@
+name: frontend-coverage-80
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev]
+
+jobs:
+  frontend-coverage-80:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      # Создаём временный jest-конфиг для CI с порогом покрытия 80%
+      - name: Create Jest CI config (80% threshold)
+        run: |
+          if [ -f jest.config.cjs ]; then BASE="require('./jest.config.cjs')" ; else BASE="{}" ; fi
+          cat > jest.ci.config.cjs <<'EOF'
+          const base = (() => { try { return /**/BASE_PLACEHOLDER/**/ } catch (_) { return {}; } })();
+          module.exports = {
+            ...base,
+            collectCoverage: true,
+            coverageDirectory: 'coverage/unit',
+            coverageReporters: ['text', 'lcov', 'html'],
+            coverageThreshold: {
+              global: { statements: 80, branches: 80, functions: 80, lines: 80 }
+            },
+            testEnvironment: base.testEnvironment || 'jsdom',
+          };
+          EOF
+          # подставим require, если базовый конфиг есть
+          sed -i "s|/**/BASE_PLACEHOLDER/**/|${BASE}|" jest.ci.config.cjs
+
+      - name: Run unit tests with coverage (fails <80%)
+        run: npx jest --config jest.ci.config.cjs --runInBand
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage-report
+          path: frontend/coverage/unit
+          if-no-files-found: ignore
