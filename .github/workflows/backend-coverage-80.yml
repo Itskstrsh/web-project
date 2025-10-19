@@ -3,20 +3,14 @@ name: backend-coverage-80
 on:
   pull_request:
     branches: [dev, main]
-    paths:
-      - backend/**
-      - .github/workflows/backend-coverage-80.yml
   push:
     branches: [dev]
-    paths:
-      - backend/**
-      - .github/workflows/backend-coverage-80.yml
   workflow_dispatch: {}
 
 jobs:
-  coverage:
+  backend-coverage-80:
+    name: backend-coverage-80
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -26,9 +20,9 @@ jobs:
           java-version: '21'
           cache: maven
 
+      # если pom.xml находится в backend/pom.xml
       - name: Enforce 80% JaCoCo coverage
-        working-directory: backend/pekarnya
-        run: mvn -B -DskipITs=true verify
+        run: mvn -B -DskipITs=true -f backend/pom.xml verify
 
       - name: Upload JaCoCo report
         if: always()
@@ -36,6 +30,14 @@ jobs:
         with:
           name: backend-jacoco-report
           path: |
-            backend/pekarnya/**/jacoco.xml
-            backend/pekarnya/**/site/jacoco/**
+            backend/**/jacoco.xml
+            backend/**/site/jacoco/**
           if-no-files-found: ignore
+
+      # Отладка на случай следующей ошибки путей
+      - name: Debug tree (if failed)
+        if: failure()
+        run: |
+          echo "::group::git root"; pwd; echo "::endgroup::"
+          echo "::group::tree"; ls -la; echo "::endgroup::"
+          echo "::group::backend tree"; ls -la backend || true; echo "::endgroup::"
