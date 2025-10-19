@@ -3,18 +3,13 @@ name: frontend-unit-tests
 on:
   pull_request:
     branches: [dev, main]
-    paths:
-      - frontend/**
-      - .github/workflows/frontend-unit-tests.yml
   push:
     branches: [dev]
-    paths:
-      - frontend/**
-      - .github/workflows/frontend-unit-tests.yml
   workflow_dispatch: {}
 
 jobs:
-  unit:
+  frontend-unit-tests:
+    name: frontend-unit-tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -34,11 +29,13 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm i; fi
 
-      - name: Run tests (if script exists)
+      - name: Run tests (npm test if exists; else Vitest)
         run: |
           TEST_SCRIPT=$(npm pkg get scripts.test | tr -d '"')
           if [ "$TEST_SCRIPT" != "null" ]; then
             npm test -- --ci
+          elif npx --yes vitest -v >/dev/null 2>&1; then
+            npx vitest run
           else
-            echo "No 'test' script — skipping"
+            echo "No test runner found — skipping"; exit 0
           fi
