@@ -3,21 +3,14 @@ name: backend-unit-tests
 on:
   pull_request:
     branches: [dev, main]
-    paths:
-      - backend/**            # только когда меняется бэкенд
-      - .github/workflows/backend-unit-tests.yml
   push:
     branches: [dev]
-    paths:
-      - backend/**
-      - .github/workflows/backend-unit-tests.yml
   workflow_dispatch: {}
 
 jobs:
-  unit:
+  backend-unit-tests:
     name: backend-unit-tests
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -28,5 +21,4 @@ jobs:
           cache: maven
 
       - name: Run unit tests
-        working-directory: backend/pekarnya
-        run: mvn -B -DskipITs=true test
+        run: mvn -B -DskipITs=false -f backend/pom.xml verify
