@@ -3,20 +3,14 @@ name: backend-coverage-80
 on:
   pull_request:
     branches: [dev, main]
-    paths:
-      - backend/**
-      - .github/workflows/backend-coverage-80.yml
   push:
     branches: [dev]
-    paths:
-      - backend/**
-      - .github/workflows/backend-coverage-80.yml
   workflow_dispatch: {}
 
 jobs:
-  coverage:
+  backend-coverage-80:
+    name: backend-coverage-80
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
