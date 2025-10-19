@@ -22,8 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          # Cypress 15.x требует Node >=20, поэтому обновляем
-          node-version: 20
+          node-version: 20          # Cypress 15/Vite 7 требуют Node >= 20
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
@@ -45,8 +44,8 @@ jobs:
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
-          # важно — оставляем project=frontend, но убираем working-directory
-          project: frontend
+          working-directory: frontend  # <-- здесь lockfile найден
+          install: false               # установку уже сделали npm ci выше
           browser: chrome
           config: baseUrl=http://localhost:5173
           wait-on: 'http://localhost:5173'
