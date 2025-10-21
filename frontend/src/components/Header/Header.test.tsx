@@ -27,7 +27,7 @@ interface RootState {
 const createMockStore = (preloadedState: Partial<RootState> = {}) => {
   return configureStore({
     reducer: {
-      cart: (state: CartState = { items: [] }, action) => state,
+      cart: (state: CartState = { items: [] }) => state,
       menu: menuReducer,
     },
     preloadedState: {
