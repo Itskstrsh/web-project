@@ -21,9 +21,9 @@ const Header: React.FC = () => {
   return (
     <header className="bg-white shadow-md">
       <div className="container mx-auto px-4">
-        {/* Верхняя часть хедера */}
+        {}
         <div className="flex items-center justify-between py-4">
-          {/* Логотип и название */}
+          {}
           <div className="flex items-center space-x-4">
             <div className="text-2xl font-bold text-red-600">ВИНЕГРЕТ</div>
             <div className="text-sm text-gray-600 border-l border-gray-300 pl-4">
