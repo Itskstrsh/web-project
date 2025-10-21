@@ -3,14 +3,8 @@ name: frontend-coverage-80
 on:
   pull_request:
     branches: [dev, main]
-    paths:
-      - frontend/**
-      - .github/workflows/frontend-coverage-80.yml
   push:
     branches: [dev]
-    paths:
-      - frontend/**
-      - .github/workflows/frontend-coverage-80.yml
   workflow_dispatch: {}
 
 concurrency:
@@ -18,7 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  coverage:
+  frontend-coverage-80:
+    name: frontend-coverage-80
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -40,11 +35,11 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm i; fi
 
-      # трансформеры для TS/TSX/JSX + jsdom
+      # Универсальная настройка Jest на лету (если проект не на Vitest)
       - name: Add Jest/Babel transformers (if missing)
         run: |
           npm i -D @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript \
-                 babel-jest jest-environment-jsdom identity-obj-proxy @testing-library/jest-dom
+                 babel-jest jest jest-environment-jsdom identity-obj-proxy @testing-library/jest-dom
 
       - name: Create Babel & Jest CI config (80% threshold)
         run: |
@@ -96,5 +91,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-coverage-report
-          path: coverage/unit
+          path: frontend/coverage/unit
           if-no-files-found: ignore
