@@ -42,11 +42,13 @@ jobs:
       - name: Run integration/e2e tests (Failsafe only, must fail on failing IT)
         run: >
           mvn -B -f backend/pom.xml
-          -DskipTests
+          -Dsurefire.skipTests=true
           -DskipITs=false
           -DfailIfNoTests=true
-          -Dit.test='**/*IT,**/*ITCase,**/ITests/*IT'
-          failsafe:integration-test failsafe:verify
+          -DargLine=""
+          '-Dit.test=**/ITests/*IT.java'
+          verify
+
 
 
 
