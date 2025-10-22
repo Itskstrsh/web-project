@@ -47,7 +47,7 @@ class OrderControllerIT {
         );
 
         // act + assert
-        mvc.perform(post("/api/orders")
+        mvc.perform(post("/api/orderss")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isAccepted());
