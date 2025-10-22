@@ -45,11 +45,13 @@ jobs:
         working-directory: frontend
         run: |
           cat > babel.config.cjs <<'EOF'
+          // Явный babel-config для CI
           module.exports = {
             presets: [
-              ['@babel/preset-env', { targets: { node: 'current' } }],
+              ['@babel/preset-env', { targets: { node: 'current' }, modules: 'commonjs' }],
               ['@babel/preset-react', { runtime: 'automatic' }],
-              '@babel/preset-typescript',
+              // ВАЖНО: этот пресет включает поддержку TypeScript и TSX
+              ['@babel/preset-typescript', { allowDeclareFields: true }],
             ],
           };
           EOF
@@ -67,18 +69,27 @@ jobs:
           mkdir -p __mocks__
           echo "module.exports = 'file-mock';" > __mocks__/fileMock.js
       
-          cat > jest.ci.config.cjs <<EOF
+          cat > jest.ci.config.cjs <<'EOF'
+          const path = require('path');
+      
           module.exports = {
+            rootDir: path.resolve(__dirname),
             testEnvironment: 'jest-environment-jsdom',
-            transform: { '^.+\\\\.(t|j)sx?$$': ['babel-jest', { rootMode: 'upward' }] },
+      
+            // Критично: явно говорим babel-jest, какой конфиг брать
+            transform: {
+              '^.+\\.(t|j)sx?$': ['babel-jest', { configFile: '<rootDir>/babel.config.cjs' }],
+            },
             moduleFileExtensions: ['ts','tsx','js','jsx','json'],
             moduleNameMapper: {
-              '\\\\.(css|less|sass|scss)$$': 'identity-obj-proxy',
-              '\\\\.(jpg|jpeg|png|gif|webp|svg)$$': '<rootDir>/__mocks__/fileMock.js',
+              '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
+              '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
             },
+      
+            // подхватим jest.setup.* если он есть в проекте
             ${SETUP_LINE}
       
-            // 👇 считаем покрытие ПО ВСЕМ исходникам
+            // Считаем покрытие по всем исходникам
             collectCoverage: true,
             collectCoverageFrom: [
               'src/**/*.{ts,tsx,js,jsx}',
@@ -91,6 +102,7 @@ jobs:
             coverageThreshold: { global: { statements: 80, branches: 80, functions: 80, lines: 80 } },
           };
           EOF
+
 
       - name: Run unit tests with coverage (fails <80%)
         run: npx jest --config jest.ci.config.cjs --runInBand
