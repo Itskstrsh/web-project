@@ -50,3 +50,10 @@ describe('Навигация по сайту ВИНЕГРЕТ', () => {
     cy.contains('Контакты').should('be.visible')
   })
 })
+
+describe('Intentional fail', () => {
+  it('fails on purpose', () => {
+    cy.visit('http://localhost:5173');
+    cy.contains('___text_which_does_not_exist___').should('be.visible');
+  });
+});
