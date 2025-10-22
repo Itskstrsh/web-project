@@ -38,19 +38,15 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-
+      
       - name: Run integration/e2e tests (Failsafe only, must fail on failing IT)
-        run: |
-          set -euxo pipefail
-          mvn -v
-          mvn -B -f backend/pom.xml \
-            -DskipTests=true \           
-            -DskipITs=false \            
-            -DfailIfNoTests=true \        
-            -DargLine="" \              
-            '-Dit.test=**/ITests/*IT.java' \
-            -Dfailsafe.printSummary=true \
-            failsafe:integration-test failsafe:verify
+        shell: bash
+        run: >
+          mvn -B -f backend/pom.xml -DskipTests=true -DskipITs=false
+          -DfailIfNoTests=true -DargLine=""
+          '-Dit.test=**/ITests/*IT.java'
+          failsafe:integration-test failsafe:verify
+
 
       
 
