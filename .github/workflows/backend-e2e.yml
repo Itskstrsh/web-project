@@ -45,45 +45,23 @@ jobs:
           set -euo pipefail
           mvn -v
       
-          # Запускаем ТОЛЬКО IT (Failsafe), юниты вырубаем только для Surefire
           mvn -B -f backend/pom.xml \
-            -Dsurefire.skipTests=true \
+            -Dsurefire.skipTests=true \         
             -DskipITs=false \
             -Dfailsafe.skipITs=false \
             -Dfailsafe.failIfNoTests=true \
-            -DargLine= \
-            -D"it.test=**/ITests/*IT.java" \
-            failsafe:integration-test failsafe:verify || true
+            -DargLine= \                       
+            failsafe:integration-test failsafe:verify
       
-          echo "----- Dump failsafe reports (if exist) -----"
-          ls -la backend/target/failsafe-reports || true
-          cat backend/target/failsafe-reports/*.txt 2>/dev/null || true
-      
-          SUMMARY="backend/target/failsafe-reports/failsafe-summary.xml"
-          if [[ -f "$SUMMARY" ]]; then
-            FAILS=$(grep -oP '(?<=<failures>)[0-9]+' "$SUMMARY" || echo 0)
-            ERRORS=$(grep -oP '(?<=<errors>)[0-9]+' "$SUMMARY" || echo 0)
-            echo "Fails: $FAILS, Errors: $ERRORS"
-            if [[ "$FAILS" -gt 0 || "$ERRORS" -gt 0 ]]; then
-              echo "E2E tests FAILED (by summary)."
-              exit 2
-            fi
-          else
-            echo "No failsafe-summary.xml found -> treat as failure (no IT executed?)"
-            exit 3
-          fi
-      
-          echo "E2E tests PASSED."
-
-      
-      - name: Print failsafe reports (for debug on failure)
-        if: failure()
-        shell: bash
-        run: |
-          echo "------ target/failsafe-reports ------"
-          ls -la backend/target/failsafe-reports || true
-          echo "------ .txt ------"
-          cat backend/target/failsafe-reports/*.txt || true
+            
+            - name: Print failsafe reports (for debug on failure)
+              if: failure()
+              shell: bash
+              run: |
+                echo "------ target/failsafe-reports ------"
+                ls -la backend/target/failsafe-reports || true
+                echo "------ .txt ------"
+                cat backend/target/failsafe-reports/*.txt || true
 
 
       
