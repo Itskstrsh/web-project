@@ -40,7 +40,13 @@ jobs:
           cache: maven
 
       - name: Run integration/e2e tests (Failsafe only)
-        run: mvn -B -f backend/pom.xml -DskipTests -DfailIfNoTests=false verify
+        run: >
+          mvn -B -f backend/pom.xml
+          -DskipTests                       # не запускаем юниты (Surefire)
+          -DskipITs=false                   # явно разрешаем IT
+          -DfailIfNoTests=true              # падаем, если IT не найдены
+          verify
+      
 
 
       - name: Upload failsafe reports
