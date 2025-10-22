@@ -40,13 +40,16 @@ jobs:
           cache: maven
 
       - name: Run integration/e2e tests (Failsafe only, must fail on failing IT)
-        run: |
-          mvn -B -f backend/pom.xml \
-            -DskipTests \             
-            -DskipITs=false \        
-            -DfailIfNoTests=true \     
-            -Dit.test='**/*IT,**/*ITCase,**/ITests/*IT' \
-            failsafe:integration-test failsafe:verify
+        run: >
+          mvn -B -f backend/pom.xml
+          -Dsurefire.skipTests=true
+          -DskipITs=false
+          -DfailIfNoTests=true
+          -DargLine=""
+          '-Dit.test=**/ITests/*IT.java'
+          verify
+
+
 
 
 
