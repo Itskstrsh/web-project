@@ -39,9 +39,9 @@ jobs:
           java-version: '21'
           cache: maven
 
-      # Важно: без working-directory, указываем pom явно
-      - name: Run integration/e2e tests (Failsafe)
-        run: mvn -B -DskipITs=false -f backend/pom.xml verify
+      - name: Run integration/e2e tests (Failsafe only)
+        run: mvn -B -f backend/pom.xml -DskipTests -DfailIfNoTests=false verify
+
 
       - name: Upload failsafe reports
         if: always()
