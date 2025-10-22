@@ -41,11 +41,26 @@ jobs:
       
       - name: Run integration/e2e tests (Failsafe only, must fail on failing IT)
         shell: bash
-        run: >
-          mvn -B -f backend/pom.xml -DskipTests=true -DskipITs=false
-          -DfailIfNoTests=true -DargLine=""
-          '-Dit.test=**/ITests/*IT.java'
-          failsafe:integration-test failsafe:verify
+        run: |
+          set -euo pipefail
+
+          mvn -B -f backend/pom.xml \
+            -DskipTests=true \
+            -DskipITs=false \
+            -DfailIfNoTests=true \
+            -Dfailsafe.failIfNoTests=true \
+            -DargLine= \
+            -D"it.test=**/ITests/*IT.java" \
+            failsafe:integration-test failsafe:verify
+      
+      - name: Print failsafe reports (for debug on failure)
+        if: failure()
+        shell: bash
+        run: |
+          echo "------ target/failsafe-reports ------"
+          ls -la backend/target/failsafe-reports || true
+          echo "------ .txt ------"
+          cat backend/target/failsafe-reports/*.txt || true
 
 
       
