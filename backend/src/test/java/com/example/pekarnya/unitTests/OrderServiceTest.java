@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -88,6 +89,12 @@ class OrderServiceTest {
         OrderItem it = saved.getItems().get(0);
         assertThat(it.getProduct()).isSameAs(p);
         assertThat(it.getAmount()).isEqualTo(2);
+    }
+
+    @Test
+    void demo_shouldFail_forG31() {
+        // Намеренно ломаем юнит-тест для демонстрации G3.1:
+        fail("G3.1 demo: unit test intentionally failing");
     }
 
     @Test
