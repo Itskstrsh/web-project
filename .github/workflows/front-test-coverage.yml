@@ -44,18 +44,18 @@ jobs:
       - name: Create Babel & Jest CI config (80% threshold)
         working-directory: frontend
         run: |
+          # babel.config.cjs — можно с кавычками, подстановок нет
           cat > babel.config.cjs <<'EOF'
-          // Явный babel-config для CI
           module.exports = {
             presets: [
               ['@babel/preset-env', { targets: { node: 'current' }, modules: 'commonjs' }],
               ['@babel/preset-react', { runtime: 'automatic' }],
-              // ВАЖНО: этот пресет включает поддержку TypeScript и TSX
               ['@babel/preset-typescript', { allowDeclareFields: true }],
             ],
           };
           EOF
       
+          # Определяем SETUP_LINE
           if [ -f jest.setup.ts ]; then
             SETUP_LINE="setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],"
           elif [ -f jest.setup.js ]; then
@@ -69,27 +69,23 @@ jobs:
           mkdir -p __mocks__
           echo "module.exports = 'file-mock';" > __mocks__/fileMock.js
       
-          cat > jest.ci.config.cjs <<'EOF'
+          # jest.ci.config.cjs — БЕЗ кавычек, чтобы ${SETUP_LINE} подставился
+          cat > jest.ci.config.cjs <<EOF
           const path = require('path');
       
           module.exports = {
             rootDir: path.resolve(__dirname),
             testEnvironment: 'jest-environment-jsdom',
-      
-            // Критично: явно говорим babel-jest, какой конфиг брать
             transform: {
               '^.+\\.(t|j)sx?$': ['babel-jest', { configFile: '<rootDir>/babel.config.cjs' }],
             },
             moduleFileExtensions: ['ts','tsx','js','jsx','json'],
             moduleNameMapper: {
-              '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
-              '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
+              '\\\\.(css|less|sass|scss)$': 'identity-obj-proxy',
+              '\\\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
             },
-      
-            // подхватим jest.setup.* если он есть в проекте
             ${SETUP_LINE}
       
-            // Считаем покрытие по всем исходникам
             collectCoverage: true,
             collectCoverageFrom: [
               'src/**/*.{ts,tsx,js,jsx}',
@@ -102,6 +98,7 @@ jobs:
             coverageThreshold: { global: { statements: 80, branches: 80, functions: 80, lines: 80 } },
           };
           EOF
+
 
 
       - name: Run unit tests with coverage (fails <80%)
