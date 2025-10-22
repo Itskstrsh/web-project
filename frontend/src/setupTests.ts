@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import './coverageSink';
 
 // Правильный мок для matchMedia
 Object.defineProperty(window, 'matchMedia', {
