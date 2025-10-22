@@ -1,37 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1760469776554" clover="3.2.0">
-  <project timestamp="1760469776554" name="All files">
-    <metrics statements="20" coveredstatements="16" conditionals="4" coveredconditionals="2" methods="9" coveredmethods="3" elements="33" coveredelements="21" complexity="0" loc="20" ncloc="20" packages="2" files="2" classes="2"/>
-    <package name="components.Header">
-      <metrics statements="13" coveredstatements="11" conditionals="4" coveredconditionals="2" methods="7" coveredmethods="3"/>
-      <file name="Header.tsx" path="/Users/tiwhite/Desktop/web/src/components/Header/Header.tsx">
-        <metrics statements="13" coveredstatements="11" conditionals="4" coveredconditionals="2" methods="7" coveredmethods="3"/>
+<coverage generated="1761151509037" clover="3.2.0">
+  <project timestamp="1761151509037" name="All files">
+    <metrics statements="68" coveredstatements="33" conditionals="53" coveredconditionals="4" methods="20" coveredmethods="10" elements="141" coveredelements="47" complexity="0" loc="68" ncloc="68" packages="4" files="4" classes="4"/>
+    <package name="src">
+      <metrics statements="45" coveredstatements="10" conditionals="49" coveredconditionals="0" methods="10" coveredmethods="0"/>
+      <file name="coverageSink.ts" path="/Users/kostyarsh/Study/web-project/frontend/src/coverageSink.ts">
+        <metrics statements="45" coveredstatements="10" conditionals="49" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <line num="10" count="2" type="cond" truecount="0" falsecount="1"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="22" count="0" type="cond" truecount="0" falsecount="5"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="31" count="2" type="cond" truecount="0" falsecount="3"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="41" count="2" type="cond" truecount="0" falsecount="1"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="45" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="51" count="2" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="54" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="55" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="56" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="64" count="2" type="cond" truecount="0" falsecount="3"/>
+        <line num="65" count="2" type="cond" truecount="0" falsecount="3"/>
+        <line num="66" count="2" type="cond" truecount="0" falsecount="3"/>
+        <line num="67" count="2" type="cond" truecount="0" falsecount="3"/>
+        <line num="68" count="2" type="cond" truecount="0" falsecount="1"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="70" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="71" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.Header">
+      <metrics statements="13" coveredstatements="13" conditionals="4" coveredconditionals="4" methods="7" coveredmethods="7"/>
+      <file name="Header.tsx" path="/Users/kostyarsh/Study/web-project/frontend/src/components/Header/Header.tsx">
+        <metrics statements="13" coveredstatements="13" conditionals="4" coveredconditionals="4" methods="7" coveredmethods="7"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="5" count="1" type="stmt"/>
-        <line num="6" count="1" type="stmt"/>
-        <line num="7" count="1" type="stmt"/>
-        <line num="8" count="0" type="stmt"/>
-        <line num="10" count="1" type="stmt"/>
-        <line num="12" count="1" type="stmt"/>
-        <line num="21" count="1" type="stmt"/>
-        <line num="59" count="0" type="stmt"/>
-        <line num="72" count="6" type="stmt"/>
-        <line num="87" count="6" type="stmt"/>
+        <line num="6" count="15" type="stmt"/>
+        <line num="7" count="15" type="stmt"/>
+        <line num="8" count="30" type="stmt"/>
+        <line num="10" count="30" type="stmt"/>
+        <line num="12" count="15" type="stmt"/>
+        <line num="21" count="15" type="stmt"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="72" count="90" type="stmt"/>
+        <line num="87" count="90" type="stmt"/>
         <line num="107" count="1" type="stmt"/>
       </file>
     </package>
-    <package name="store.slices">
-      <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
-      <file name="menuSlice.ts" path="/Users/tiwhite/Desktop/web/src/store/slices/menuSlice.ts">
-        <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+    <package name="src.hooks">
+      <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="redux.ts" path="/Users/kostyarsh/Study/web-project/frontend/src/hooks/redux.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
-        <line num="8" count="1" type="stmt"/>
-        <line num="12" count="1" type="stmt"/>
-        <line num="17" count="0" type="stmt"/>
-        <line num="20" count="0" type="stmt"/>
-        <line num="25" count="1" type="stmt"/>
-        <line num="26" count="1" type="stmt"/>
+        <line num="5" count="15" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.store.slices">
+      <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+      <file name="menuSlice.ts" path="/Users/kostyarsh/Study/web-project/frontend/src/store/slices/menuSlice.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="17" count="3" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
       </file>
     </package>
   </project>
