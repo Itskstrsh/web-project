@@ -1,6 +1,12 @@
 // store/slices/menuSlice.test.ts
 import menuReducer, { toggleMenu, setMenuOpen } from './menuSlice';
 
+describe('G3 demo — break frontend unit CI', () => {
+  it('intentionally fails to verify CI blocking', () => {
+    expect(true).toBe(false); // специально делаем fail
+  });
+});
+
 describe('menuSlice', () => {
   const initialState = { isMenuOpen: false };
 
