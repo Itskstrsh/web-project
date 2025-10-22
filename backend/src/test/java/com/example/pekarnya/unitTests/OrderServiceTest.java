@@ -78,7 +78,7 @@ class OrderServiceTest {
         verify(orders).save(orderCaptor.capture());
 
         Order saved = orderCaptor.getValue();
-        assertThat(saved.getCustomerPhone()).isEqualTo("+79990001122");
+        assertThat(saved.getCustomerPhone()).isEqualTo("+79990001112");
         assertThat(saved.getPreferredContact()).isEqualTo("phone");
         assertThat(saved.getDeliveryType()).isEqualTo("delivery");
         assertThat(saved.getAddress()).isEqualTo("ул. Пекарная, 1");
