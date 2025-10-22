@@ -41,43 +41,15 @@ jobs:
           npm i -D @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript \
                  babel-jest jest jest-environment-jsdom identity-obj-proxy @testing-library/jest-dom
 
-      - name: Create Babel & Jest CI config (80% threshold)
-        working-directory: frontend
-        run: |
-          # babel.config.cjs — можно с кавычками, подстановок нет
-          cat > babel.config.cjs <<'EOF'
-          module.exports = {
-            presets: [
-              ['@babel/preset-env', { targets: { node: 'current' }, modules: 'commonjs' }],
-              ['@babel/preset-react', { runtime: 'automatic' }],
-              ['@babel/preset-typescript', { allowDeclareFields: true }],
-            ],
-          };
-          EOF
-      
-          # Определяем SETUP_LINE
-          if [ -f jest.setup.ts ]; then
-            SETUP_LINE="setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],"
-          elif [ -f jest.setup.js ]; then
-            SETUP_LINE="setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],"
-          elif [ -f jest.setup.cjs ]; then
-            SETUP_LINE="setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],"
-          else
-            SETUP_LINE="setupFilesAfterEnv: ['@testing-library/jest-dom'],"
-          fi
-      
-          mkdir -p __mocks__
-          echo "module.exports = 'file-mock';" > __mocks__/fileMock.js
-      
-          # jest.ci.config.cjs — БЕЗ кавычек, чтобы ${SETUP_LINE} подставился
           cat > jest.ci.config.cjs <<EOF
           const path = require('path');
-      
+          const babelConfigFile = path.resolve(__dirname, 'babel.config.cjs');
+          
           module.exports = {
             rootDir: path.resolve(__dirname),
             testEnvironment: 'jest-environment-jsdom',
             transform: {
-              '^.+\\.(t|j)sx?$': ['babel-jest', { configFile: '<rootDir>/babel.config.cjs' }],
+              '^.+\\.(t|j)sx?$': ['babel-jest', { configFile: babelConfigFile }],
             },
             moduleFileExtensions: ['ts','tsx','js','jsx','json'],
             moduleNameMapper: {
@@ -85,7 +57,7 @@ jobs:
               '\\\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
             },
             ${SETUP_LINE}
-      
+          
             collectCoverage: true,
             collectCoverageFrom: [
               'src/**/*.{ts,tsx,js,jsx}',
@@ -98,6 +70,7 @@ jobs:
             coverageThreshold: { global: { statements: 80, branches: 80, functions: 80, lines: 80 } },
           };
           EOF
+      
 
 
 
