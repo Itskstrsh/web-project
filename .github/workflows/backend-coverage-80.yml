@@ -21,12 +21,8 @@ jobs:
           cache: maven
 
       - name: Enforce 80% JaCoCo coverage (ignore test failures)
-        run: |
-          mvn -B -f backend/pom.xml \
-            -DskipITs \
-            -DtestFailureIgnore=true \
-            -DfailIfNoTests=false \
-            clean test jacoco:report jacoco:check
+        run: mvn -B -f backend/pom.xml -DskipITs -DtestFailureIgnore=true -DfailIfNoTests=false clean test jacoco:report jacoco:check
+
 
       - name: Upload JaCoCo report
         if: always()
