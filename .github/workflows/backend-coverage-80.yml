@@ -33,14 +33,14 @@ jobs:
           java-version: "21"
           cache: maven
 
-
       - name: Run unit tests + JaCoCo check (fail only if coverage < 80%)
         run: >
-          mvn -B
+          mvn -B -f backend/pom.xml
           -DskipITs
-          -DtestFailureIgnore=true
+          -Dmaven.test.failure.ignore=true
           -DfailIfNoTests=false
           clean test jacoco:check@check
+
 
       - name: Upload JaCoCo report
         if: always()
