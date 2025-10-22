@@ -57,6 +57,13 @@ class OrderControllerIT {
     }
 
     @Test
+    void g32_demo_shouldFail_intentionally() {
+        // Демонстрационный падающий IT для проверки блокировки CI (G3.2)
+        org.junit.jupiter.api.Assertions.fail("G3.2 demo: IT intentionally failing");
+    }
+
+
+    @Test
     void createOrder_invalidBody_returns400() throws Exception {
         // ВНИМАНИЕ: тест сработает, только если в OrderDto стоят валидационные аннотации.
         // Например: @NotEmpty на items, @NotBlank на phone, @Min(1) на amount и т.д.
