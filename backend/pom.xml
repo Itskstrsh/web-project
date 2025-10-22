@@ -144,6 +144,29 @@
       <artifactId>spring-boot-maven-plugin</artifactId>
     </plugin>
 
+
+
+    <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-failsafe-plugin</artifactId>
+           <version>3.5.1</version>
+           <configuration>
+             <useModulePath>false</useModulePath>
+             <includes>
+               <include>**/*IT.java</include>
+               <include>**/*ITCase.java</include>
+             </includes>
+           </configuration>
+           <executions>
+             <execution>
+               <goals>
+                 <goal>integration-test</goal>
+                 <goal>verify</goal>
+               </goals>
+             </execution>
+           </executions>
+         </plugin>
+
     <!-- JaCoCo: агент + отчёт + проверка >=80% -->
     <plugin>
       <groupId>org.jacoco</groupId>
