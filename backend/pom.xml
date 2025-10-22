@@ -122,142 +122,128 @@
 
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <release>21</release>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
+  <plugins>
+    <!-- Компиляция -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <release>21</release>
+        <annotationProcessorPaths>
+          <path>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+          </path>
+        </annotationProcessorPaths>
+      </configuration>
+    </plugin>
 
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
+    <!-- Spring Boot -->
+    <plugin>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-maven-plugin</artifactId>
+    </plugin>
 
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
-                <executions>
-                    <!-- Впрыскиваем агент в юнит-тесты -->
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
+    <!-- JaCoCo: агент + отчёт + проверка >=80% -->
+    <plugin>
+      <groupId>org.jacoco</groupId>
+      <artifactId>jacoco-maven-plugin</artifactId>
+      <version>0.8.12</version>
+      <executions>
+        <!-- подключаем агент для юнит-тестов -->
+        <execution>
+          <goals>
+            <goal>prepare-agent</goal>
+          </goals>
+        </execution>
+        <!-- генерим отчёт сразу после тестов -->
+        <execution>
+          <id>report</id>
+          <phase>test</phase>
+          <goals>
+            <goal>report</goal>
+          </goals>
+          <configuration>
+            <outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+            <formats>
+              <format>HTML</format>
+              <format>XML</format>
+            </formats>
+            <excludes>
+              <exclude>**/dto/**</exclude>
+              <exclude>**/PekarnyaApplication*</exclude>
+              <exclude>**/*Configuration*</exclude>
+            </excludes>
+          </configuration>
+        </execution>
+        <!-- проверяем порог покрытия -->
+        <execution>
+          <id>check</id>
+          <goals>
+            <goal>check</goal>
+          </goals>
+          <configuration>
+            <rules>
+              <rule>
+                <element>BUNDLE</element>
+                <limits>
+                  <limit>
+                    <counter>INSTRUCTION</counter>
+                    <value>COVEREDRATIO</value>
+                    <minimum>0.80</minimum>
+                  </limit>
+                </limits>
+                <excludes>
+                  <exclude>**/dto/**</exclude>
+                  <exclude>**/PekarnyaApplication*</exclude>
+                  <exclude>**/*Configuration*</exclude>
+                </excludes>
+              </rule>
+            </rules>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
 
-                    <!-- Генерация отчёта после verify -->
-                    <execution>
-                        <id>report</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
-                            <formats>
-                                <format>HTML</format>
-                                <format>XML</format>
-                            </formats>
-                            <excludes>
-                                <exclude>**/dto/**</exclude>
-                                <exclude>**/PekarnyaApplication*</exclude>
-                                <exclude>**/*Configuration*</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
+    <!-- Юнит-тесты (*Test) -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <version>3.5.1</version>
+      <configuration>
+        <useModulePath>false</useModulePath>
+        <!-- JaCoCo кладёт агент в ${argLine}; просто пробрасываем -->
+        <argLine>${argLine} -XX:+EnableDynamicAgentLoading</argLine>
+        <!-- Не обязательно, но можно зафиксировать шаблон юнитов -->
+        <!-- <includes>
+          <include>**/*Test.java</include>
+        </includes> -->
+      </configuration>
+    </plugin>
 
-                    <!-- Порог покрытия (пример: 80%) -->
-                    <execution>
-                        <id>check</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <rule>
-                                    <element>BUNDLE</element>
-                                    <limits>
-                                        <limit>
-                                            <counter>INSTRUCTION</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
-                                        </limit>
-                                    </limits>
-                                    <excludes>
-                                        <exclude>**/dto/**</exclude>
-                                        <exclude>**/PekarnyaApplication*</exclude>
-                                        <exclude>**/*Configuration*</exclude>
-                                    </excludes>
-                                </rule>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+    <!-- Интеграционные/e2e-тесты (*IT, *ITCase) -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-failsafe-plugin</artifactId>
+      <version>3.5.1</version>
+      <configuration>
+        <useModulePath>false</useModulePath>
+        <argLine>${argLine} -XX:+EnableDynamicAgentLoading</argLine>
+        <!-- Если держишь IT в отдельной папке, можно ужесточить include:
+        <includes>
+          <include>**/ITests/**/*IT.java</include>
+        </includes> -->
+      </configuration>
+      <executions>
+        <execution>
+          <goals>
+            <goal>integration-test</goal>
+            <goal>verify</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
 
-            <!-- 2) Surefire: запускает unit-тесты и подхватывает argLine от Jacoco -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <useModulePath>false</useModulePath>
-                    <argLine>${argLine} -XX:+EnableDynamicAgentLoading</argLine>
-                </configuration>
-            </plugin>
-
-            <!-- 3) Failsafe: на случай интеграционных тестов (если есть IT*) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <useModulePath>false</useModulePath>
-                    <!--suppress UnresolvedMavenProperty -->
-                    <argLine>${argLine} -XX:+EnableDynamicAgentLoading</argLine>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <useModulePath>false</useModulePath>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
