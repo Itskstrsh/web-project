@@ -43,7 +43,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
+          echo "Maven version:"
+          mvn -v
+      
+          # Запускаем ТОЛЬКО Failsafe и ТОЛЬКО нужные IT
           mvn -B -f backend/pom.xml \
             -DskipTests=true \
             -DskipITs=false \
@@ -51,7 +54,30 @@ jobs:
             -Dfailsafe.failIfNoTests=true \
             -DargLine= \
             -D"it.test=**/ITests/*IT.java" \
-            failsafe:integration-test failsafe:verify
+            failsafe:integration-test failsafe:verify || true
+      
+          echo "----- Dump failsafe reports (if exist) -----"
+          ls -la backend/target/failsafe-reports || true
+          cat backend/target/failsafe-reports/*.txt 2>/dev/null || true
+      
+          # Жёсткая проверка результата, даже если Maven вдруг вернул 0
+          SUMMARY="backend/target/failsafe-reports/failsafe-summary.xml"
+          if [[ -f "$SUMMARY" ]]; then
+            echo "===> Checking $SUMMARY"
+            FAILS=$(grep -oP '(?<=<failures>)[0-9]+' "$SUMMARY" || echo 0)
+            ERRORS=$(grep -oP '(?<=<errors>)[0-9]+' "$SUMMARY" || echo 0)
+            echo "Fails: $FAILS, Errors: $ERRORS"
+            if [[ "${FAILS:-0}" -gt 0 || "${ERRORS:-0}" -gt 0 ]]; then
+              echo "E2E tests FAILED (by summary)."
+              exit 2
+            fi
+          else
+            echo "No failsafe-summary.xml found -> treat as failure (no IT executed?)"
+            exit 3
+          fi
+      
+          echo "E2E tests PASSED."
+
       
       - name: Print failsafe reports (for debug on failure)
         if: failure()
