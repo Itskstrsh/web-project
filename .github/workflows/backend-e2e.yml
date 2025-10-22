@@ -43,14 +43,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "Maven version:"
           mvn -v
       
-          # Запускаем ТОЛЬКО Failsafe и ТОЛЬКО нужные IT
+          # Запускаем ТОЛЬКО IT (Failsafe), юниты вырубаем только для Surefire
           mvn -B -f backend/pom.xml \
-            -DskipTests=true \
+            -Dsurefire.skipTests=true \
             -DskipITs=false \
-            -DfailIfNoTests=true \
+            -Dfailsafe.skipITs=false \
             -Dfailsafe.failIfNoTests=true \
             -DargLine= \
             -D"it.test=**/ITests/*IT.java" \
@@ -60,14 +59,12 @@ jobs:
           ls -la backend/target/failsafe-reports || true
           cat backend/target/failsafe-reports/*.txt 2>/dev/null || true
       
-          # Жёсткая проверка результата, даже если Maven вдруг вернул 0
           SUMMARY="backend/target/failsafe-reports/failsafe-summary.xml"
           if [[ -f "$SUMMARY" ]]; then
-            echo "===> Checking $SUMMARY"
             FAILS=$(grep -oP '(?<=<failures>)[0-9]+' "$SUMMARY" || echo 0)
             ERRORS=$(grep -oP '(?<=<errors>)[0-9]+' "$SUMMARY" || echo 0)
             echo "Fails: $FAILS, Errors: $ERRORS"
-            if [[ "${FAILS:-0}" -gt 0 || "${ERRORS:-0}" -gt 0 ]]; then
+            if [[ "$FAILS" -gt 0 || "$ERRORS" -gt 0 ]]; then
               echo "E2E tests FAILED (by summary)."
               exit 2
             fi
