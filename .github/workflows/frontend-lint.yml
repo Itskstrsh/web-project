@@ -1,0 +1,61 @@
+name: frontend-lint
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev]
+  workflow_dispatch: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-lint:
+    name: frontend-lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm i; fi
+
+      - name: ESLint (only src)
+        run: |
+          if npx --yes eslint -v >/dev/null 2>&1; then
+            npx eslint "src/**/*.{ts,tsx,js,jsx}" \
+              --ignore-pattern 'cypress/**' \
+              --ignore-pattern 'coverage/**' \
+              --no-error-on-unmatched-pattern
+          else
+            echo "eslint not installed — skipping"
+          fi
+
+      - name: Prettier check
+        run: |
+          if npm run | grep -q "^  format:check$"; then
+            npm run format:check
+          else
+            echo "no format:check — skipping"
+          fi
+
+      - name: Stylelint (optional)
+        run: |
+          if npm run | grep -q "^  stylelint$"; then
+            npm run stylelint
+          else
+            echo "no stylelint — skipping"
+          fi
