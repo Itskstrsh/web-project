@@ -1,5 +1,7 @@
 package com.example.pekarnya.dto;
 
+import com.example.pekarnya.enums.ContactWay;
+import com.example.pekarnya.enums.DeliveryType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
@@ -20,11 +22,11 @@ public record OrderDto(
 
     public record Customer(
             @NotBlank String phone,
-            @NotBlank String preferredContact   // можно заменить на enum + @NotNull
+            @NotNull ContactWay contactWay
     ) { }
 
     public record Delivery(
-            @NotBlank String type,
+            @NotNull DeliveryType deliveryType,
             @NotBlank String address,
             @NotNull LocalDate date,
             @NotNull LocalTime time

@@ -19,8 +19,8 @@ public class OrderService {
     public void create(OrderDto dto) {
         Order o = Order.builder()
                 .customerPhone(dto.customer().phone())
-                .preferredContact(dto.customer().preferredContact())
-                .deliveryType(dto.delivery().type())
+                .preferredContact(dto.customer().contactWay())
+                .deliveryType(dto.delivery().deliveryType())
                 .address(dto.delivery().address())
                 .date(dto.delivery().date())
                 .time(dto.delivery().time())
