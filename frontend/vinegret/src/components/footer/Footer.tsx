@@ -1,9 +1,9 @@
 import { Box, Container, Typography } from '@mui/material';
 import HorizontalBlock from './HorizontalBlock';
 import FooterColumns from './ColumnsBlock';
-import phone from '../../images/phone.webp';
-import whatsapp from '../../images/whatsapp.webp';
-import telegram from '../../images/telegram.webp';
+import phone from '../../images/communicationImages/phone.webp';
+import whatsapp from '../../images/communicationImages/whatsapp.webp';
+import telegram from '../../images/communicationImages/telegram.webp';
 
 const Footer = () => {
     return (

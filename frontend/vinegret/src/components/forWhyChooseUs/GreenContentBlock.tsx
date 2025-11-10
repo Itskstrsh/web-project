@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { whyChooseUsData } from './whyChooseUsData';
+import { whyChooseUsData } from '../../screens/why-choose-us-screen/whyChooseUsData';
 import FeatureCard from './FeatureCard';
 import greenBackground from '../../images/greenBackground.webp';
 import ourFoodCat from '../../images/ourFoodCat.webp';
