@@ -5,6 +5,7 @@ import phone from '../../images/communicationImages/phone.webp';
 import whatsapp from '../../images/communicationImages/whatsapp.webp';
 import telegram from '../../images/communicationImages/telegram.webp';
 
+
 const Footer = () => {
     return (
         <Box
