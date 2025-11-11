@@ -49,12 +49,12 @@ class OrderServiceTest {
                 .build();
     }
 
-    private OrderDto.Customer customer(String phone, String pref) {
+    private OrderDto.Customer customer(String phone, ContactWay pref) {
         return new OrderDto.Customer(phone, pref);
     }
 
     private OrderDto.Delivery delivery(
-            String type, String address, LocalDate date, LocalTime time
+            DeliveryType type, String address, LocalDate date, LocalTime time
     ) {
         return new OrderDto.Delivery(type, address, date, time);
     }
@@ -69,8 +69,8 @@ class OrderServiceTest {
 
         var dto = new OrderDto(
                 List.of(new OrderDto.Item(pid, 2)),
-                customer("+79990001122", "phone"),
-                delivery("delivery", "ул. Пекарная, 1",
+                customer("+79990001122", ContactWay.PHONE_CALL),
+                delivery(DeliveryType.DELIVERY, "ул. Пекарная, 1",
                         LocalDate.of(2025, 10, 15), LocalTime.of(10, 0))
         );
 
@@ -104,8 +104,8 @@ class OrderServiceTest {
 
         var dto = new OrderDto(
                 List.of(new OrderDto.Item(p1, 2), new OrderDto.Item(p2, 1)),
-                customer("123", "telegram"),
-                delivery("pickup", "ПВЗ",
+                customer("123", ContactWay.TELEGRAM),
+                delivery(DeliveryType.PICKUP, "ПВЗ",
                         LocalDate.of(2025, 10, 16), LocalTime.of(12, 30))
         );
 
@@ -125,8 +125,8 @@ class OrderServiceTest {
 
         var dto = new OrderDto(
                 List.of(new OrderDto.Item(pid, 3)), // > stock
-                customer("555", "phone"),
-                delivery("delivery", "адрес",
+                customer("555", ContactWay.PHONE_CALL),
+                delivery(DeliveryType.DELIVERY, "адрес",
                         LocalDate.of(2025, 10, 20), LocalTime.of(18, 0))
         );
 
