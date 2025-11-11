@@ -4,6 +4,8 @@ import com.example.pekarnya.dto.OrderDto;
 import com.example.pekarnya.entities.Order;
 import com.example.pekarnya.entities.OrderItem;
 import com.example.pekarnya.entities.Product;
+import com.example.pekarnya.enums.ContactWay;
+import com.example.pekarnya.enums.DeliveryType;
 import com.example.pekarnya.repository.OrderRepo;
 import com.example.pekarnya.repository.ProductRepo;
 import com.example.pekarnya.services.OrderService;
@@ -79,13 +81,13 @@ class OrderServiceTest {
 
         Order saved = orderCaptor.getValue();
         assertThat(saved.getCustomerPhone()).isEqualTo("+79990001122");
-        assertThat(saved.getPreferredContact()).isEqualTo("phone");
-        assertThat(saved.getDeliveryType()).isEqualTo("delivery");
+        assertThat(saved.getPreferredContact()).isEqualTo(ContactWay.PHONE_CALL);
+        assertThat(saved.getDeliveryType()).isEqualTo(DeliveryType.DELIVERY);
         assertThat(saved.getAddress()).isEqualTo("ул. Пекарная, 1");
         assertThat(saved.getDate()).isEqualTo(LocalDate.of(2025, 10, 15));
         assertThat(saved.getTime()).isEqualTo(LocalTime.of(10, 0));
         assertThat(saved.getItems()).hasSize(1);
-        OrderItem it = saved.getItems().get(0);
+        OrderItem it = saved.getItems().getFirst();
         assertThat(it.getProduct()).isSameAs(p);
         assertThat(it.getAmount()).isEqualTo(2);
     }
