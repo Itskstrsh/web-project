@@ -17,11 +17,6 @@ public class OrderController {
 
     @PostMapping("/orders")
     public ResponseEntity<Void> create(@RequestBody @Valid OrderDto order) {
-        try {
-            throw new Exception("This is a test.");
-        } catch (Exception e) {
-            Sentry.captureException(e); //Sentry testing
-        }
         ordersService.create(order);
         return ResponseEntity.accepted().build();
     }
