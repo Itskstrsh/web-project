@@ -1,0 +1,41 @@
+name: frontend-unit-tests
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev]
+  workflow_dispatch: {}
+
+jobs:
+  frontend-unit-tests:
+    name: frontend-unit-tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install deps
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm i; fi
+
+      - name: Run tests (npm test if exists; else Vitest)
+        run: |
+          TEST_SCRIPT=$(npm pkg get scripts.test | tr -d '"')
+          if [ "$TEST_SCRIPT" != "null" ]; then
+            npm test -- --ci
+          elif npx --yes vitest -v >/dev/null 2>&1; then
+            npx vitest run
+          else
+            echo "No test runner found — skipping"; exit 0
+          fi
