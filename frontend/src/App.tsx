@@ -12,14 +12,14 @@ import CategoryPage from "./screens/category-page/CategoryPage";
 function App() {
     return (
         <Provider store={store}>
-            <Router>
+            <Router basename="/web-project">
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'column',
                     minHeight: '100vh'
                 }}>
                     <Header />
-                    <Box sx={{ flex: 1 }}> {/* Контент растягивается */}
+                    <Box sx={{ flex: 1 }}>
                         <Routes>
                             <Route path="/" element={
                                 <>
