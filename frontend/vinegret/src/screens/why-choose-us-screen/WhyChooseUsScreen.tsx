@@ -1,7 +1,7 @@
 import { Box, Container, Typography } from '@mui/material';
-import GreenContentBlock from './GreenContentBlock';
-import leftYellowAntennae from '../../images/leftYellowAntennae.png';
-import rightYellowAntennae from '../../images/rightYellowAntennae.png';
+import GreenContentBlock from '../../components/forWhyChooseUs/GreenContentBlock';
+import leftYellowAntennae from '../../images/stripesImages/leftYellowAntennae.png';
+import rightYellowAntennae from '../../images/stripesImages/rightYellowAntennae.png';
 
 const WhyChooseUs = () => {
     return (
