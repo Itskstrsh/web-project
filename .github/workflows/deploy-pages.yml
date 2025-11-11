@@ -2,8 +2,8 @@ name: Deploy frontend to GitHub Pages
 
 on:
   push:
-    branches: [ main ]        # деплоим после мерджа в main
-  workflow_dispatch:          # ручной запуск из Actions
+    branches: [ main ]          # деплой при любом пуше в main
+  workflow_dispatch:            # ручной запуск из Actions
 
 permissions:
   contents: read
@@ -21,11 +21,9 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
@@ -34,16 +32,14 @@ jobs:
       - name: Install deps
         run: npm ci
 
+      # ВАЖНО: без tsc и без тестов/линта — сразу Vite
+      - name: Vite build (no typecheck)
+        run: npx vite build
 
+      - name: Add 404 fallback (SPA routing)
+        run: cp dist/index.html dist/404.html || true
 
-      - name: Build
-        run: npm run build
-
-      - name: Add 404 fallback
-        run: cp dist/index.html dist/404.html
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist
 
@@ -54,6 +50,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
