@@ -1,8 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { store } from './store/store';
 import Header from './components/Header/Header';
 import HeroBanner from './components/HeroBanner/HeroBanner';
+import HowItWorks from './components/HowIt/HowIt';
+import { store } from './store/store';
 
 const App: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ const App: React.FC = () => {
         <Header />
         <main>
           <HeroBanner />
+          <HowItWorks/>
           {/* Здесь будут другие секции */}
         </main>
       </div>
