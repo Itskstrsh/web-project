@@ -8,6 +8,7 @@ import Footer from "./components/footer/Footer";
 import WhyChooseUsScreen from "./screens/why-choose-us-screen/WhyChooseUsScreen";
 import Assortment from "./screens/assortment/Assortment";
 import CategoryPage from "./screens/category-page/CategoryPage";
+import FaqScreen from "./screens/faqScreen/FaqScreen.tsx";
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                                     <HeroBanner />
                                     <Assortment />
                                     <WhyChooseUsScreen />
+                                    <FaqScreen />
                                 </>
                             } />
                             <Route path="/category/:categoryId" element={<CategoryPage />} />
