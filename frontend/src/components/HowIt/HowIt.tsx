@@ -1,60 +1,98 @@
+// components/HowItWorks/HowItWorks.tsx
 import { motion } from 'framer-motion';
-import React from 'react';
-
-
-
-import bg5 from '../images/KruASSani.png';
-import bg1 from '../images/Maga.png';
-import bg2 from '../images/Pelmeni228.png';
-import bg4 from '../images/ReadyToEat.png';
-import bg3 from '../images/Vareniki.png';
-
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const HowItWorks: React.FC = () => {
-const stats = [
+  const navigate = useNavigate();
+  const [images, setImages] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadImages = async () => {
+      try {
+        // Динамически импортируем картинки
+        const [bg1,bg2, bg3, bg4, bg5] = await Promise.all([
+        import('../../../public/images/Maga.png'),
+        import('../../../public/images/Pelmeni228.png'),
+        import('../../../public/images/Vareniki.png'),
+        import('../../../public/images/ReadyToEat.png'),
+        import('../../../public/images/KruASSani.png')
+        ]);
+
+        setImages({
+        shop : bg1.default,
+        pelmeni: bg2.default,
+        vareniki: bg3.default,
+        rte: bg4.default,
+        desserts: bg5.default
+        });
+      } catch (error) {
+        console.error('Error loading images:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadImages();
+  }, []);
+
+  const stats = [
     {
       number: '2',
-      label: 'Магазина',
-      description: 'С продукцией в наличии',
-      link: '#assortment',
-      background: bg1
+      line1: 'Магазина',
+      line2: 'С продукцией в наличии',
+      path: '/assortment',
+      imageKey: 'shop'
     },
     {
       number: '7',
-      label: 'видов пельменей на любой вкус',
-      description: 'От классики до авторских решений',
-      link: '#pelmeni',
-      background: bg2
+      line1: 'видов пельменей',
+      line2: 'на любой вкус',
+      path: '/assortment/pelmeni',
+      imageKey: 'pelmeni'
     },
     {
       number: '11',
-      label: 'Видов вареников',
-      description: 'Разнообразное меню на каждый день',
-      link: '#vareniki',
-      background: bg3
+      line1: 'видов вареников',
+      line2: 'на любой вкус',
+      path: '/vareniki',
+      imageKey: 'vareniki'
     },
     {
       number: '53',
-      label: 'вид выпечки, десертов и тортов',
-      description: 'Свежая выпечка и сладости',
-      link: '#bakery',
-      background: bg4
+      line1: 'вида готовой еды',
+      line2: 'каждый найдет свою',
+      path: '/polupoker',
+      imageKey : 'rte'
     },
     {
       number: '21',
-      label: 'Вид выпечки, десертов, тортов',
-      description: 'Точно найдете сладость на ваш вкус',
-      link: '#tort',
-      background: bg5
+      line1: 'Вид выпечки',
+      line2: 'десертов, тортов',
+      path: '/desserts',
+      imageKey: 'desserts'
     }
   ];
 
-  const handleCardClick = (link: string) => {
-    const element = document.querySelector(link);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleCardClick = (path: string) => {
+    navigate(path);
   };
+
+  if (loading) {
+    return (
+      <section className="bg-white relative overflow-hidden py-20 lg:py-28">
+        <div className="container mx-auto px-6">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center">
+              <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-green-700">Загрузка...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-white relative overflow-hidden py-20 lg:py-28">
@@ -92,45 +130,56 @@ const stats = [
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="relative rounded-3xl p-6 lg:p-8 shadow-lg border border-green-100 hover:shadow-xl transition-all duration-300 hover:scale-105 group cursor-pointer overflow-hidden"
-              onClick={() => handleCardClick(stat.link)}
+              className="relative rounded-3xl p-4 shadow-lg border border-green-100 hover:shadow-xl transition-all duration-300 hover:scale-105 group cursor-pointer overflow-hidden min-h-[180px] flex flex-col justify-end"
+              onClick={() => handleCardClick(stat.path)}
             >
               {/* Фоновое изображение */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center rounded-3xl"
-                style={{ backgroundImage: `url(${stat.background})` }}
-              >
-                {/* Темный оверлей для лучшей читаемости */}
-                <div className="absolute inset-0 bg-black/40 rounded-3xl group-hover:bg-black/30 transition-all duration-300"></div>
-                
-                {/* Градиентный оверлей */}
-                <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 to-emerald-800/10 rounded-3xl"></div>
-              </div>
+              {(stat.imageKey && images[stat.imageKey]) ? (
+  <div className="absolute inset-0 rounded-3xl overflow-hidden">
+    {/* Картинка */}
+    <img 
+      src={images[stat.imageKey]} 
+      alt="" 
+      className="w-full h-full object-cover"
+    />
+    {/* Двойной оверлей для гарантии */}
+    <div className="absolute inset-0 bg-black/50 rounded-3xl"></div>
+    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent rounded-3xl"></div>
+    {/* Ховер эффект */}
+    <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 rounded-3xl transition-all duration-300"></div>
+  </div>
+) : (
+  <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-500 rounded-3xl">
+    <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
+  </div>
+)}
 
-              {/* Контент */}
-              <div className="relative z-10 h-full flex flex-col justify-between">
+              {/* Контент внизу блока */}
+              <div className="relative z-10 text-center">
                 {/* Число */}
-                <div className="text-center mb-4">
-                  <span className="text-5xl lg:text-6xl font-black text-white drop-shadow-lg">
+                <div className="mb-1">
+                  <span className="text-3xl lg:text-4xl font-black text-white drop-shadow-2xl">
                     {stat.number}
                   </span>
                 </div>
                 
-                {/* Описание */}
-                <div className="text-center">
-                  <h3 className="text-lg lg:text-xl font-bold text-white mb-2 leading-tight drop-shadow-lg">
-                    {stat.label}
-                  </h3>
-                  <p className="text-green-100 font-medium text-sm lg:text-base drop-shadow">
-                    {stat.description}
-                  </p>
+                {/* Текст построчно */}
+                <div className="space-y-0">
+                  <div className="text-sm lg:text-base font-bold text-white drop-shadow-2xl leading-tight">
+                    {stat.line1}
+                  </div>
+                  {stat.line2 && (
+                    <div className="text-sm lg:text-base font-bold text-white drop-shadow-2xl leading-tight">
+                      {stat.line2}
+                    </div>
+                  )}
                 </div>
 
                 {/* Индикатор кликабельности */}
-                <div className="flex justify-center mt-4">
-                  <div className="flex items-center gap-2 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="text-sm font-semibold">Подробнее</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex justify-center mt-2">
+                  <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="text-white text-xs font-semibold">Подробнее</span>
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </div>
@@ -138,7 +187,7 @@ const stats = [
               </div>
 
               {/* Декоративный элемент */}
-              <div className="absolute top-4 right-4 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
+              <div className="absolute top-3 right-3 w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
             </motion.div>
           ))}
         </div>

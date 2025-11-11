@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import React from 'react';
-import cat from '../images/cat.png';
+import cat from '/images/cat.png';
 
 const HeroBanner: React.FC = () => {
   return (
