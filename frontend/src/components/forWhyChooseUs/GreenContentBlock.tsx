@@ -3,7 +3,6 @@ import { whyChooseUsData } from '../../constants/whyChooseUsData.ts';
 import FeatureCard from './FeatureCard.tsx';
 import greenBackground from '../../images/greenBackground.webp';
 import ourFoodCat from '../../images/ourFoodCat.webp';
-import whiteCheckMark from '../../images/whiteCheckMark.png';
 
 const GreenContentBlock = () => {
     return (
