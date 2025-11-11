@@ -8,7 +8,7 @@ const CategoryHeader = ({ title }: CategoryHeaderProps) => {
     return (
         <Typography
             sx={{
-                color: '#1f924b',
+                color: '#20924b',
                 fontSize: '40px',
                 fontFamily: 'Rubik, sans-serif',
                 fontWeight: 600,
