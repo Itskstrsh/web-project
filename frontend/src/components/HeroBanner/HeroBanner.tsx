@@ -1,64 +1,35 @@
+import { motion } from 'framer-motion';
 import React from 'react';
 
 const HeroBanner: React.FC = () => {
   return (
-    <section className="bg-gradient-to-r from-red-50 to-orange-50 py-16">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Заголовок баннера */}
-          <div className="mb-8">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-              ВКУС МЕНЯЕТ НАСТРОЕНИЕ!
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-700 mb-6">
-              ДОМАШНЯЯ ЕДА БЕЗ ИЗЖОГИ И ТЯЖЕСТИ В ЖЕЛУДКЕ В ШАГЕ ОТ ДОМА
-            </p>
-          </div>
+    <section className="bg-gradient-to-br from-[#8CD97B] via-[#A3E87B] to-[#F5FCE8] text-gray-800 py-32 relative overflow-hidden">
+      {/* Декоративная текстура */}
+      <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/food.png')] mix-blend-soft-light pointer-events-none"></div>
 
-          {/* Кнопка призыва к действию */}
-          <div className="mb-12">
-            <button className="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-colors duration-200 shadow-lg">
-              Посмотреть ассортимент
-            </button>
-          </div>
+      <div className="container mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center">
+        {/* Левый блок: Лозунг + кнопка */}
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="md:w-1/2 text-left"
+        >
+          <h1 className="text-4xl md:text-6xl font-extrabold text-green-900 mb-6 drop-shadow-sm">
+            ВКУС МЕНЯЕТ НАСТРОЕНИЕ!
+          </h1>
+          <a
+            href="#assortment"
+            className="inline-block bg-white/90 hover:bg-white text-green-800 font-semibold py-4 px-10 rounded-2xl text-lg shadow-md hover:shadow-xl transition-all duration-300"
+          >
+            Посмотреть ассортимент
+          </a>
+        </motion.div>
 
-          {/* Преимущества */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div className="text-center">
-              <div className="bg-white rounded-lg p-6 shadow-md">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">БЕЗ ГМО И КОНСЕРВАНТОВ</h3>
-                <p className="text-gray-600 text-sm">
-                  Уже 7 лет готовим для вас на натуральных продуктов высокого качества.
-                </p>
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-white rounded-lg p-6 shadow-md">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">ДЛЯ САМЫХ МАЛЕНЬКИХ</h3>
-                <p className="text-gray-600 text-sm">
-                  Наша еда подходит даже для детей от 1 года.
-                </p>
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-white rounded-lg p-6 shadow-md">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">ДЛЯ ТЕХ КТО СЧИТАЕТ БЖУ</h3>
-                <p className="text-gray-600 text-sm">
-                  Мы специально посчитали БЖУ, чтобы вы вписались в свою норму.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Дополнительная информация */}
-          <div className="bg-white rounded-lg p-6 shadow-md">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Современное и безопасное производство</h2>
-            <p className="text-gray-600">
-              Мы используем только современное оборудование и соблюдаем все стандарты безопасности пищевого производства.
-            </p>
-          </div>
+        {/* Правый блок можно оставить пустым для картинки или декоративного фона */}
+        <div className="md:w-1/2 mt-10 md:mt-0 flex justify-center">
+          {/* Здесь можно вставить иллюстрацию еды, если будет */}
         </div>
       </div>
     </section>
