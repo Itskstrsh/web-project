@@ -1,4 +1,6 @@
 package com.example.pekarnya.entities;
+import com.example.pekarnya.enums.ContactWay;
+import com.example.pekarnya.enums.DeliveryType;
 import jakarta.persistence.*;
 import lombok.*;
 import static lombok.AccessLevel.PROTECTED;
@@ -22,9 +24,9 @@ public class Order {
     private List<OrderItem> items = new ArrayList<>();
 
     private String customerPhone;
-    private String preferredContact;
+    private ContactWay preferredContact;
 
-    private String deliveryType; // delivery / pickup
+    private DeliveryType deliveryType; // delivery / pickup
     private String address;
     private LocalDate date;
     private LocalTime time;

@@ -2,6 +2,8 @@ package com.example.pekarnya.ITests;
 
 import com.example.pekarnya.controllers.OrderController;
 import com.example.pekarnya.dto.OrderDto;
+import com.example.pekarnya.enums.ContactWay;
+import com.example.pekarnya.enums.DeliveryType;
 import com.example.pekarnya.services.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -41,8 +43,8 @@ class OrderControllerIT {
         UUID pid = UUID.randomUUID();
         OrderDto dto = new OrderDto(
                 List.of(new OrderDto.Item(pid, 2)),
-                new OrderDto.Customer("+70000000000", "phone"),
-                new OrderDto.Delivery("courier", "Street 1, Apt 2",
+                new OrderDto.Customer("+70000000000", ContactWay.PHONE_CALL),
+                new OrderDto.Delivery(DeliveryType.COURIER, "Street 1, Apt 2",
                         LocalDate.of(2025, 12, 31), LocalTime.of(10, 30))
         );
 
@@ -81,8 +83,8 @@ class OrderControllerIT {
                         actual.items().getFirst().id().equals(expected.items().getFirst().id()) &&
                         actual.items().getFirst().amount() == expected.items().getFirst().amount() &&
                         actual.customer().phone().equals(expected.customer().phone()) &&
-                        actual.customer().preferredContact().equals(expected.customer().preferredContact()) &&
-                        actual.delivery().type().equals(expected.delivery().type()) &&
+                        actual.customer().contactWay().equals(expected.customer().contactWay()) &&
+                        actual.delivery().deliveryType().equals(expected.delivery().deliveryType()) &&
                         actual.delivery().address().equals(expected.delivery().address()) &&
                         actual.delivery().date().equals(expected.delivery().date()) &&
                         actual.delivery().time().equals(expected.delivery().time());
