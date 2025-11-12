@@ -1,16 +1,16 @@
 {
-  "name": "vinegret-culinary",
+  "name": "web-project",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://TiWh1te.github.io/vinegret-culinary",
+  "homepage": "https://TiWh1te.github.io/web-project",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist --repo https://github.com/TiWh1te/web-project.git",
+    "deploy": "gh-pages -d dist",
     "test": "jest",
     "test:header": "jest src/components/Header/Header.test.tsx",
     "cy:open": "cypress open",
@@ -20,6 +20,7 @@
     "test:all": "npm run test:coverage && npm run test:e2e",
     "test:coverage": "jest --coverage",
     "test:ci": "npm run test:coverage"
+
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
