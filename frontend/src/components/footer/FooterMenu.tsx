@@ -10,7 +10,7 @@ interface MenuSectionProps {
     }>;
 }
 
-const FooterMenu: React.FC<MenuSectionProps> = ({ title, items }) => {
+export const FooterMenu: React.FC<MenuSectionProps> = ({ title, items }) => {
     return (
         <Box>
             <Typography variant="h6" fontWeight="bold" color="white" gutterBottom>
@@ -36,5 +36,3 @@ const FooterMenu: React.FC<MenuSectionProps> = ({ title, items }) => {
         </Box>
     );
 };
-
-export default FooterMenu;

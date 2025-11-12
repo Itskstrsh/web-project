@@ -5,7 +5,7 @@ interface FooterBottomProps {
     currentYear: number;
 }
 
-const FooterBottom: React.FC<FooterBottomProps> = ({ currentYear }) => {
+export const FooterBottom: React.FC<FooterBottomProps> = ({ currentYear }) => {
     return (
         <>
             <Divider sx={{ my: 4, bgcolor: 'rgba(255,255,255,0.2)' }} />
@@ -45,5 +45,3 @@ const FooterBottom: React.FC<FooterBottomProps> = ({ currentYear }) => {
         </>
     );
 };
-
-export default FooterBottom;

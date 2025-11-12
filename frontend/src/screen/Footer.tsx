@@ -1,11 +1,11 @@
 import { Container, Grid, Paper } from '@mui/material';
 import React from 'react';
-import FooterLogo from './FooterLogo';
-import FooterMenu from './FooterMenu';
+import { FooterLogo } from '../components/Footer/FooterLogo';
+import { FooterMenu } from '../components/Footer/FooterMenu';
 
-import { categoriesMenu, mainMenu } from '../../constants/menuItems';
-import FooterBottom from './FooterBottom';
-import FooterContacts from './FooterContacts';
+import { FooterBottom } from '../components/Footer/FooterBottom';
+import { FooterContacts } from '../components/Footer/FooterContacts';
+import { categoriesMenu, mainMenu } from '../constants/menuItems';
 
 const Footer: React.FC = () => {
     const currentYear = new Date().getFullYear();

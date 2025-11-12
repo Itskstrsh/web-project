@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import React from 'react';
 import { contacts, workingHours } from '../../constants/contacts';
 
-const FooterContacts: React.FC = () => {
+export const FooterContacts: React.FC = () => {
     return (
         <Box>
             <Typography variant="h6" fontWeight="bold" color="white" gutterBottom>
@@ -48,5 +48,3 @@ const FooterContacts: React.FC = () => {
         </Box>
     );
 };
-
-export default FooterContacts;
