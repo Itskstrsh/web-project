@@ -1,4 +1,4 @@
-import {Box, Container, Typography, Grid2} from '@mui/material';
+import {Box, Container, Typography, Grid } from '@mui/material';
 import CategoryCard from '../../components/assortmentComp/CategoryCard.tsx';
 import { CATEGORIES } from '../../constants/categories.ts';
 import underlineYellow1 from '../../images/stripesImages/underlineYellow1.png'
@@ -49,18 +49,18 @@ const Assortment = () => {
                     </Typography>
                 </Box>
 
-                <Grid2 container spacing={2}>
+                <Grid container spacing={2}>
                     {CATEGORIES.map((category) => (
-                        <Grid2 key={category.id} size={{ xs: 12, sm: 6, md: 4 }}>
+                        <Grid key={category.id} size={{ xs: 12, sm: 6, md: 4 }}>
                             <CategoryCard
                                 image={category.image}
                                 title={category.title}
                                 subtitle={category.subtitle}
                                 onClick={() => handleCategoryClick(category.id)}
                             />
-                        </Grid2>
+                        </Grid>
                     ))}
-                </Grid2>
+                </Grid>
             </Container>
         </Box>
     );
