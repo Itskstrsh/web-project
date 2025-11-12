@@ -2,9 +2,9 @@ import { Box, Container, Typography } from '@mui/material';
 import phone from '../../images/communicationImages/phone.webp';
 import telegram from '../../images/communicationImages/telegram.webp';
 import whatsapp from '../../images/communicationImages/whatsapp.webp';
+
 import FooterColumns from './ColumnsBlock.tsx';
 import HorizontalBlock from './HorizontalBlock.tsx';
-
 
 const Footer = () => {
     return (
