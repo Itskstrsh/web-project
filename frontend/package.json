@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
+    "deploy": "gh-pages -d dist --repo https://github.com/TiWh1te/web-project.git",
     "test": "jest",
     "test:header": "jest src/components/Header/Header.test.tsx",
     "cy:open": "cypress open",
