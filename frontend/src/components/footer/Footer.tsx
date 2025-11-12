@@ -1,77 +1,48 @@
-import { Box, Container, Typography } from '@mui/material';
-import HorizontalBlock from './HorizontalBlock.tsx';
-import FooterColumns from './ColumnsBlock.tsx';
-import phone from '../../images/communicationImages/phone.webp';
-import whatsapp from '../../images/communicationImages/whatsapp.webp';
-import telegram from '../../images/communicationImages/telegram.webp';
+import React from 'react';
+import { Container, Grid, Paper } from '@mui/material';
+import FooterLogo from './FooterLogo';
+import FooterMenu from './FooterMenu';
+import FooterContacts from './FooterContacts';
+import FooterBottom from './FooterBottom';
+import { mainMenu, categoriesMenu } from '../../constants/menuItems';
 
+const Footer: React.FC = () => {
+    const currentYear = new Date().getFullYear();
 
-const Footer = () => {
     return (
-        <Box
+        <Paper
             component="footer"
             sx={{
-                backgroundColor: '#20924B',
+                background: 'linear-gradient(135deg, #14532d 0%, #166534 50%, #065f46 100%)',
                 color: 'white',
-                fontFamily: '"Rubik", sans-serif',
-                lineHeight: 1.2,
+                mt: 'auto',
+                borderRadius: 0,
             }}
+            elevation={0}
         >
-            <Container maxWidth="lg">
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 6,
-                    width: '100%',
-                    py: 5,
-                }}>
+            <Container maxWidth="lg" sx={{ py: 8, px: { xs: 3, sm: 4, md: 2 } }}>
+                <Grid container spacing={8}>
 
-                    <HorizontalBlock
-                        phoneNumber={{
-                            number: '+7 (988) 130-45-76',
-                            href: 'tel:+79881304576'
-                        }}
-                        rightImages={[
-                            {
-                                src: phone,
-                                href: 'tel:+79881304576',
-                                alt: 'Phone',
-                                width: 35,
-                                height: 35
-                            },
-                            {
-                                src: whatsapp,
-                                href: 'https://wa.me/79881304576',
-                                alt: 'WhatsApp',
-                                width: 35,
-                                height: 35
-                            },
-                            {
-                                src: telegram,
-                                href: 'https://t.me/username',
-                                alt: 'Telegram',
-                                width: 35,
-                                height: 35
-                            },
-                        ]}
-                    />
+                    <Grid size={{ xs: 12, md: 4 }}>
+                        <FooterLogo />
+                    </Grid>
 
-                    <FooterColumns />
+                    <Grid size={{ xs: 6, md: 2 }}>
+                        <FooterMenu title="Меню" items={mainMenu} />
+                    </Grid>
 
-                    <Typography
-                        sx={{
-                            fontFamily: '"Rubik", sans-serif',
-                            color: 'white',
-                            fontSize: '14px',
-                            textAlign: 'left',
-                        }}
-                    >
-                        © 2025 Винегрет. Все права защищены.
-                    </Typography>
+                    <Grid size={{ xs: 6, md: 2 }}>
+                        <FooterMenu title="Категории" items={categoriesMenu} />
+                    </Grid>
 
-                </Box>
+                    <Grid size={{ xs: 12, md: 4 }}>
+                        <FooterContacts />
+                    </Grid>
+                </Grid>
+
+                <FooterBottom currentYear={currentYear} />
             </Container>
-        </Box>
+        </Paper>
     );
 };
 

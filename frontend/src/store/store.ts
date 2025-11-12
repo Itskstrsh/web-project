@@ -1,11 +1,12 @@
+// store/index.ts
 import { configureStore } from '@reduxjs/toolkit';
-import menuSlice from './slices/menuSlice.ts';
-import cartSlice from './slices/cartSlice.ts';
+import menuReducer from './slices/menuSlice'; // Добавьте если у вас есть
+import productsReducer from './slices/productSlice';
 
 export const store = configureStore({
   reducer: {
-    menu: menuSlice,
-    cart: cartSlice,
+    products: productsReducer, // Убедитесь что это есть
+    menu: menuReducer, // И это
   },
 });
 
