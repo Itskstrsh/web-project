@@ -3,7 +3,7 @@ import { Box, IconButton, Typography } from '@mui/material';
 import React from 'react';
 import { contacts } from '../../constants/contacts';
 
-const FooterLogo: React.FC = () => {
+export const FooterLogo: React.FC = () => {
     return (
         <Box>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -86,5 +86,3 @@ const FooterLogo: React.FC = () => {
         </Box>
     );
 };
-
-export default FooterLogo;
