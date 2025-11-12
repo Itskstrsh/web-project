@@ -1,5 +1,6 @@
 import { Container, Grid, Paper } from '@mui/material';
 import React from 'react';
+import FooterBottom from '../components/Footer/FooterBottom';
 import FooterContacts from '../components/Footer/FooterContacts';
 import FooterLogo from '../components/Footer/FooterLogo';
 import FooterMenu from '../components/Footer/FooterMenu';
@@ -39,6 +40,7 @@ const Footer: React.FC = () => {
                     </Grid>
                 </Grid>
 
+                <FooterBottom currentYear={currentYear} />
             </Container>
         </Paper>
     );
