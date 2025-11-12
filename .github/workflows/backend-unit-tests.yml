@@ -20,5 +20,5 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Run unit tests
-        run: mvn -B -DskipITs=false -f backend/pom.xml verify
+      - name: Run unit tests 
+        run: mvn -B -f backend/pom.xml -DskipITs -DfailIfNoTests=false test

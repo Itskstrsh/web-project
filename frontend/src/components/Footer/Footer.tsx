@@ -14,7 +14,7 @@ import {
     Grid,
     IconButton,
     Link,
-    Paper, // Используем Grid2 вместо устаревшего Grid
+    Paper,
     Typography,
 } from '@mui/material';
 import React from 'react';
