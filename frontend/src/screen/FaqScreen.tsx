@@ -1,8 +1,8 @@
 import { Box, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { faqData } from '../../../data/FaqData';
-import Accordion from './Accordion';
-import { SectionContainer } from './FaqSection';
+import { faqData } from '../../data/FaqData';
+import Accordion from '../components/FAQ/Accordion';
+import { SectionContainer } from '../components/FAQ/FaqSection';
 
 const FaqScreen: React.FC = () => {
     const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
