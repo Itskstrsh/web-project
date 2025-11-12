@@ -1,4 +1,3 @@
-// components/HowItWorks/HowItWorks.tsx
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +10,6 @@ const HowItWorks: React.FC = () => {
   useEffect(() => {
     const loadImages = async () => {
       try {
-        // Динамически импортируем картинки
         const [bg1,bg2, bg3, bg4, bg5] = await Promise.all([
         import('../../../public/images/Maga.png'),
         import('../../../public/images/Pelmeni228.png'),
@@ -142,7 +140,7 @@ const HowItWorks: React.FC = () => {
       alt="" 
       className="w-full h-full object-cover"
     />
-    {/* Двойной оверлей для гарантии */}
+    {/* Двойной оверлей*/}
     <div className="absolute inset-0 bg-black/50 rounded-3xl"></div>
     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent rounded-3xl"></div>
     {/* Ховер эффект */}
