@@ -1,25 +1,51 @@
-const jwt = require('jsonwebtoken');
-const logger = require('../services/logger');
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const cors = require('cors');
 
-module.exports = (req, res, next) => {
-    // Пропускаем публичные эндпоинты
-    if (['/api/products', '/api/availability/stream'].includes(req.path)) {
-        return next();
+const app = express();
+
+// Конфигурация
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Логирование запросов
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    next();
+});
+
+// Прокси для обычных API запросов
+const apiProxy = createProxyMiddleware({
+    target: BACKEND_URL,
+    changeOrigin: true,
+    pathRewrite: {
+        '^/api': ''
+    },
+    onProxyReq: (proxyReq, req) => {
+        if (req.path === '/availability/stream') {
+            proxyReq.setHeader('Accept', 'text/event-stream');
+        }
+    },
+    onError: (err, req, res) => {
+        console.error('Ошибка прокси:', err);
+        res.status(502).json({ error: 'Сервис временно недоступен' });
     }
+});
 
-    const token = req.headers.authorization?.split(' ')[1];
+// Маршруты
+app.use('/api', apiProxy);
 
-    if (!token) {
-        logger.warn('Unauthorized request attempt');
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK' });
+});
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        logger.warn(`Invalid token: ${err.message}`);
-        res.status(403).json({ error: 'Invalid token' });
-    }
-};
+// Обработка ошибок
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Ошибка сервера' });
+});
+
+module.exports = app;
