@@ -1,10 +1,10 @@
 import { Container, Grid, Paper } from '@mui/material';
 import React from 'react';
-import { FooterLogo } from '../components/Footer/FooterLogo';
-import { FooterMenu } from '../components/Footer/FooterMenu';
+import { FooterLogo } from '../components/footer/FooterLogo';
+import { FooterMenu } from '../components/footer/FooterMenu';
 
-import { FooterBottom } from '../components/Footer/FooterBottom';
-import { FooterContacts } from '../components/Footer/FooterContacts';
+import { FooterBottom } from '../components/footer/FooterBottom';
+import { FooterContacts } from '../components/footer/FooterContacts';
 import { categoriesMenu, mainMenu } from '../constants/menuItems';
 
 const Footer: React.FC = () => {
