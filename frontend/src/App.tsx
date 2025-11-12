@@ -1,41 +1,32 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// App.tsx
+import { CssBaseline } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+import React from 'react';
 import { Provider } from 'react-redux';
-import { Box } from "@mui/material";
-import { store } from './store/store';
+import { HashRouter } from 'react-router-dom';
+import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
-import HeroBanner from './components/HeroBanner/HeroBanner';
-import Footer from "./components/footer/Footer";
-import WhyChooseUsScreen from "./screens/why-choose-us-screen/WhyChooseUsScreen";
-import Assortment from "./screens/assortment/Assortment";
-import CategoryPage from "./screens/category-page/CategoryPage";
+import AppRouter from './router/AppRouter';
+import { store } from './store/store';
+import { theme } from './theme/theme';
 
-function App() {
-    return (
-        <Provider store={store}>
-            <Router basename="/web-project">
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minHeight: '100vh'
-                }}>
-                    <Header />
-                    <Box sx={{ flex: 1 }}>
-                        <Routes>
-                            <Route path="/" element={
-                                <>
-                                    <HeroBanner />
-                                    <Assortment />
-                                    <WhyChooseUsScreen />
-                                </>
-                            } />
-                            <Route path="/category/:categoryId" element={<CategoryPage />} />
-                        </Routes>
-                    </Box>
-                    <Footer />
-                </Box>
-            </Router>
-        </Provider>
-    )
-}
+const App: React.FC = () => {
+  return (
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <HashRouter>
+          <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <Header />
+            <main style={{ flex: 1 }}>
+              <AppRouter />
+            </main>
+            <Footer />
+          </div>
+        </HashRouter>
+      </ThemeProvider>
+    </Provider>
+  );
+};
 
 export default App;
