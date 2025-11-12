@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
 import React from 'react';
-import HeroBackground from './HeroBackground';
-import HeroImage from './HeroImage';
-import HeroText from './HeroText';
+import HeroBackground from '../components/HeroBanner/HeroBackground';
+import HeroImage from '../components/HeroBanner/HeroImage';
+import HeroText from '../components/HeroBanner/HeroText';
 
 const HeroBanner: React.FC = () => {
   return (
