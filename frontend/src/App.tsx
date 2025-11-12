@@ -3,7 +3,7 @@ import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import AppRouter from './router/AppRouter';
@@ -15,7 +15,7 @@ const App: React.FC = () => {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <BrowserRouter>
+        <HashRouter>
           <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <Header />
             <main style={{ flex: 1 }}>
@@ -23,7 +23,7 @@ const App: React.FC = () => {
             </main>
             <Footer />
           </div>
-        </BrowserRouter>
+        </HashRouter>
       </ThemeProvider>
     </Provider>
   );

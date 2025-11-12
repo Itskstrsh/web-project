@@ -1,13 +1,16 @@
 {
-  "name": "my-app",
+  "name": "vinegret-culinary",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://TiWh1te.github.io/vinegret-culinary",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "test": "jest",
     "test:header": "jest src/components/Header/Header.test.tsx",
     "cy:open": "cypress open",

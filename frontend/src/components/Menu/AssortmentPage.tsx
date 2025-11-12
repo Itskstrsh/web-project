@@ -4,22 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { fetchProducts, setCurrentCategory } from '../../store/slices/productSlice';
 
-// Типы продуктов
-interface Product {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  image: string;
-  description: string;
-}
 
 const AssortmentPage: React.FC = () => {
   const { category } = useParams<{ category?: string }>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   
-  const { items: products, loading, currentCategory } = useAppSelector((state) => state.products);
+  const { items: products, loading } = useAppSelector((state) => state.products);
   const [activeFilter, setActiveFilter] = useState<string>(category || 'all');
 
   // Категории для фильтров
