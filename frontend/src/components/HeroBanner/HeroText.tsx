@@ -25,7 +25,7 @@ const HeroText: React.FC = () => (
         fontWeight: 900,
         fontSize: { xs: '2.5rem', md: '4rem', lg: '5rem' },
         lineHeight: 1.1,
-        color: '#064e3b',
+        color: '#4e0606ff',
         mb: 3,
       }}
     >
