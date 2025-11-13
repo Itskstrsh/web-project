@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class OrderService {
-    private final ProductRepo products;
-    private final OrderRepo orders;
+    private final ProductRepo productsRepository;
+    private final OrderRepo ordersRepository;
     private final ProductService productService;
 
     public void create(OrderDto dto) {
@@ -27,7 +27,7 @@ public class OrderService {
                 .build();
 
         dto.items().forEach(it -> {
-            Product p = products.findById(it.id()).orElseThrow();
+            Product p = productsRepository.findById(it.id()).orElseThrow();
             if (p.getStock() < it.amount()) throw new IllegalStateException("Not enough stock for " + p.getName());
             p.setStock(p.getStock() - it.amount());
             productService.patchStock(p.getId(), p.getStock());
@@ -39,7 +39,7 @@ public class OrderService {
             o.addItem(oi);
         });
 
-        orders.save(o);
+        ordersRepository.save(o);
     }
 }
 
