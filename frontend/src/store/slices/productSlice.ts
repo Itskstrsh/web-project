@@ -1,6 +1,6 @@
-// store/slices/productsSlice.ts
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import type { RootState } from '../store';
 import { products } from '../../../data/product'; // Импортируем данные
 import type { Product } from '../../types/product'; // Импортируем тип
 
@@ -19,11 +19,32 @@ const initialState: ProductsState = {
   error: null,
 };
 
-export const fetchProducts = createAsyncThunk(
+export const fetchProducts = createAsyncThunk<Product[], void, { state: RootState }>(
   'products/fetchAll',
-  async () => {
+  async (_, { getState }) => {
     return new Promise<Product[]>((resolve) => {
-      setTimeout(() => resolve(products), 300);
+      setTimeout(() => {
+        // Получаем товары из админки
+        const adminProducts = getState().admin.products;
+        
+        // Создаем Map для быстрого поиска по id
+        const productsMap = new Map<string, Product>();
+        
+        // Сначала добавляем базовые товары
+        products.forEach(product => {
+          productsMap.set(product.id, product);
+        });
+        
+        // Затем добавляем/обновляем товары из админки (они имеют приоритет)
+        adminProducts.forEach(adminProduct => {
+          productsMap.set(adminProduct.id, adminProduct);
+        });
+        
+        // Преобразуем Map обратно в массив
+        const allProducts = Array.from(productsMap.values());
+        
+        resolve(allProducts);
+      }, 300);
     });
   }
 );
