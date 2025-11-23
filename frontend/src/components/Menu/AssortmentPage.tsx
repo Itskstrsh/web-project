@@ -1,9 +1,9 @@
 // components/Menu/AssortmentPage.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { fetchProducts, setCurrentCategory } from '../../store/slices/productSlice';
-
+import { getCategoryKey } from '../../store/slices/adminSlice';
 
 const AssortmentPage: React.FC = () => {
   const { category } = useParams<{ category?: string }>();
@@ -11,17 +11,36 @@ const AssortmentPage: React.FC = () => {
   const dispatch = useAppDispatch();
   
   const { items: products, loading } = useAppSelector((state) => state.products);
+  // Отслеживаем изменения в админке для обновления товаров и категорий
+  const { products: adminProducts, categories: adminCategories } = useAppSelector((state) => state.admin);
   const [activeFilter, setActiveFilter] = useState<string>(category || 'all');
 
-  // Категории для фильтров
-  const categories = [
-    { id: 'all', name: 'Все продукты' },
-    { id: 'pelmeni', name: 'Пельмени' },
-    { id: 'vareniki', name: 'Вареники' },
-    { id: 'bakery', name: 'Выпечка' },
-    { id: 'desserts', name: 'Десерты' },
-    { id: 'polupoker', name: 'Полуфабрикаты' }
-  ];
+  // Объединяем базовые категории с категориями из админки
+  const categories = useMemo(() => {
+    const baseCategories = [
+      { id: 'all', name: 'Все продукты', categoryKey: 'all' },
+      { id: 'pelmeni', name: 'Пельмени', categoryKey: 'pelmeni' },
+      { id: 'vareniki', name: 'Вареники', categoryKey: 'vareniki' },
+      { id: 'bakery', name: 'Выпечка', categoryKey: 'bakery' },
+      { id: 'desserts', name: 'Десерты', categoryKey: 'desserts' },
+      { id: 'polupoker', name: 'Полуфабрикаты', categoryKey: 'polupoker' }
+    ];
+
+    // Добавляем категории из админки, которых нет в базовых
+    const baseCategoryKeys = new Set(baseCategories.map(c => c.categoryKey));
+    const adminCategoriesList = adminCategories
+      .filter(cat => {
+        const key = getCategoryKey(cat);
+        return !baseCategoryKeys.has(key);
+      })
+      .map(cat => ({
+        id: getCategoryKey(cat),
+        name: cat.name,
+        categoryKey: getCategoryKey(cat)
+      }));
+
+    return [...baseCategories, ...adminCategoriesList];
+  }, [adminCategories]);
 
   useEffect(() => {
     // Если есть категория в URL, устанавливаем фильтр
@@ -30,9 +49,14 @@ const AssortmentPage: React.FC = () => {
       dispatch(setCurrentCategory(category));
     }
     
-    // Загружаем продукты
+    // Загружаем продукты (включая товары из админки)
     dispatch(fetchProducts());
   }, [category, dispatch]);
+
+  // Обновляем товары при изменении в админке
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [adminProducts.length, adminCategories.length, dispatch]);
 
   // Фильтруем продукты по активной категории
   const filteredProducts = activeFilter === 'all' 

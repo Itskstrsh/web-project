@@ -7,4 +7,5 @@ export interface Product {
   image: string;
   description: string;
   weight?: string;
+  quantity?: number; // Количество товара
 }
