@@ -1,6 +1,7 @@
 // store/index.ts
 import { configureStore, type Middleware } from '@reduxjs/toolkit';
 import adminReducer from './slices/adminSlice';
+import authReducer from './slices/authSlice';
 import menuReducer from './slices/menuSlice'; // Добавьте если у вас есть
 import productsReducer from './slices/productSlice';
 import type { AdminState } from './slices/adminSlice';
@@ -35,6 +36,7 @@ export const store = configureStore({
     products: productsReducer, // Убедитесь что это есть
     menu: menuReducer, // И это
     admin: adminReducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(adminPersistenceMiddleware),
