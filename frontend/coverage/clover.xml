@@ -1,35 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1760469776554" clover="3.2.0">
-  <project timestamp="1760469776554" name="All files">
-    <metrics statements="20" coveredstatements="16" conditionals="4" coveredconditionals="2" methods="9" coveredmethods="3" elements="33" coveredelements="21" complexity="0" loc="20" ncloc="20" packages="2" files="2" classes="2"/>
+<coverage generated="1765835433841" clover="3.2.0">
+  <project timestamp="1765835433841" name="All files">
+    <metrics statements="45" coveredstatements="45" conditionals="2" coveredconditionals="1" methods="19" coveredmethods="13" elements="66" coveredelements="59" complexity="0" loc="45" ncloc="45" packages="5" files="5" classes="5"/>
     <package name="components.Header">
-      <metrics statements="13" coveredstatements="11" conditionals="4" coveredconditionals="2" methods="7" coveredmethods="3"/>
-      <file name="Header.tsx" path="/Users/tiwhite/Desktop/web/src/components/Header/Header.tsx">
-        <metrics statements="13" coveredstatements="11" conditionals="4" coveredconditionals="2" methods="7" coveredmethods="3"/>
+      <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
+      <file name="HeaderPhone.tsx" path="/Users/main/Documents/ITMO/web-course/web-project/frontend/src/components/Header/HeaderPhone.tsx">
+        <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
+        <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="8" count="6" type="stmt"/>
+        <line num="10" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="12" count="6" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.HeroBanner">
+      <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+      <file name="HeroText.tsx" path="/Users/main/Documents/ITMO/web-course/web-project/frontend/src/components/HeroBanner/HeroText.tsx">
+        <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="15" count="10" type="stmt"/>
+        <line num="99" count="30" type="stmt"/>
+        <line num="105" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="components.HomePage">
+      <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="HomePage.tsx" path="/Users/main/Documents/ITMO/web-course/web-project/frontend/src/components/HomePage/HomePage.tsx">
+        <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
         <line num="5" count="1" type="stmt"/>
         <line num="6" count="1" type="stmt"/>
         <line num="7" count="1" type="stmt"/>
-        <line num="8" count="0" type="stmt"/>
-        <line num="10" count="1" type="stmt"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="router">
+      <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="13" coveredmethods="7"/>
+      <file name="AppRouter.tsx" path="/Users/main/Documents/ITMO/web-course/web-project/frontend/src/router/AppRouter.tsx">
+        <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="13" coveredmethods="7"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
         <line num="12" count="1" type="stmt"/>
-        <line num="21" count="1" type="stmt"/>
-        <line num="59" count="0" type="stmt"/>
-        <line num="72" count="6" type="stmt"/>
-        <line num="87" count="6" type="stmt"/>
-        <line num="107" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="17" count="15" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
       </file>
     </package>
     <package name="store.slices">
-      <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
-      <file name="menuSlice.ts" path="/Users/tiwhite/Desktop/web/src/store/slices/menuSlice.ts">
-        <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+      <file name="menuSlice.ts" path="/Users/main/Documents/ITMO/web-course/web-project/frontend/src/store/slices/menuSlice.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
         <line num="1" count="1" type="stmt"/>
         <line num="8" count="1" type="stmt"/>
         <line num="12" count="1" type="stmt"/>
-        <line num="17" count="0" type="stmt"/>
-        <line num="20" count="0" type="stmt"/>
+        <line num="17" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
         <line num="25" count="1" type="stmt"/>
         <line num="26" count="1" type="stmt"/>
       </file>
