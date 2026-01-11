@@ -9,7 +9,6 @@ import Footer from './screen/Footer';
 import Header from './screen/Header';
 import { store } from './store/store';
 import { theme } from './theme/theme';
-
 const AppContent: React.FC = () => {
   const location = useLocation();
   // В HashRouter pathname должен работать правильно
