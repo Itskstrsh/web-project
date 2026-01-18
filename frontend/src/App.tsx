@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { HashRouter, useLocation } from 'react-router-dom';
+import OrderSuccessModal from './components/Order/OrderSuccessModal';
 import AppRouter from './router/AppRouter';
 import Footer from './screen/Footer';
 import Header from './screen/Header';
@@ -30,6 +31,7 @@ const App: React.FC = () => {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <OrderSuccessModal />
         <HashRouter>
           <AppContent />
         </HashRouter>

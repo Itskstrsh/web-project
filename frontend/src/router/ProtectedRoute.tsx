@@ -1,13 +1,15 @@
+// router/ProtectedRoute.tsx
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAppSelector } from '../hooks/redux';
 
 interface ProtectedRouteProps {
   children: React.ReactElement;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  // Простая проверка localStorage
+  const isAuthenticated = localStorage.getItem('adminAuth') === 'true' 
+    && localStorage.getItem('adminToken') !== null;
 
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
@@ -17,4 +19,3 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 };
 
 export default ProtectedRoute;
-
