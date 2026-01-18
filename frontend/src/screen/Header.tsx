@@ -1,17 +1,17 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import {
-  AppBar,
-  Box,
-  Container,
-  IconButton,
-  Toolbar,
-  useMediaQuery
+    AppBar,
+    Box,
+    Container,
+    IconButton,
+    Toolbar,
+    useMediaQuery
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
-import { HeaderLogo } from './HeaderLogo';
-import { HeaderNav } from './HeaderNav';
-import { HeaderPhone } from './HeaderPhone';
+import { HeaderLogo } from '../components/Header/HeaderLogo';
+import { HeaderNav } from '../components/Header/HeaderNav';
+import { HeaderPhone } from '../components/Header/HeaderPhone';
 
 const menuItems = [
   { label: 'О нас', href: '/#about' },

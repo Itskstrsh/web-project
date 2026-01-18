@@ -1,8 +1,8 @@
 import { Box, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { faqData } from '../../../data/FaqData';
-import Accordion from './Accordion';
-import { SectionContainer } from './FaqSection';
+import { faqData } from '../../data/FaqData';
+import Accordion from '../components/FAQ/Accordion';
+import { SectionContainer } from '../components/FAQ/FaqSection';
 
 const FaqScreen: React.FC = () => {
     const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
@@ -18,18 +18,15 @@ const FaqScreen: React.FC = () => {
             return newSet;
         });
     };
-
-    // Функция для проверки, открыт ли конкретный элемент
     const isExpanded = (panel: string) => expandedItems.has(panel);
 
-    // Разделяем вопросы на две колонки
     const half = Math.ceil(faqData.length / 2);
     const firstColumn = faqData.slice(0, half);
     const secondColumn = faqData.slice(half);
 
     return (
         <SectionContainer>
-            {/* Заменяем CategoryHeader на простой Typography */}
+            
             <Typography
                 variant="h2"
                 component="h2"

@@ -1,7 +1,7 @@
 // pages/HomePage.tsx
 import React from 'react';
-import FAQ from '../FAQ/FaqScreen';
-import HeroBanner from '../HeroBanner/HeroBanner';
+import FAQ from '../../screen/FaqScreen';
+import HeroBanner from '../../screen/HeroBanner';
 import HowItWorks from '../HowIt/HowIt';
 import Map from '../Maps/MapSection';
 const HomePage: React.FC = () => {
