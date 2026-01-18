@@ -1,9 +1,11 @@
 package com.example.pekarnya.controllers;
 
 import com.example.pekarnya.dto.*;
+import com.example.pekarnya.services.AuthorizationService;
 import com.example.pekarnya.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AdminController {
     private final ProductService productService;
+    private final AuthorizationService authorizationService;
 
     @GetMapping("/products")
     public Map<String, Object> allProducts() {
@@ -55,5 +58,36 @@ public class AdminController {
     public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
         productService.deleteCategory(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        System.out.println("=== LOGIN REQUEST RECEIVED ===");
+        System.out.println("Password from request: " + request.password());
+        System.out.println("Password length: " + (request.password() != null ? request.password().length() : "null"));
+        
+        boolean isValid = authorizationService.checkAuthorization(request.password());
+        
+        System.out.println("Authorization result: " + isValid);
+        System.out.println("=== END LOGIN REQUEST ===");
+        
+        if (isValid) {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("token", "admin-token-here");
+            return ResponseEntity.ok(response);
+        } else {
+            Map<String, String> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("message", "Invalid password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody LoginRequest request){
+        System.out.println("=== REGISTER REQUEST RECEIVED ===");
+        System.out.println("Password: " + request.password());
+        return authorizationService.register(request.password());
     }
 }
