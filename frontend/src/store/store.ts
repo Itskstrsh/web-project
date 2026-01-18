@@ -11,7 +11,7 @@ const adminPersistenceMiddleware: Middleware = (store) => (next) => (action) => 
   const result = next(action);
   
   // Сохраняем только если действие относится к admin slice
-  if (action.type?.startsWith('admin/')) {
+  if ((action as any)?.type?.startsWith('admin/')) {
     const state = store.getState();
     const adminState: AdminState = state.admin;
     
