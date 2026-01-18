@@ -1,10 +1,12 @@
 // store/index.ts
 import { configureStore, type Middleware } from '@reduxjs/toolkit';
+import type { AdminState } from './slices/adminSlice';
 import adminReducer from './slices/adminSlice';
 import authReducer from './slices/authSlice';
-import menuReducer from './slices/menuSlice'; // Добавьте если у вас есть
+import cartReducer from './slices/cartSlice'; // Добавляем импорт корзины
+import menuReducer from './slices/menuSlice';
+import orderReducer from './slices/orderSlice';
 import productsReducer from './slices/productSlice';
-import type { AdminState } from './slices/adminSlice';
 
 // Middleware для сохранения admin state в localStorage
 const adminPersistenceMiddleware: Middleware = (store) => (next) => (action) => {
@@ -15,7 +17,6 @@ const adminPersistenceMiddleware: Middleware = (store) => (next) => (action) => 
     const state = store.getState();
     const adminState: AdminState = state.admin;
     
-    // Сохраняем products, categories и deletedBaseCategoryIds
     try {
       const stateToSave = {
         products: adminState.products,
@@ -33,10 +34,12 @@ const adminPersistenceMiddleware: Middleware = (store) => (next) => (action) => 
 
 export const store = configureStore({
   reducer: {
-    products: productsReducer, // Убедитесь что это есть
-    menu: menuReducer, // И это
+    products: productsReducer,
+    menu: menuReducer,
     admin: adminReducer,
     auth: authReducer,
+    cart: cartReducer, // Добавляем корзину здесь
+    order: orderReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(adminPersistenceMiddleware),

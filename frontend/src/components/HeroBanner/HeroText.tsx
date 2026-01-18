@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import HeroFeatureItem from './HeroFeatureItem';
 
 const MotionBox = motion(Box);
@@ -54,27 +55,28 @@ const HeroText: React.FC = () => (
       Откройте для себя мир изысканных вкусов и кулинарных шедевров
     </Typography>
 
-    <Button
-      href="#order"
-      variant="contained"
-      sx={{
-        background: 'linear-gradient(to right, #16a34a, #059669)',
-        borderRadius: 3,
-        px: 5,
-        py: 1.5,
-        fontSize: '1.2rem',
-        fontWeight: 700,
-        boxShadow: 4,
-        transition: 'all 0.3s ease',
-        '&:hover': {
-          background: 'linear-gradient(to right, #15803d, #047857)',
-          transform: 'scale(1.05)',
-          boxShadow: 6,
-        },
-      }}
-    >
-      АССОРТИМЕНТ
-    </Button>
+        <Button
+  component={RouterLink}
+  to="/assortment"
+  variant="contained"
+  sx={{
+    background: 'linear-gradient(to right, #16a34a, #059669)',
+    borderRadius: 3,
+    px: 5,
+    py: 1.5,
+    fontSize: '1.2rem',
+    fontWeight: 700,
+    boxShadow: 4,
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: 'linear-gradient(to right, #15803d, #047857)',
+      transform: 'scale(1.05)',
+      boxShadow: 6,
+    },
+  }}
+>
+  АССОРТИМЕНТ
+</Button>
 
     <Box 
   sx={{ 
