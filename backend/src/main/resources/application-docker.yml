@@ -1,4 +1,22 @@
 spring:
+  mail:
+    host: smtp.yandex.ru
+    port: 587
+    username: shinsunhon@yandex.ru  # ваша яндекс почта
+    password: zvjitfsiniqhasjf     # пароль приложения Яндекс
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: smtp.yandex.ru
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/pekarnya}
     username: ${SPRING_DATASOURCE_USERNAME:pekar}
@@ -15,3 +33,9 @@ spring:
 
 server:
   port: 8080
+
+app:
+  email:
+    from: shinsunhon@yandex.ru      # от кого отправлять
+    to: rosh.28@mail.ru          # кому отправлять ошибки
+    subject: "🚨 Ошибка в приложении"
