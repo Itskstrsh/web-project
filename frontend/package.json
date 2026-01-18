@@ -35,6 +35,10 @@
     "react-router-dom": "^7.9.5"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
     "@eslint/js": "^9.36.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
@@ -48,6 +52,7 @@
     "@typescript-eslint/parser": "^8.46.1",
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.21",
+    "babel-jest": "^30.2.0",
     "cypress": "^15.4.0",
     "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
