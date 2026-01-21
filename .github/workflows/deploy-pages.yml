@@ -34,7 +34,7 @@ jobs:
 
       # ВАЖНО: без tsc и без тестов/линта — сразу Vite
       - name: Vite build (no typecheck)
-        run: npx vite build
+        run: VITE_BASE=/web-project/ npx vite build
 
       - name: Add 404 fallback (SPA routing)
         run: cp dist/index.html dist/404.html || true
