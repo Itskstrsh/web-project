@@ -8,6 +8,7 @@ import ProtectedRoute from './ProtectedRoute';
 // Public pages (NO lazy)
 import HomePage from '../components/HomePage/HomePage';
 import AssortmentPage from '../components/Menu/AssortmentPage';
+import AllReviewsPage from '../components/Reviews/AllReviewsPage';
 
 // Admin (lazy)
 const LazyAdminPage = React.lazy(() => import('../components/Admin/AdminPage'));
@@ -24,6 +25,9 @@ const AppRouter: React.FC = () => {
       {/* Assortment */}
       <Route path="/assortment" element={<AssortmentPage />} />
       <Route path="/assortment/:category" element={<AssortmentPage />} />
+
+      {/* Reviews */}
+      <Route path="/reviews" element={<AllReviewsPage />} />
 
       {/* Category aliases (NO Navigate → NO lag) */}
       <Route path="/pelmeni" element={<AssortmentPage />} />
