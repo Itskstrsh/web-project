@@ -16,8 +16,8 @@ import { HeaderPhone } from '../components/Header/HeaderPhone';
 const menuItems = [
   { label: 'О нас', href: '/#about' },
   { label: 'Ассортимент', href: '/assortment' },
-  { label: 'Отзывы', href: '/#reviews' },
-  { label: 'Доставка', href: '/#delivery' },
+  { label: 'Отзывы', href: '/reviews' },
+  { label: 'Корзина', href: '/cart' },
 ];
 
 const Header: React.FC = () => {
