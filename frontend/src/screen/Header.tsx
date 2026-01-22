@@ -1,3 +1,4 @@
+import React from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
   AppBar,
@@ -6,13 +7,14 @@ import {
   Drawer,
   IconButton,
   List,
+  ListItem,
   ListItemButton,
   ListItemText,
   Toolbar,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import React from 'react';
+import { Link } from 'react-router-dom';
 import { HeaderLogo } from '../components/Header/HeaderLogo';
 import { HeaderNav } from '../components/Header/HeaderNav';
 import { HeaderPhone } from '../components/Header/HeaderPhone';
@@ -27,7 +29,10 @@ const menuItems = [
 const Header: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const handleOpenDrawer = () => setDrawerOpen(true);
+  const handleCloseDrawer = () => setDrawerOpen(false);
 
   return (
     <>
@@ -51,11 +56,7 @@ const Header: React.FC = () => {
               <HeaderPhone />
 
               {isMobile && (
-                <IconButton
-                  color="success"
-                  size="large"
-                  onClick={() => setMobileOpen(true)}
-                >
+                <IconButton color="success" size="large" onClick={handleOpenDrawer}>
                   <MenuIcon />
                 </IconButton>
               )}
@@ -64,22 +65,20 @@ const Header: React.FC = () => {
         </Container>
       </AppBar>
 
-      <Drawer
-        anchor="right"
-        open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-      >
-        <Box sx={{ width: 250 }}>
+      <Drawer anchor="right" open={drawerOpen} onClose={handleCloseDrawer}>
+        <Box
+          sx={{ width: 250 }}
+          role="presentation"
+          onClick={handleCloseDrawer}
+          onKeyDown={handleCloseDrawer}
+        >
           <List>
-            {menuItems.map(item => (
-              <ListItemButton
-                key={item.label}
-                component="a"
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-              >
-                <ListItemText primary={item.label} />
-              </ListItemButton>
+            {menuItems.map((item) => (
+              <ListItem key={item.href} disablePadding>
+                <ListItemButton component={Link} to={item.href}>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </ListItem>
             ))}
           </List>
         </Box>
@@ -87,6 +86,5 @@ const Header: React.FC = () => {
     </>
   );
 };
-
 
 export default Header;
