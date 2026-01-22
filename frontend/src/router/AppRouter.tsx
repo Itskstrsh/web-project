@@ -8,6 +8,7 @@ import ProtectedRoute from './ProtectedRoute';
 // Public pages (NO lazy)
 import HomePage from '../components/HomePage/HomePage';
 import AssortmentPage from '../components/Menu/AssortmentPage';
+import AllReviewsPage from '../components/Reviews/AllReviewsPage';
 
 // Reviews (lazy)
 const LazyAllReviewsPage = React.lazy(() => import('../components/Reviews/AllReviewsPage'));
@@ -51,12 +52,15 @@ const AppRouter: React.FC = () => {
                 }
             />
 
-            {/* Category aliases (NO Navigate → NO lag) */}
-            <Route path="/pelmeni" element={<AssortmentPage />} />
-            <Route path="/vareniki" element={<AssortmentPage />} />
-            <Route path="/bakery" element={<AssortmentPage />} />
-            <Route path="/desserts" element={<AssortmentPage />} />
-            <Route path="/polupoker" element={<AssortmentPage />} />
+      {/* Reviews */}
+      <Route path="/reviews" element={<AllReviewsPage />} />
+
+      {/* Category aliases (NO Navigate → NO lag) */}
+      <Route path="/pelmeni" element={<AssortmentPage />} />
+      <Route path="/vareniki" element={<AssortmentPage />} />
+      <Route path="/bakery" element={<AssortmentPage />} />
+      <Route path="/desserts" element={<AssortmentPage />} />
+      <Route path="/polupoker" element={<AssortmentPage />} />
 
             {/* Admin login */}
             <Route
