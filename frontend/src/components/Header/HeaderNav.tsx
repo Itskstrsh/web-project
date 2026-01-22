@@ -25,10 +25,13 @@ export const HeaderNav: React.FC<Props> = ({ items }) => {
     }
   };
 
+  const getPath = (href: string) =>
+    `${process.env.PUBLIC_URL || ''}${href.startsWith('/') ? href : '/' + href}`;
+
   return (
     <Box sx={{ display: 'flex', gap: 1 }}>
       {items.map((item) => {
-        const active = location.pathname === item.href;
+        const active = location.pathname === getPath(item.href);
         return (
           <Button
             key={item.href}

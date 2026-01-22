@@ -47,7 +47,7 @@ const App: React.FC = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <OrderSuccessModal />
-        <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <BrowserRouter basename="/web-project">
           <AppContent />
         </BrowserRouter>
       </ThemeProvider>
