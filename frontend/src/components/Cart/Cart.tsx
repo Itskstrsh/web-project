@@ -1,10 +1,8 @@
-// components/Cart/Cart.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { clearCart, closeCart, removeFromCart, updateQuantity } from '../../store/slices/cartSlice';
-import CheckoutModal from '../Checkout/CheckoutModal'; // Импортируем CheckoutModal
+import CheckoutModal from '../Checkout/CheckoutModal';
 
-// Компонент элемента корзины
 const CartItem: React.FC<{ item: any }> = React.memo(({ item }) => {
   const dispatch = useAppDispatch();
   
@@ -74,43 +72,65 @@ const Cart: React.FC = () => {
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   
-  // Обработчик открытия оформления заказа
+  useEffect(() => {
+    if (isOpen && !showCheckout) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, showCheckout]);
+  
   const handleCheckoutClick = () => {
     setShowCheckout(true);
   };
   
-  // Обработчик закрытия модалки оформления
   const handleCheckoutClose = () => {
     setShowCheckout(false);
+    if (isOpen) {
+      dispatch(closeCart());
+    }
+  };
+  
+  const handleCartClose = () => {
+    setShowCheckout(false);
+    dispatch(closeCart());
   };
   
   if (!isOpen && !showCheckout) return null;
   
   return (
     <>
-      {/* Overlay для корзины */}
       {isOpen && !showCheckout && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => dispatch(closeCart())}
+          className="fixed inset-0 z-40 transition-opacity duration-300"
+          onClick={handleCartClose}
           aria-hidden="true"
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(2px)',
+            WebkitBackdropFilter: 'blur(2px)',
+            pointerEvents: 'auto',
+          }}
         />
       )}
       
-      {/* Модалка оформления заказа */}
       {showCheckout && <CheckoutModal onClose={handleCheckoutClose} />}
       
-      {/* Корзина (показываем только если не открыто оформление) */}
       {isOpen && !showCheckout && (
-        <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white z-50 shadow-2xl animate-slideIn">
+        <div 
+          className="fixed inset-y-0 right-0 w-full max-w-md bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-out"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="flex flex-col h-full">
-            {/* Шапка */}
             <div className="p-6 border-b border-green-100">
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-green-900">Корзина</h2>
                 <button
-                  onClick={() => dispatch(closeCart())}
-                  className="text-green-600 hover:text-green-800 p-2"
+                  onClick={handleCartClose}
+                  className="text-green-600 hover:text-green-800 p-2 transition-colors"
                   aria-label="Закрыть"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +143,6 @@ const Cart: React.FC = () => {
               </p>
             </div>
             
-            {/* Список товаров */}
             <div className="flex-1 overflow-y-auto p-6">
               {items.length === 0 ? (
                 <div className="text-center py-12">
@@ -140,7 +159,6 @@ const Cart: React.FC = () => {
               )}
             </div>
             
-            {/* Итого и кнопки */}
             <div className="p-6 border-t border-green-100 bg-green-50">
               <div className="flex justify-between items-center mb-6">
                 <span className="text-lg font-semibold text-green-900">Итого:</span>
