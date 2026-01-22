@@ -17,7 +17,11 @@ export const HeaderNav: React.FC<Props> = ({ items }) => {
   return (
     <Box sx={{ display: 'flex', gap: 1 }}>
       {items.map((item) => {
-        const active = location.pathname === item.href;
+        const active =
+          item.href === '/'
+            ? location.pathname === '/'
+            : location.pathname.startsWith(item.href);
+
         return (
           <Button
             key={item.href}
@@ -30,14 +34,11 @@ export const HeaderNav: React.FC<Props> = ({ items }) => {
               fontWeight: 600,
               textTransform: 'none',
               position: 'relative',
-              ...(active
-                ? { color: 'success.main' }
-                : {
-                    '&:hover': {
-                      color: 'success.main',
-                      backgroundColor: 'rgba(76, 175, 80, 0.08)',
-                    },
-                  }),
+              color: active ? 'success.main' : 'inherit',
+              '&:hover': {
+                color: 'success.main',
+                backgroundColor: 'rgba(76, 175, 80, 0.08)',
+              },
             }}
           >
             {item.label}
