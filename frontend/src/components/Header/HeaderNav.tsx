@@ -14,19 +14,18 @@ interface Props {
 export const HeaderNav: React.FC<Props> = ({ items }) => {
   const location = useLocation();
 
+  const getPath = (href: string) =>
+    `${process.env.PUBLIC_URL || ''}${href.startsWith('/') ? href : '/' + href}`;
+
   return (
     <Box sx={{ display: 'flex', gap: 1 }}>
       {items.map((item) => {
-        const active =
-          item.href === '/'
-            ? location.pathname === '/'
-            : location.pathname.startsWith(item.href);
-
+        const active = location.pathname === getPath(item.href);
         return (
           <Button
             key={item.href}
             component={Link}
-            to={item.href}
+            to={getPath(item.href)}
             color="inherit"
             sx={{
               px: 2.5,
@@ -34,11 +33,14 @@ export const HeaderNav: React.FC<Props> = ({ items }) => {
               fontWeight: 600,
               textTransform: 'none',
               position: 'relative',
-              color: active ? 'success.main' : 'inherit',
-              '&:hover': {
-                color: 'success.main',
-                backgroundColor: 'rgba(76, 175, 80, 0.08)',
-              },
+              ...(active
+                ? { color: 'success.main' }
+                : {
+                    '&:hover': {
+                      color: 'success.main',
+                      backgroundColor: 'rgba(76, 175, 80, 0.08)',
+                    },
+                  }),
             }}
           >
             {item.label}
