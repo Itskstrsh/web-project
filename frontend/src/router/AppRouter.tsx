@@ -10,6 +10,12 @@ import HomePage from '../components/HomePage/HomePage';
 import AssortmentPage from '../components/Menu/AssortmentPage';
 import AllReviewsPage from '../components/Reviews/AllReviewsPage';
 
+// Reviews (lazy)
+const LazyAllReviewsPage = React.lazy(() => import('../components/Reviews/AllReviewsPage'));
+
+// Cart (lazy)
+const LazyCartPage = React.lazy(() => import('../components/Cart/CartPage'));
+
 // Admin (lazy)
 const LazyAdminPage = React.lazy(() => import('../components/Admin/AdminPage'));
 const LazyAddProductForm = React.lazy(() => import('../components/Admin/AddProductForm'));
@@ -17,14 +23,34 @@ const LazyAddCategoryForm = React.lazy(() => import('../components/Admin/AddCate
 const LazyAdminLogin = React.lazy(() => import('../components/Admin/AdminLogin'));
 
 const AppRouter: React.FC = () => {
-  return (
-    <Routes>
-      {/* Home */}
-      <Route path="/" element={<HomePage />} />
+    return (
+        <Routes>
+            {/* Home */}
+            <Route path="/" element={<HomePage />} />
 
-      {/* Assortment */}
-      <Route path="/assortment" element={<AssortmentPage />} />
-      <Route path="/assortment/:category" element={<AssortmentPage />} />
+            {/* Assortment */}
+            <Route path="/assortment" element={<AssortmentPage />} />
+            <Route path="/assortment/:category" element={<AssortmentPage />} />
+
+            {/* Reviews */}
+            <Route
+                path="/reviews"
+                element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <LazyAllReviewsPage />
+                    </Suspense>
+                }
+            />
+
+            {/* Cart */}
+            <Route
+                path="/cart"
+                element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <LazyCartPage />
+                    </Suspense>
+                }
+            />
 
       {/* Reviews */}
       <Route path="/reviews" element={<AllReviewsPage />} />
@@ -36,36 +62,36 @@ const AppRouter: React.FC = () => {
       <Route path="/desserts" element={<AssortmentPage />} />
       <Route path="/polupoker" element={<AssortmentPage />} />
 
-      {/* Admin login */}
-      <Route
-        path="/admin/login"
-        element={
-          <Suspense fallback={<LoadingSpinner />}>
-            <LazyAdminLogin />
-          </Suspense>
-        }
-      />
+            {/* Admin login */}
+            <Route
+                path="/admin/login"
+                element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <LazyAdminLogin />
+                    </Suspense>
+                }
+            />
 
-      {/* Admin */}
-      <Route
-        path="/admin"
-        element={
-          <Suspense fallback={<LoadingSpinner />}>
-            <ProtectedRoute>
-              <AdminLayout />
-            </ProtectedRoute>
-          </Suspense>
-        }
-      >
-        <Route index element={<LazyAdminPage />} />
-        <Route path="product/add" element={<LazyAddProductForm />} />
-        <Route path="category/add" element={<LazyAddCategoryForm />} />
-      </Route>
+            {/* Admin */}
+            <Route
+                path="/admin"
+                element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <ProtectedRoute>
+                            <AdminLayout />
+                        </ProtectedRoute>
+                    </Suspense>
+                }
+            >
+                <Route index element={<LazyAdminPage />} />
+                <Route path="product/add" element={<LazyAddProductForm />} />
+                <Route path="category/add" element={<LazyAddCategoryForm />} />
+            </Route>
 
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+    );
 };
 
 export default AppRouter;
