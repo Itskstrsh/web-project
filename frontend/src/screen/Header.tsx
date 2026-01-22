@@ -24,7 +24,7 @@ const menuItems: MenuItem[] = [
   { label: 'О нас', href: '/#about' },
   { label: 'Ассортимент', href: '/assortment' },
   { label: 'Отзывы', href: '/reviews' },
-  { label: 'Корзина', href: '/cart' },
+  { label: 'Корзина', href: '#', onClick: 'cart' },
 ];
 
 const Header: React.FC = () => {

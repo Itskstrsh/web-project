@@ -1,22 +1,13 @@
-// router/AppRouter.tsx
 import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import AdminLayout from '../components/Admin/AdminLayout';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ProtectedRoute from './ProtectedRoute';
-
-// Public pages (NO lazy)
 import HomePage from '../components/HomePage/HomePage';
 import AssortmentPage from '../components/Menu/AssortmentPage';
 import AllReviewsPage from '../components/Reviews/AllReviewsPage';
 
-// Reviews (lazy)
 const LazyAllReviewsPage = React.lazy(() => import('../components/Reviews/AllReviewsPage'));
-
-// Cart (lazy)
-const LazyCartPage = React.lazy(() => import('../components/Cart/CartPage'));
-
-// Admin (lazy)
 const LazyAdminPage = React.lazy(() => import('../components/Admin/AdminPage'));
 const LazyAddProductForm = React.lazy(() => import('../components/Admin/AddProductForm'));
 const LazyAddCategoryForm = React.lazy(() => import('../components/Admin/AddCategoryForm'));
@@ -25,14 +16,9 @@ const LazyAdminLogin = React.lazy(() => import('../components/Admin/AdminLogin')
 const AppRouter: React.FC = () => {
     return (
         <Routes>
-            {/* Home */}
             <Route path="/" element={<HomePage />} />
-
-            {/* Assortment */}
             <Route path="/assortment" element={<AssortmentPage />} />
             <Route path="/assortment/:category" element={<AssortmentPage />} />
-
-            {/* Reviews */}
             <Route
                 path="/reviews"
                 element={
@@ -41,28 +27,11 @@ const AppRouter: React.FC = () => {
                     </Suspense>
                 }
             />
-
-            {/* Cart */}
-            <Route
-                path="/cart"
-                element={
-                    <Suspense fallback={<LoadingSpinner />}>
-                        <LazyCartPage />
-                    </Suspense>
-                }
-            />
-
-      {/* Reviews */}
-      <Route path="/reviews" element={<AllReviewsPage />} />
-
-      {/* Category aliases (NO Navigate → NO lag) */}
-      <Route path="/pelmeni" element={<AssortmentPage />} />
-      <Route path="/vareniki" element={<AssortmentPage />} />
-      <Route path="/bakery" element={<AssortmentPage />} />
-      <Route path="/desserts" element={<AssortmentPage />} />
-      <Route path="/polupoker" element={<AssortmentPage />} />
-
-            {/* Admin login */}
+            <Route path="/pelmeni" element={<AssortmentPage />} />
+            <Route path="/vareniki" element={<AssortmentPage />} />
+            <Route path="/bakery" element={<AssortmentPage />} />
+            <Route path="/desserts" element={<AssortmentPage />} />
+            <Route path="/polupoker" element={<AssortmentPage />} />
             <Route
                 path="/admin/login"
                 element={
@@ -71,8 +40,6 @@ const AppRouter: React.FC = () => {
                     </Suspense>
                 }
             />
-
-            {/* Admin */}
             <Route
                 path="/admin"
                 element={
@@ -87,8 +54,6 @@ const AppRouter: React.FC = () => {
                 <Route path="product/add" element={<LazyAddProductForm />} />
                 <Route path="category/add" element={<LazyAddCategoryForm />} />
             </Route>
-
-            {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );
