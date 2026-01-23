@@ -63,7 +63,7 @@ const getImageUrl = (imagePath?: string) => {
   
   // Если путь начинается с /uploads, добавляем базовый URL бэкенда
   if (imagePath.startsWith('/uploads/')) {
-    const fullUrl = `http://localhost:8080${imagePath}`;
+    const fullUrl = `${imagePath}`;
     console.log(`Преобразовано в: ${fullUrl}`);
     return fullUrl;
   }
@@ -74,7 +74,7 @@ const getImageUrl = (imagePath?: string) => {
   }
   
   // Если просто имя файла (без /uploads/)
-  return `http://localhost:8080/uploads/${imagePath}`;
+  return `/uploads/${imagePath}`;
 };
 
   if (error) {
