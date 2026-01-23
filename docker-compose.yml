@@ -18,20 +18,20 @@ services:
     #   - "5433:5432"
 
   app:
-  build: ./backend
-  container_name: pekarnya-app
-  depends_on:
-    db:
-      condition: service_healthy
-  environment:
-    SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/pekarnya
-    SPRING_DATASOURCE_USERNAME: pekar
-    SPRING_DATASOURCE_PASSWORD: secret
-    SPRING_PROFILES_ACTIVE: docker
-    SPRING_MAIL_ENABLED: false
-  expose:
-    - "8080"
-  restart: unless-stopped
+    build: ./backend
+    container_name: pekarnya-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/pekarnya
+      SPRING_DATASOURCE_USERNAME: pekar
+      SPRING_DATASOURCE_PASSWORD: secret
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_MAIL_ENABLED: false
+    expose:
+      - "8080"
+    restart: unless-stopped
 
   nginx:
     image: nginx:alpine
