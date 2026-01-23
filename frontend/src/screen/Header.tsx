@@ -1,24 +1,23 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import {
-    AppBar,
-    Box,
-    Container,
-    IconButton,
-    Toolbar,
-    useMediaQuery,
-    Drawer,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemText,
+  AppBar,
+  Box,
+  Container,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Toolbar,
+  useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React, { useState } from 'react';
-import { HeaderLogo } from '../components/Header/HeaderLogo';
-import { HeaderNav } from '../components/Header/HeaderNav';
-import { HeaderPhone } from '../components/Header/HeaderPhone';
-import { MenuItem } from '../components/Header/HeaderNav';
 import { Link } from 'react-router-dom';
+import { HeaderLogo } from '../components/Header/HeaderLogo';
+import { HeaderNav, type MenuItem } from '../components/Header/HeaderNav';
+import { HeaderPhone } from '../components/Header/HeaderPhone';
 
 const menuItems: MenuItem[] = [
   { label: 'О нас', href: '/#about' },
@@ -33,7 +32,7 @@ const Header: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const getPath = (href: string) =>
-    `${process.env.PUBLIC_URL || ''}${href.startsWith('/') ? href : '/' + href}`;
+    `${import.meta.env.BASE_URL}${href.replace(/^\//, '')}`;
 
   const toggleDrawer = (open: boolean) => () => {
     setDrawerOpen(open);

@@ -26,7 +26,7 @@ export const HeaderNav: React.FC<Props> = ({ items }) => {
   };
 
   const getPath = (href: string) =>
-    `${process.env.PUBLIC_URL || ''}${href.startsWith('/') ? href : '/' + href}`;
+    `${import.meta.env.BASE_URL}${href.replace(/^\//, '')}`;
 
   return (
     <Box sx={{ display: 'flex', gap: 1 }}>
@@ -37,7 +37,7 @@ export const HeaderNav: React.FC<Props> = ({ items }) => {
             key={item.href}
             component={item.onClick === 'cart' ? 'button' : Link}
             to={item.onClick === 'cart' ? undefined : item.href}
-            onClick={(e) => handleClick(item, e)}
+            onClick={(e: React.MouseEvent<Element, MouseEvent>) => handleClick(item, e)}
             color="inherit"
             sx={{
               px: 2.5,

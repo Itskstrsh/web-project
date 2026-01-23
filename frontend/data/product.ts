@@ -1,13 +1,18 @@
 // data/products.ts
 import type { Product } from '../src/types/product';
 
+import croissantImg from '/images/croissant-chocolate.jpg.webp';
+import croissantClassicImg from '/images/croissant.jpg.webp';
+import eclClassicImg from '/images/eklClassic.webp';
+import eclShock from '/images/eklshock.webp';
+
 export const products: Product[] = [
   {
     id: 'pel-1',
     name: 'Пельмени Классические',
     category: 'pelmeni',
     price: 450,
-    image: '/images/pelmeni-classic.jpg',
+    imageUrl: '/images/pelmeni-classic.jpg',
     description: 'Свинина и говядина по традиционному рецепту',
     weight: '500г'
   },
@@ -16,7 +21,7 @@ export const products: Product[] = [
     name: 'Пельмени Куриные',
     category: 'pelmeni', 
     price: 420,
-    image: '/images/pelmeni-chicken.jpg',
+    imageUrl: '/images/pelmeni-chicken.jpg',
     description: 'Нежное куриное филе с луком',
     weight: '500г'
   },
@@ -25,7 +30,7 @@ export const products: Product[] = [
     name: 'Пельмени С мраморной говядиной',
     category: 'pelmeni',
     price: 520,
-    image: '/images/pelmeni-beef.jpg',
+    imageUrl: '/images/pelmeni-beef.jpg',
     description: 'Премиальная мраморная говядина',
     weight: '500г'
   },
@@ -34,7 +39,7 @@ export const products: Product[] = [
     name: 'Пельмени С индейкой',
     category: 'pelmeni',
     price: 430,
-    image: '/images/pelmeni-turkey.jpg',
+    imageUrl: '/images/pelmeni-turkey.jpg',
     description: 'Диетическое мясо индейки',
     weight: '500г'
   },
@@ -43,7 +48,7 @@ export const products: Product[] = [
     name: 'Пельмени С грибами',
     category: 'pelmeni',
     price: 380,
-    image: '/images/pelmeni-mushrooms.jpg',
+    imageUrl: '/images/pelmeni-mushrooms.jpg',
     description: 'Шампиньоны и лесные грибы',
     weight: '500г'
   },
@@ -52,7 +57,7 @@ export const products: Product[] = [
     name: 'Пельмени С лососем',
     category: 'pelmeni',
     price: 580,
-    image: '/images/pelmeni-salmon.jpg',
+    imageUrl: '/images/pelmeni-salmon.jpg',
     description: 'Нежный лосось с укропом',
     weight: '500г'
   },
@@ -61,7 +66,7 @@ export const products: Product[] = [
     name: 'Пельмени Деревенские',
     category: 'pelmeni',
     price: 470,
-    image: '/images/pelmeni-village.jpg',
+    imageUrl: '/images/pelmeni-village.jpg',
     description: 'Свинина по деревенскому рецепту',
     weight: '500г'
   },
@@ -71,7 +76,7 @@ export const products: Product[] = [
     name: 'Вареники С картошкой',
     category: 'vareniki',
     price: 320,
-    image: '/images/vareniki-potato.jpg',
+    imageUrl: '/images/vareniki-potato.jpg',
     description: 'С картофельным пюре и луком',
     weight: '500г'
   },
@@ -80,7 +85,7 @@ export const products: Product[] = [
     name: 'Вареники С картошкой и грибами',
     category: 'vareniki',
     price: 380,
-    image: '/images/vareniki-potato-mushrooms.jpg',
+    imageUrl: '/images/vareniki-potato-mushrooms.jpg',
     description: 'Картофель с шампиньонами',
     weight: '500г'
   },
@@ -89,7 +94,7 @@ export const products: Product[] = [
     name: 'Вареники С творогом',
     category: 'vareniki',
     price: 350,
-    image: '/images/vareniki-curd.jpg',
+    imageUrl: '/images/vareniki-curd.jpg',
     description: 'Нежный творог с ванилью',
     weight: '500г'
   },
@@ -98,7 +103,7 @@ export const products: Product[] = [
     name: 'Вареники С вишней',
     category: 'vareniki',
     price: 340,
-    image: '/images/vareniki-cherry.jpg',
+    imageUrl: '/images/vareniki-cherry.jpg',
     description: 'Сочная вишня с сахаром',
     weight: '500г'
   },
@@ -107,7 +112,7 @@ export const products: Product[] = [
     name: 'Вареники С капустой',
     category: 'vareniki',
     price: 330,
-    image: '/images/vareniki-cabbage.jpg',
+    imageUrl: '/images/vareniki-cabbage.jpg',
     description: 'Тушеная капуста с морковью',
     weight: '500г'
   },
@@ -116,7 +121,7 @@ export const products: Product[] = [
     name: 'Вареники С мясом',
     category: 'vareniki',
     price: 420,
-    image: '/images/vareniki-meat.jpg',
+    imageUrl: '/images/vareniki-meat.jpg',
     description: 'Свинина и говядина в тонком тесте',
     weight: '500г'
   },
@@ -125,7 +130,7 @@ export const products: Product[] = [
     name: 'Вареники С брусникой',
     category: 'vareniki',
     price: 360,
-    image: '/images/vareniki-lingonberry.jpg',
+    imageUrl: '/images/vareniki-lingonberry.jpg',
     description: 'Ароматная лесная брусника',
     weight: '500г'
   },
@@ -134,7 +139,7 @@ export const products: Product[] = [
     name: 'Вареники С черникой',
     category: 'vareniki',
     price: 370,
-    image: '/images/vareniki-blueberry.jpg',
+    imageUrl: '/images/vareniki-blueberry.jpg',
     description: 'Свежая черника с сахаром',
     weight: '500г'
   },
@@ -143,7 +148,7 @@ export const products: Product[] = [
     name: 'Вареники С клубникой',
     category: 'vareniki',
     price: 390,
-    image: '/images/vareniki-strawberry.jpg',
+    imageUrl: '/images/vareniki-strawberry.jpg',
     description: 'Сладкая клубника в нежном тесте',
     weight: '500г'
   },
@@ -152,7 +157,7 @@ export const products: Product[] = [
     name: 'Вареники С яблоком',
     category: 'vareniki',
     price: 340,
-    image: '/images/vareniki-apple.jpg',
+    imageUrl: '/images/vareniki-apple.jpg',
     description: 'Печеные яблоки с корицей',
     weight: '500г'
   },
@@ -161,7 +166,7 @@ export const products: Product[] = [
     name: 'Вареники С сыром',
     category: 'vareniki',
     price: 380,
-    image: '/images/vareniki-cheese.jpg',
+    imageUrl: '/images/vareniki-cheese.jpg',
     description: 'Сырная начинка с зеленью',
     weight: '500г'
   },
@@ -171,15 +176,31 @@ export const products: Product[] = [
     name: 'Круассан Классический',
     category: 'bakery',
     price: 120,
-    image: '/images/croissant-classic.jpg',
+    imageUrl: croissantClassicImg,
     description: 'Слоеное тесто по французскому рецепту'
   },
   {
-    id: 'bak-2',
+    id: 'bak-3',
     name: 'Круассан Шоколадный',
     category: 'bakery',
     price: 150,
-    image: '/images/croissant-chocolate.jpg',
+    imageUrl: croissantImg,
+    description: 'С начинкой из бельгийского шоколада'
+  },
+  {
+    id: 'bak-4',
+    name: 'Эклер Классический',
+    category: 'bakery',
+    price: 150,
+    imageUrl: eclClassicImg,
+    description: 'С ванильной начинкой'
+  },
+  {
+    id: 'bak-5',
+    name: 'Эклер Шоколадный',
+    category: 'bakery',
+    price: 150,
+    imageUrl: eclShock,
     description: 'С начинкой из бельгийского шоколада'
   },
   {
@@ -187,7 +208,7 @@ export const products: Product[] = [
     name: 'Паста карбонара',
     category: 'polupoker',
     price: 150,
-    image: '/images/croissant-chocolate.jpg',
+    imageUrl: '/images/croissant-chocolate.jpg',
     description: 'С нежным соусом'
   }
 ];

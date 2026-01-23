@@ -4,7 +4,7 @@ export interface Product {
   name: string;
   category: string;
   price: number;
-  image: string;
+  imageUrl: string;
   description: string;
   weight?: string;
   quantity?: number; // Количество товара
