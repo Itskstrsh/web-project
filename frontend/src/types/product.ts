@@ -2,10 +2,11 @@
 export interface Product {
   id: string;
   name: string;
-  category: string;
   price: number;
-  imageUrl: string;
-  description: string;
+  quantity: number;
+  description?: string;
+  category: string;
   weight?: string;
-  quantity?: number; // Количество товара
+  image?: string;  // ← Должно быть image, а не imageUrl
+  imageUrl?: string; // ← Если нужно оставить для обратной совместимости
 }

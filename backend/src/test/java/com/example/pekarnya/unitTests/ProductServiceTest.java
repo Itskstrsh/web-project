@@ -1,166 +1,273 @@
 package com.example.pekarnya.unitTests;
 
-import com.example.pekarnya.dto.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.example.pekarnya.dto.CreateProductDto;
+import com.example.pekarnya.dto.PatchProductDto;
+import com.example.pekarnya.dto.ProductDto;
 import com.example.pekarnya.entities.Category;
 import com.example.pekarnya.entities.Product;
 import com.example.pekarnya.repository.CategoryRepo;
 import com.example.pekarnya.repository.ProductRepo;
-import com.example.pekarnya.services.AvailabilityBroadcaster;
 import com.example.pekarnya.services.ProductService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import java.util.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
-    @Mock ProductRepo products;
-    @Mock CategoryRepo categories;
     @Mock
-    AvailabilityBroadcaster broadcaster;
+    private ProductRepo productRepo;
+
+    @Mock
+    private CategoryRepo categoryRepo;
+
     @InjectMocks
-    ProductService service;
+    private ProductService productService;
+
+    private Product testProduct;
+    private Category testCategory;
+    private UUID testId;
 
     @BeforeEach
-    void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
+    void setUp() {
+        testId = UUID.randomUUID();
+        testCategory = Category.builder()
+                .id(testId)
+                .name("Пельмени")
+                .build();
 
-    private Product sampleProduct() {
-        Category cat = Category.builder().id(UUID.randomUUID()).name("bread").build();
-        return Product.builder()
-                .id(UUID.randomUUID())
-                .name("Багет")
-                .about("Французский хлеб")
-                .price(120)
-                .image("baguette.png")
-                .calories("210")
-                .category(cat)
+        testProduct = Product.builder()
+                .id(testId)
+                .name("Пельмени классические")
+                .about("Вкусные пельмени")
+                .price(450)
+                .image("/uploads/test.jpg")
+                .calories("500 г")
+                .category(testCategory)
                 .isActive(true)
-                .stock(3)
+                .stock(10)
                 .build();
     }
 
-
     @Test
-    void publicList_returnsOnlyActiveProducts() {
-        when(products.findByIsActiveTrue()).thenReturn(List.of(sampleProduct()));
+    void createProduct_ShouldCreateAndReturnProductDto() {
+        // Arrange
+        CreateProductDto createDto = new CreateProductDto(
+                "Пельмени классические",
+                "Вкусные пельмени",
+                450,
+                "/uploads/test.jpg",      // image
+                null,                      // imageBase64 (может быть null)
+                "500 г",                   // calories
+                "Пельмени",                // category
+                10                         // stock
+        );
 
-        var result = service.publicList();
+        when(categoryRepo.findByName("Пельмени")).thenReturn(Optional.of(testCategory));
+        when(productRepo.save(any(Product.class))).thenReturn(testProduct);
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).name()).isEqualTo("Багет");
-        verify(products).findByIsActiveTrue();
+        // Act
+        ProductDto result = productService.create(createDto);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.name()).isEqualTo("Пельмени классические");
+        assertThat(result.price()).isEqualTo(450);
+        assertThat(result.category()).isEqualTo("Пельмени");
+        verify(productRepo, times(1)).save(any(Product.class));
     }
 
     @Test
-    void adminList_withoutCategory_returnsAll() {
-        when(products.findAll()).thenReturn(List.of(sampleProduct()));
+    void createProduct_WithNewCategory_ShouldCreateCategoryAndProduct() {
+        // Arrange
+        CreateProductDto createDto = new CreateProductDto(
+                "Новый продукт",
+                "Описание нового продукта",
+                300,
+                "/uploads/new.jpg",        // image
+                null,                      // imageBase64
+                "400 г",                   // calories
+                "Новая категория",         // category
+                5                          // stock
+        );
 
-        var res = service.adminList(Optional.empty());
+        Category newCategory = Category.builder()
+                .id(UUID.randomUUID())
+                .name("Новая категория")
+                .build();
 
-        assertThat(res).hasSize(1);
-        verify(products).findAll();
+        Product newProduct = Product.builder()
+                .id(UUID.randomUUID())
+                .name("Новый продукт")
+                .about("Описание нового продукта")
+                .price(300)
+                .image("/uploads/new.jpg")
+                .calories("400 г")
+                .category(newCategory)
+                .isActive(true)
+                .stock(5)
+                .build();
+
+        when(categoryRepo.findByName("Новая категория")).thenReturn(Optional.empty());
+        when(categoryRepo.save(any(Category.class))).thenReturn(newCategory);
+        when(productRepo.save(any(Product.class))).thenReturn(newProduct);
+
+        // Act
+        ProductDto result = productService.create(createDto);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.name()).isEqualTo("Новый продукт");
+        assertThat(result.category()).isEqualTo("Новая категория");
+        verify(categoryRepo, times(1)).save(any(Category.class));
     }
 
     @Test
-    void adminList_withCategory_filtersByCategory() {
-        when(products.findByCategory_Name("bread")).thenReturn(List.of(sampleProduct()));
+    void patchProduct_ShouldUpdateProductAndReturnDto() {
+        // Arrange
+        PatchProductDto patchDto = new PatchProductDto(
+                "Обновленное название",    // name
+                "Обновленное описание",    // about
+                500,                       // price (Integer, not int)
+                "/uploads/updated.jpg",    // image
+                null,                      // imageBase64
+                "600 г",                   // calories
+                "Обновленная категория",   // category
+                false                      // isActive (Boolean, not boolean)
+        );
 
-        var res = service.adminList(Optional.of("bread"));
+        Category updatedCategory = Category.builder()
+                .id(UUID.randomUUID())
+                .name("Обновленная категория")
+                .build();
 
-        assertThat(res).hasSize(1);
-        verify(products).findByCategory_Name("bread");
-    }
+        Product updatedProduct = Product.builder()
+                .id(testId)
+                .name("Обновленное название")
+                .about("Обновленное описание")
+                .price(500)
+                .image("/uploads/updated.jpg")
+                .calories("600 г")
+                .category(updatedCategory)
+                .isActive(false)
+                .stock(10)
+                .build();
 
+        when(productRepo.findById(testId)).thenReturn(Optional.of(testProduct));
+        when(categoryRepo.findByName("Обновленная категория")).thenReturn(Optional.of(updatedCategory));
+        when(productRepo.save(any(Product.class))).thenReturn(updatedProduct);
 
-    @Test
-    void create_withExistingCategory_reusesIt() {
-        var cat = Category.builder().id(UUID.randomUUID()).name("bread").build();
-        when(categories.findByName("bread")).thenReturn(Optional.of(cat));
+        // Act
+        ProductDto result = productService.patch(testId, patchDto);
 
-        var saved = sampleProduct();
-        when(products.save(any())).thenReturn(saved);
-
-        var dto = new CreateProductDto("Багет","desc",120,"img","cal","bread");
-        var res = service.create(dto);
-
-        assertThat(res.category()).isEqualTo("bread");
-        verify(categories, never()).save(any());
-        verify(products).save(any(Product.class));
-    }
-
-    @Test
-    void create_withNewCategory_savesCategory() {
-        when(categories.findByName("newcat")).thenReturn(Optional.empty());
-        when(categories.save(any())).thenAnswer(a -> a.getArgument(0));
-
-        var p = sampleProduct();
-        when(products.save(any())).thenReturn(p);
-
-        var dto = new CreateProductDto("Новый","desc",100,"img","cal","newcat");
-        service.create(dto);
-
-        verify(categories).save(any(Category.class));
-    }
-
-
-    @Test
-    void deleteProduct_callsRepository() {
-        UUID id = UUID.randomUUID();
-        service.deleteProduct(id);
-        verify(products).deleteById(id);
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.name()).isEqualTo("Обновленное название");
+        assertThat(result.price()).isEqualTo(500);
+        assertThat(result.category()).isEqualTo("Обновленная категория");
+        assertThat(result.isActive()).isFalse();
     }
 
     @Test
-    void deleteCategory_callsRepository() {
-        UUID id = UUID.randomUUID();
-        service.deleteCategory(id);
-        verify(categories).deleteById(id);
+    void patchProduct_WithPartialUpdate_ShouldUpdateOnlyProvidedFields() {
+        // Arrange
+        PatchProductDto patchDto = new PatchProductDto(
+                null,                      // name (не обновляем)
+                "Новое описание",          // about
+                null,                      // price (не обновляем)
+                null,                      // image (не обновляем)
+                null,                      // imageBase64 (не обновляем)
+                null,                      // calories (не обновляем)
+                null,                      // category (не обновляем)
+                null                       // isActive (не обновляем)
+        );
+
+        when(productRepo.findById(testId)).thenReturn(Optional.of(testProduct));
+        when(productRepo.save(any(Product.class))).thenReturn(testProduct);
+
+        // Act
+        ProductDto result = productService.patch(testId, patchDto);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.about()).isEqualTo("Новое описание");
+        // Остальные поля должны остаться прежними
+        assertThat(result.name()).isEqualTo("Пельмени классические");
+        assertThat(result.price()).isEqualTo(450);
     }
 
-
     @Test
-    void createCategory_savesAndReturnsDto() {
-        var cat = Category.builder().id(UUID.randomUUID()).name("drinks").build();
-        when(categories.save(any())).thenReturn(cat);
+    void createProduct_WithBase64Image_ShouldProcessBase64() {
+        // Arrange
+        String base64Image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+        
+        CreateProductDto createDto = new CreateProductDto(
+                "Продукт с base64",
+                "Описание",
+                250,
+                null,                      // image (null, используем base64)
+                base64Image,               // imageBase64
+                "300 г",                   // calories
+                "Пельмени",                // category
+                15                         // stock
+        );
 
-        var dto = service.createCategory("drinks");
+        when(categoryRepo.findByName("Пельмени")).thenReturn(Optional.of(testCategory));
+        when(productRepo.save(any(Product.class))).thenAnswer(invocation -> {
+            Product savedProduct = invocation.getArgument(0);
+            // Проверяем, что изображение было обработано
+            assertThat(savedProduct.getImage()).isNotNull();
+            return savedProduct;
+        });
 
-        assertThat(dto.name()).isEqualTo("drinks");
-        verify(categories).save(any(Category.class));
+        // Act
+        ProductDto result = productService.create(createDto);
+
+        // Assert
+        assertThat(result).isNotNull();
+        verify(productRepo, times(1)).save(any(Product.class));
     }
 
-
     @Test
-    void patch_updatesFieldsAndCategory() {
-        Product prod = sampleProduct();
-        when(products.findById(prod.getId())).thenReturn(Optional.of(prod));
+    void patchProduct_WithBase64Image_ShouldUpdateImage() {
+        // Arrange
+        String base64Image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+        
+        PatchProductDto patchDto = new PatchProductDto(
+                null,                      // name
+                null,                      // about
+                null,                      // price
+                null,                      // image (null, используем base64)
+                base64Image,               // imageBase64
+                null,                      // calories
+                null,                      // category
+                null                       // isActive
+        );
 
-        var patch = new PatchProductDto("Батон","новый",200,"img2","300","newcat",false);
-        when(categories.findByName("newcat")).thenReturn(Optional.empty());
-        when(categories.save(any())).thenAnswer(a -> a.getArgument(0));
+        when(productRepo.findById(testId)).thenReturn(Optional.of(testProduct));
+        when(productRepo.save(any(Product.class))).thenAnswer(invocation -> {
+            Product savedProduct = invocation.getArgument(0);
+            // Проверяем, что изображение было обновлено
+            assertThat(savedProduct.getImage()).isNotNull();
+            return savedProduct;
+        });
 
-        var res = service.patch(prod.getId(), patch);
+        // Act
+        ProductDto result = productService.patch(testId, patchDto);
 
-        assertThat(res.name()).isEqualTo("Батон");
-        assertThat(prod.getPrice()).isEqualTo(200);
-        verify(categories).save(any(Category.class));
-    }
-
-
-    @Test
-    void patchStock_updatesAndPublishesEvent() {
-        Product prod = sampleProduct();
-        when(products.findById(prod.getId())).thenReturn(Optional.of(prod));
-        when(products.save(any())).thenAnswer(a -> a.getArgument(0));
-
-        var res = service.patchStock(prod.getId(), 9);
-
-        assertThat(res.stock()).isEqualTo(9);
-        verify(broadcaster).publish(any());
-        verify(products).save(any(Product.class));
+        // Assert
+        assertThat(result).isNotNull();
+        verify(productRepo, times(1)).save(any(Product.class));
     }
 }

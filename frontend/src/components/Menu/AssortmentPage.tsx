@@ -8,6 +8,29 @@ import { fetchProducts, setCurrentCategory } from '../../store/slices/productSli
 import Cart from '../Cart/Cart';
 import CartIcon from '../Cart/CartIcon';
 
+// Функция для получения полного URL изображения
+const getFullImageUrl = (imagePath?: string): string => {
+  if (!imagePath) return '/images/placeholder.jpg';
+  
+  // Если URL уже полный (http:// или https://)
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  
+  // Если путь начинается с /uploads/, добавляем базовый URL бэкенда
+  if (imagePath.startsWith('/uploads/')) {
+    return `http://localhost:8080${imagePath}`;
+  }
+  
+  // Если другой путь, начинающийся с /
+  if (imagePath.startsWith('/')) {
+    return `http://localhost:8080${imagePath}`;
+  }
+  
+  // В остальных случаях возвращаем как есть (скорее всего это placeholder)
+  return imagePath;
+};
+
 const ProductCard: React.FC<{ product: any }> = ({ product }) => {
   const dispatch = useAppDispatch();
   const { items: cartItems } = useAppSelector(state => state.cart);
@@ -20,21 +43,33 @@ const ProductCard: React.FC<{ product: any }> = ({ product }) => {
       name: product.name,
       price: product.price || 0,
       weight: product.weight,
-      imageUrl: product.imageUrl,
+      imageUrl: product.image, // Используем поле image с сервера
     }));
   };
 
-  const imageSrc = product.imageUrl || '/images/placeholder.jpg';
+  // Получаем путь к изображению из product.image (серверное поле)
+  // или из product.imageUrl (для обратной совместимости)
+  const imagePath = product.image || product.imageUrl;
+  
+  // Получаем полный URL для изображения
+  const fullImageSrc = getFullImageUrl(imagePath);
+  
+  // Для отладки (можно удалить после проверки)
+  console.log(`Product: ${product.name}, Image path: ${imagePath}, Full URL: ${fullImageSrc}`);
 
   return (
     <article className="group bg-white rounded-3xl shadow-lg border border-green-100 p-6 hover:shadow-xl transition-shadow">
       
       <div className="w-full h-48 mb-4 overflow-hidden rounded-2xl bg-green-50">
         <img
-          src={imageSrc}
+          src={fullImageSrc}
           alt={product.name}
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={(e) => {
+            console.error(`Ошибка загрузки изображения для продукта "${product.name}": ${fullImageSrc}`);
+            e.currentTarget.src = '/images/placeholder.jpg';
+          }}
         />
       </div>
 
@@ -43,7 +78,7 @@ const ProductCard: React.FC<{ product: any }> = ({ product }) => {
       </h3>
 
       <p className="text-green-700 mb-4 text-sm line-clamp-3">
-        {product.description}
+        {product.description || product.about}
       </p>
 
       <div className="flex items-center justify-between mt-4">
@@ -154,6 +189,18 @@ const AssortmentPage: React.FC = () => {
     if (activeFilter === 'all') return 'Весь ассортимент';
     return categories.find(c => c.id === activeFilter)?.name;
   }, [activeFilter, categories]);
+
+  // Для отладки: посмотреть структуру продуктов
+  useEffect(() => {
+    if (products.length > 0) {
+      console.log('Продукты в AssortmentPage:', products.map(p => ({
+        name: p.name,
+        image: p.image,
+        imageUrl: p.imageUrl,
+        category: p.category,
+      })));
+    }
+  }, [products]);
 
   if (loading && products.length === 0) {
     return (

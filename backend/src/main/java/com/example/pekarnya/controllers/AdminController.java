@@ -1,15 +1,32 @@
 package com.example.pekarnya.controllers;
 
-import com.example.pekarnya.dto.*;
-import com.example.pekarnya.services.AuthorizationService;
-import com.example.pekarnya.services.ProductService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import com.example.pekarnya.dto.CategoryDto;
+import com.example.pekarnya.dto.CreateProductDto;
+import com.example.pekarnya.dto.LoginRequest;
+import com.example.pekarnya.dto.PatchProductDto;
+import com.example.pekarnya.dto.ProductDto;
+import com.example.pekarnya.dto.StockPatchDto;
+import com.example.pekarnya.services.AuthorizationService;
+import com.example.pekarnya.services.ProductService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -90,4 +107,6 @@ public class AdminController {
         System.out.println("Password: " + request.password());
         return authorizationService.register(request.password());
     }
+
+    
 }
