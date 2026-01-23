@@ -28,7 +28,7 @@ services:
       SPRING_DATASOURCE_USERNAME: pekar
       SPRING_DATASOURCE_PASSWORD: secret
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_MAIL_ENABLED: false
+      SPRING_MAIL_ENABLED: "false"
     expose:
       - "8080"
     restart: unless-stopped
