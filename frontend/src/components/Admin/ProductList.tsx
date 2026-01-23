@@ -1,249 +1,275 @@
-import {
-  Box,
-  IconButton,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Typography,
-  TextField,
-} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import RemoveIcon from '@mui/icons-material/Remove';
-import AddIcon from '@mui/icons-material/Add';
-import React, { useState, useEffect } from 'react';
+import {
+  Alert,
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Chip,
+  IconButton,
+  Skeleton,
+  Stack,
+  Typography
+} from '@mui/material';
+import React, { useState } from 'react';
 import { useAppDispatch } from '../../hooks/redux';
-import { deleteProduct, updateProduct, updateProductQuantity } from '../../store/slices/adminSlice';
-import { fetchProducts } from '../../store/slices/productSlice';
+import { deleteProductOnServer } from '../../store/slices/adminSlice';
 import type { Product } from '../../types/product';
-import EditProductDialog from './EditProductDialog';
 
 interface ProductListProps {
   products: Product[];
+  onEdit?: (product: Product) => void;
+  loading?: boolean;
+  error?: string;
 }
 
-const ProductList: React.FC<ProductListProps> = ({ products }) => {
+const ProductList: React.FC<ProductListProps> = ({ 
+  products, 
+  onEdit, 
+  loading = false,
+  error 
+}) => {
   const dispatch = useAppDispatch();
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [inputValues, setInputValues] = useState<Record<string, string>>({});
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
-  // Инициализируем inputValues из продуктов при загрузке
-  useEffect(() => {
-    const initialInputValues: Record<string, string> = {};
-    products.forEach((product) => {
-      initialInputValues[product.id] = (product.quantity || 0).toString();
-    });
-    setInputValues(initialInputValues);
-  }, [products]);
-
-  const getQuantity = (productId: string) => {
-    const product = products.find((p) => p.id === productId);
-    return product?.quantity || 0;
-  };
-
-  const handleQuantityChange = (productId: string, delta: number) => {
-    const newQuantity = Math.max(0, getQuantity(productId) + delta);
-    dispatch(updateProductQuantity({ id: productId, quantity: newQuantity }));
-    setInputValues((prev) => ({
-      ...prev,
-      [productId]: newQuantity.toString(),
-    }));
-  };
-
-  const handleInputChange = (productId: string, value: string) => {
-    // Сохраняем сырое значение ввода
-    setInputValues((prev) => ({
-      ...prev,
-      [productId]: value,
-    }));
-
-    // Проверяем, является ли значение числом
-    const numValue = parseInt(value, 10);
-    if (!isNaN(numValue) && numValue >= 0) {
-      dispatch(updateProductQuantity({ id: productId, quantity: numValue }));
-    } else if (value === '') {
-      // Если поле пустое, устанавливаем 0
-      dispatch(updateProductQuantity({ id: productId, quantity: 0 }));
-    }
-  };
-
-  const handleInputBlur = (productId: string) => {
-    const currentValue = inputValues[productId];
-    if (currentValue === '' || isNaN(parseInt(currentValue, 10))) {
-      // Если значение некорректное, сбрасываем к 0
-      setInputValues((prev) => ({
-        ...prev,
-        [productId]: '0',
-      }));
-      dispatch(updateProductQuantity({ id: productId, quantity: 0 }));
-    } else {
-      // Нормализуем значение (убираем лишние нули и т.д.)
-      const normalizedValue = parseInt(currentValue, 10).toString();
-      const numValue = parseInt(currentValue, 10);
-      setInputValues((prev) => ({
-        ...prev,
-        [productId]: normalizedValue,
-      }));
-      dispatch(updateProductQuantity({ id: productId, quantity: numValue }));
+  const handleDelete = async (id: string, name: string) => {
+    if (window.confirm(`Вы уверены, что хотите удалить товар "${name}"?`)) {
+      try {
+        await dispatch(deleteProductOnServer(id)).unwrap();
+        // Можно добавить уведомление об успешном удалении
+      } catch (error) {
+        alert(`Ошибка при удалении: ${error}`);
+      }
     }
   };
 
   const handleEdit = (product: Product) => {
-    setEditingProduct(product);
-  };
-
-  const handleDelete = (productId: string) => {
-    if (window.confirm('Вы уверены, что хотите удалить этот товар?')) {
-      dispatch(deleteProduct(productId));
-      dispatch(fetchProducts());
+    if (onEdit) {
+      onEdit(product);
     }
   };
 
-  const handleSaveEdit = (updatedProduct: Product) => {
-    dispatch(updateProduct(updatedProduct));
-    dispatch(fetchProducts());
-    setEditingProduct(null);
+  const handleImageError = (productId: string, imageUrl: string) => {
+    console.error(`Ошибка загрузки изображения для продукта ${productId}:`, imageUrl);
+    setImageErrors(prev => ({ ...prev, [productId]: true }));
   };
+
+  // Функция для получения полного URL изображения
+const getImageUrl = (imagePath?: string) => {
+  if (!imagePath) return null;
+  
+  console.log(`Обработка imagePath: ${imagePath}`);
+  
+  // Если путь начинается с /uploads, добавляем базовый URL бэкенда
+  if (imagePath.startsWith('/uploads/')) {
+    const fullUrl = `http://localhost:8080${imagePath}`;
+    console.log(`Преобразовано в: ${fullUrl}`);
+    return fullUrl;
+  }
+  
+  // Если URL уже полный
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  
+  // Если просто имя файла (без /uploads/)
+  return `http://localhost:8080/uploads/${imagePath}`;
+};
+
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mb: 3 }}>
+        {error}
+      </Alert>
+    );
+  }
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 3 }}>
+        {[...Array(6)].map((_, index) => (
+          <Card key={index} sx={{ height: 400 }}>
+            <Skeleton variant="rectangular" height={200} />
+            <CardContent>
+              <Skeleton variant="text" height={32} width="80%" sx={{ mb: 1 }} />
+              <Skeleton variant="text" height={24} width="60%" sx={{ mb: 2 }} />
+              <Skeleton variant="text" height={20} width="40%" />
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+    );
+  }
 
   if (products.length === 0) {
     return (
-        <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Typography variant="body1" color="text.secondary">
-            Товары не найдены
-          </Typography>
-        </Box>
+      <Box sx={{ textAlign: 'center', py: 8 }}>
+        <Typography variant="h6" color="text.secondary">
+          Товары не найдены
+        </Typography>
+      </Box>
     );
   }
 
   return (
-      <>
-        <TableContainer
-            component={Paper}
+    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 3 }}>
+      {products.map((product) => {
+        // ВАЖНО: Используем поле 'image' из ответа сервера, а не 'imageUrl'
+        const imagePath = product.image || product.imageUrl;
+        const fullImageUrl = getImageUrl(imagePath);
+        const hasImageError = imageErrors[product.id];
+        
+        console.log(`Продукт: ${product.name}, Image path: ${imagePath}, Full URL: ${fullImageUrl}`);
+
+        return (
+          <Card
+            key={product.id}
             sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
               borderRadius: 2,
               overflow: 'hidden',
-              boxShadow: 'none',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+              },
             }}
-        >
-          <Table>
-            <TableBody>
-              {products.map((product) => (
-                  <TableRow
-                      key={product.id}
-                      sx={{
-                        bgcolor: '#F0E1D6',
-                        '&:hover': { bgcolor: '#dfcfc6' },
-                        '&:not(:last-child)': {
-                          borderBottom: '1px solid #E0D0B8',
-                        }
-                      }}
+          >
+            {/* Изображение продукта */}
+            <Box sx={{ position: 'relative', height: 200, overflow: 'hidden', bgcolor: '#f5f5f5' }}>
+              {fullImageUrl && !hasImageError ? (
+                <>
+                  <CardMedia
+                    component="img"
+                    image={fullImageUrl}
+                    alt={product.name}
+                    sx={{
+                      height: '100%',
+                      width: '100%',
+                      objectFit: 'cover',
+                      transition: 'transform 0.3s',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                      },
+                    }}
+                    onError={() => handleImageError(product.id, fullImageUrl)}
+                    onLoad={() => console.log(`Изображение загружено: ${product.name}`)}
+                  />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      display: 'flex',
+                      gap: 0.5,
+                    }}
                   >
-                    <TableCell sx={{ py: 2 }}>
-                      <Typography variant="body1" sx={{ fontWeight: 500, color: '#5C4A37' }}>
-                        {product.name}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right" sx={{ py: 2 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
-                        <IconButton
-                            size="small"
-                            onClick={() => handleQuantityChange(product.id, -1)}
-                            disabled={getQuantity(product.id) === 0}
-                            sx={{
-                              bgcolor: 'white',
-                              '&:hover': { bgcolor: '#f5f5f5' },
-                              '&:disabled': { bgcolor: '#f0f0f0' },
-                            }}
-                        >
-                          <RemoveIcon fontSize="small" />
-                        </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleEdit(product)}
+                      sx={{
+                        bgcolor: 'rgba(255,255,255,0.9)',
+                        '&:hover': { bgcolor: 'white' },
+                      }}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDelete(product.id, product.name)}
+                      sx={{
+                        bgcolor: 'rgba(255,255,255,0.9)',
+                        '&:hover': { bgcolor: 'white' },
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                </>
+              ) : (
+                <Box
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    p: 2,
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary" align="center">
+                    {hasImageError ? 'Ошибка загрузки изображения' : 'Нет изображения'}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" align="center" sx={{ mt: 1 }}>
+                    {fullImageUrl}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
 
-                        <TextField
-                            value={inputValues[product.id] || getQuantity(product.id).toString()}
-                            onChange={(e) => handleInputChange(product.id, e.target.value)}
-                            onBlur={() => handleInputBlur(product.id)}
-                            inputProps={{
-                              style: {
-                                textAlign: 'center',
-                                padding: '8px 4px',
-                                width: '60px',
-                              },
-                              min: 0,
-                              type: 'text', // Используем text чтобы обрабатывать пустые значения
-                            }}
-                            sx={{
-                              '& .MuiOutlinedInput-root': {
-                                '& fieldset': {
-                                  borderColor: 'transparent',
-                                },
-                                '&:hover fieldset': {
-                                  borderColor: '#ccc',
-                                },
-                                '&.Mui-focused fieldset': {
-                                  borderColor: '#5C4A37',
-                                  borderWidth: '1px',
-                                },
-                              },
-                              '& .MuiInputBase-input': {
-                                fontWeight: 600,
-                                color: '#5C4A37',
-                                fontSize: '0.875rem',
-                              },
-                            }}
-                            variant="outlined"
-                            size="small"
-                        />
+            <CardContent sx={{ flexGrow: 1, p: 2 }}>
+              <Stack spacing={1}>
+                {/* Название и категория */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#5C4A37' }}>
+                    {product.name}
+                  </Typography>
+                  {product.category && (
+                    <Chip
+                      label={product.category}
+                      size="small"
+                      sx={{
+                        bgcolor: 'rgba(92, 74, 55, 0.1)',
+                        color: '#5C4A37',
+                        fontSize: '0.75rem',
+                      }}
+                    />
+                  )}
+                </Box>
 
-                        <IconButton
-                            size="small"
-                            onClick={() => handleQuantityChange(product.id, 1)}
-                            sx={{
-                              bgcolor: 'white',
-                              '&:hover': { bgcolor: '#f5f5f5' },
-                            }}
-                        >
-                          <AddIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
-                    </TableCell>
-                    <TableCell align="right" sx={{ py: 2 }}>
-                      <IconButton
-                          onClick={() => handleEdit(product)}
-                          sx={{
-                            color: '#5C4A37',
-                            '&:hover': { bgcolor: 'rgba(92, 74, 55, 0.1)' },
-                          }}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                          onClick={() => handleDelete(product.id)}
-                          sx={{
-                            color: '#d32f2f',
-                            '&:hover': { bgcolor: 'rgba(211, 47, 47, 0.1)' },
-                          }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                {/* Описание */}
+                {product.description && (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      minHeight: '40px',
+                    }}
+                  >
+                    {product.description}
+                  </Typography>
+                )}
 
-        {editingProduct && (
-            <EditProductDialog
-                product={editingProduct}
-                open={!!editingProduct}
-                onClose={() => setEditingProduct(null)}
-                onSave={handleSaveEdit}
-            />
-        )}
-      </>
+                {/* Вес/калории */}
+                {product.weight && (
+                  <Typography variant="caption" color="text.secondary">
+                    Вес: {product.weight}
+                  </Typography>
+                )}
+
+                {/* Цена и количество */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
+                  <Typography variant="h6" color="primary" sx={{ fontWeight: 700 }}>
+                    {product.price} ₽
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    В наличии: {product.quantity || 0} шт.
+                  </Typography>
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </Box>
   );
 };
 
