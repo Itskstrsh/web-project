@@ -100,7 +100,7 @@ export const createProductOnServer = createAsyncThunk(
 
       console.log('Отправляю запрос на сервер...');
       
-      const response = await fetch('http://localhost:8080/api/admin/product', {
+      const response = await fetch('/api/admin/product', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -157,7 +157,7 @@ export const deleteProductOnServer = createAsyncThunk(
       
       console.log('Удаление продукта с ID:', id);
 
-      const response = await fetch(`http://localhost:8080/api/admin/product/${id}`, {
+      const response = await fetch(`/api/admin/product/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
