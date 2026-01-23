@@ -1,14 +1,16 @@
 package com.example.pekarnya.exceptions;
 
-import com.example.pekarnya.bug_reporter.BugReporterService;
-import io.sentry.Sentry;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.example.pekarnya.bug_reporter.BugReporterService;
 
 @RestControllerAdvice
 public class RestExceptionHandler {

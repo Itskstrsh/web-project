@@ -3,51 +3,96 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { getCategoryKey } from '../../store/slices/adminSlice';
-import { addToCart } from '../../store/slices/cartSlice'; // Импортируем
+import { addToCart } from '../../store/slices/cartSlice';
 import { fetchProducts, setCurrentCategory } from '../../store/slices/productSlice';
-import Cart from '../Cart/Cart'; // Компонент корзины
-import CartIcon from '../Cart/CartIcon'; // Иконка корзины
+import Cart from '../Cart/Cart';
+import CartIcon from '../Cart/CartIcon';
 
-// Компонент карточки товара
+// Функция для получения полного URL изображения
+const getFullImageUrl = (imagePath?: string): string => {
+  if (!imagePath) return '/images/placeholder.jpg';
+  
+  // Если URL уже полный (http:// или https://)
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  
+  // Если путь начинается с /uploads/, добавляем базовый URL бэкенда
+  if (imagePath.startsWith('/uploads/')) {
+    return `http://localhost:8080${imagePath}`;
+  }
+  
+  // Если другой путь, начинающийся с /
+  if (imagePath.startsWith('/')) {
+    return `http://localhost:8080${imagePath}`;
+  }
+  
+  // В остальных случаях возвращаем как есть (скорее всего это placeholder)
+  return imagePath;
+};
+
 const ProductCard: React.FC<{ product: any }> = ({ product }) => {
   const dispatch = useAppDispatch();
   const { items: cartItems } = useAppSelector(state => state.cart);
-  
+
+  const inCart = cartItems.some(item => item.id === product.id);
+
   const handleAddToCart = () => {
-    const cartItem = {
+    dispatch(addToCart({
       id: product.id,
       name: product.name,
       price: product.price || 0,
       weight: product.weight,
-      imageUrl: product.imageUrl,
-    };
-    
-    dispatch(addToCart(cartItem));
+      imageUrl: product.image, // Используем поле image с сервера
+    }));
   };
+
+  // Получаем путь к изображению из product.image (серверное поле)
+  // или из product.imageUrl (для обратной совместимости)
+  const imagePath = product.image || product.imageUrl;
   
-  const inCart = cartItems.some(item => item.id === product.id);
+  // Получаем полный URL для изображения
+  const fullImageSrc = getFullImageUrl(imagePath);
   
+  // Для отладки (можно удалить после проверки)
+  console.log(`Product: ${product.name}, Image path: ${imagePath}, Full URL: ${fullImageSrc}`);
+
   return (
-    <article className="bg-white rounded-3xl shadow-lg border border-green-100 p-6 hover:shadow-xl transition-shadow">
-      {product.imageUrl && (
-        <img 
-          src={product.imageUrl} 
+    <article className="group bg-white rounded-3xl shadow-lg border border-green-100 p-6 hover:shadow-xl transition-shadow">
+      
+      <div className="w-full h-48 mb-4 overflow-hidden rounded-2xl bg-green-50">
+        <img
+          src={fullImageSrc}
           alt={product.name}
-          className="w-full h-48 object-cover rounded-2xl mb-4"
+          loading="lazy"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={(e) => {
+            console.error(`Ошибка загрузки изображения для продукта "${product.name}": ${fullImageSrc}`);
+            e.currentTarget.src = '/images/placeholder.jpg';
+          }}
         />
-      )}
-      
-      <h3 className="text-xl font-bold text-green-900 mb-2">{product.name}</h3>
-      <p className="text-green-700 mb-4 text-sm">{product.description}</p>
-      
+      </div>
+
+      <h3 className="text-xl font-bold text-green-900 mb-2">
+        {product.name}
+      </h3>
+
+      <p className="text-green-700 mb-4 text-sm line-clamp-3">
+        {product.description || product.about}
+      </p>
+
       <div className="flex items-center justify-between mt-4">
         <div>
-          <div className="text-lg font-bold text-green-900">{product.price || 0} ₽</div>
+          <div className="text-lg font-bold text-green-900">
+            {product.price || 0} ₽
+          </div>
           {product.weight && (
-            <div className="text-sm text-green-600">{product.weight}г</div>
+            <div className="text-sm text-green-600">
+              {product.weight} г
+            </div>
           )}
         </div>
-        
+
         <button
           onClick={handleAddToCart}
           className={`px-4 py-2 rounded-xl font-semibold transition-colors ${
@@ -63,11 +108,10 @@ const ProductCard: React.FC<{ product: any }> = ({ product }) => {
   );
 };
 
-// Компонент кнопки категории
-const CategoryButton: React.FC<{ 
-  category: any; 
-  isActive: boolean; 
-  onClick: () => void 
+const CategoryButton: React.FC<{
+  category: any;
+  isActive: boolean;
+  onClick: () => void;
 }> = ({ category, isActive, onClick }) => (
   <button
     onClick={onClick}
@@ -90,18 +134,15 @@ const AssortmentPage: React.FC = () => {
   const { items: products, loading } = useAppSelector(state => state.products);
   const { categories: adminCategories } = useAppSelector(state => state.admin);
 
-  // Определяем активную категорию
   const activeCategoryFromUrl = useMemo(() => {
     if (location.pathname === '/assortment') return 'all';
-    if (category) return category;
-    return location.pathname.replace('/', '') || 'all';
+    return category || 'all';
   }, [category, location.pathname]);
 
   const [activeFilter, setActiveFilter] = useState(activeCategoryFromUrl);
 
-  // Формируем список категорий
   const categories = useMemo(() => {
-    const baseCategories = [
+    const base = [
       { id: 'all', name: 'Все продукты', categoryKey: 'all' },
       { id: 'pelmeni', name: 'Пельмени', categoryKey: 'pelmeni' },
       { id: 'vareniki', name: 'Вареники', categoryKey: 'vareniki' },
@@ -110,8 +151,9 @@ const AssortmentPage: React.FC = () => {
       { id: 'polupoker', name: 'Полуфабрикаты', categoryKey: 'polupoker' },
     ];
 
-    const baseKeys = new Set(baseCategories.map(c => c.categoryKey));
-    const adminList = adminCategories
+    const baseKeys = new Set(base.map(c => c.categoryKey));
+
+    const admin = adminCategories
       .filter(cat => !baseKeys.has(getCategoryKey(cat)))
       .map(cat => ({
         id: getCategoryKey(cat),
@@ -119,43 +161,47 @@ const AssortmentPage: React.FC = () => {
         categoryKey: getCategoryKey(cat),
       }));
 
-    return [...baseCategories, ...adminList];
+    return [...base, ...admin];
   }, [adminCategories]);
 
-  // Фильтруем продукты
   const filteredProducts = useMemo(() => {
-    return activeFilter === 'all' 
-      ? products 
+    return activeFilter === 'all'
+      ? products
       : products.filter(p => p.category === activeFilter);
   }, [products, activeFilter]);
 
-  // Загрузка продуктов
   useEffect(() => {
-    if (products.length === 0) dispatch(fetchProducts());
+    if (products.length === 0) {
+      dispatch(fetchProducts());
+    }
   }, [dispatch, products.length]);
 
-  // Синхронизация с URL
   useEffect(() => {
     setActiveFilter(activeCategoryFromUrl);
     dispatch(setCurrentCategory(activeCategoryFromUrl));
   }, [activeCategoryFromUrl, dispatch]);
 
-  // Обработчики
-  const handleFilterClick = (categoryId: string) => {
-    navigate(categoryId === 'all' ? '/assortment' : `/assortment/${categoryId}`, { 
-      replace: true 
-    });
+  const handleFilterClick = (id: string) => {
+    navigate(id === 'all' ? '/assortment' : `/assortment/${id}`, { replace: true });
   };
 
-  // Получаем название активной категории
-  const activeCategoryName = useMemo(() => 
-    activeFilter === 'all' 
-      ? 'Весь ассортимент' 
-      : categories.find(c => c.id === activeFilter)?.name,
-    [activeFilter, categories]
-  );
+  const activeCategoryName = useMemo(() => {
+    if (activeFilter === 'all') return 'Весь ассортимент';
+    return categories.find(c => c.id === activeFilter)?.name;
+  }, [activeFilter, categories]);
 
-  // Загрузка
+  // Для отладки: посмотреть структуру продуктов
+  useEffect(() => {
+    if (products.length > 0) {
+      console.log('Продукты в AssortmentPage:', products.map(p => ({
+        name: p.name,
+        image: p.image,
+        imageUrl: p.imageUrl,
+        category: p.category,
+      })));
+    }
+  }, [products]);
+
   if (loading && products.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -189,10 +235,7 @@ const AssortmentPage: React.FC = () => {
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredProducts.map(product => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           ) : (
@@ -202,11 +245,8 @@ const AssortmentPage: React.FC = () => {
           )}
         </div>
       </div>
-      
-      {/* Иконка корзины */}
+
       <CartIcon />
-      
-      {/* Модальное окно корзины */}
       <Cart />
     </>
   );

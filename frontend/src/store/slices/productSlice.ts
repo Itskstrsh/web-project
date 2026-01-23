@@ -1,10 +1,6 @@
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { RootState } from '../store';
-import { products } from '../../../data/product'; // Импортируем данные
-import type { Product } from '../../types/product'; // Импортируем тип
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { Product } from '../../types/product';
 
-// Используем импортированный тип
 interface ProductsState {
   items: Product[];
   currentCategory: string;
@@ -19,47 +15,46 @@ const initialState: ProductsState = {
   error: null,
 };
 
-export const fetchProducts = createAsyncThunk<Product[], void, { state: RootState }>(
-  'products/fetchAll',
-  async (_, { getState }) => {
-    return new Promise<Product[]>((resolve) => {
-      setTimeout(() => {
-        // Получаем товары из админки
-        const adminProducts = getState().admin.products;
-        
-        // Создаем Map для быстрого поиска по id
-        const productsMap = new Map<string, Product>();
-        
-        // Сначала добавляем базовые товары
-        products.forEach(product => {
-          productsMap.set(product.id, product);
-        });
-        
-        // Затем добавляем/обновляем товары из админки (они имеют приоритет)
-        adminProducts.forEach(adminProduct => {
-          productsMap.set(adminProduct.id, adminProduct);
-        });
-        
-        // Преобразуем Map обратно в массив
-        const allProducts = Array.from(productsMap.values());
-        
-        resolve(allProducts);
-      }, 300);
-    });
+export const fetchProducts = createAsyncThunk(
+  'products/fetchProducts',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch('/api/products');
+      if (!response.ok) {
+        throw new Error('Ошибка загрузки продуктов');
+      }
+      
+      const products = await response.json();
+      
+      // Преобразуем данные с сервера
+      return products.map((product: any) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: product.stock || 0,
+        description: product.about,
+        category: product.category?.name || product.category || 'pelmeni',
+        weight: product.calories,
+        // Используйте поле image, которое приходит с сервера
+        image: product.image, // ← Важно: используйте то же поле
+      }));
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Ошибка загрузки');
+    }
   }
 );
 
-export const productsSlice = createSlice({
+const productsSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    setCurrentCategory: (state, action: PayloadAction<string>) => {
+    setCurrentCategory(state, action: PayloadAction<string>) {
       state.currentCategory = action.payload;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(fetchProducts.pending, (state) => {
+      .addCase(fetchProducts.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -69,7 +64,7 @@ export const productsSlice = createSlice({
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Ошибка загрузки';
+        state.error = action.error.message ?? 'Ошибка';
       });
   },
 });

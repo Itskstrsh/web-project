@@ -1,6 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { Product } from '../../types/product';
+import { fetchProducts } from './productSlice';
 
 export interface AdminCategory {
   id: number;
@@ -8,6 +9,33 @@ export interface AdminCategory {
   image?: string;
   categoryKey?: string;
 }
+const convertFileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      reject(new Error('Файл должен быть изображением'));
+      return;
+    }
+
+    const reader = new FileReader();
+    
+    reader.onload = () => {
+      const base64String = reader.result as string;
+      
+      // Проверяем размер base64
+      if (base64String.length > 7 * 1024 * 1024) { // ~5MB оригинал
+        reject(new Error('Размер изображения слишком большой (максимум ~5MB)'));
+      } else {
+        resolve(base64String);
+      }
+    };
+    
+    reader.onerror = () => {
+      reject(new Error('Ошибка чтения файла'));
+    };
+    
+    reader.readAsDataURL(file);
+  });
+};
 
 const baseCategoriesConfig = [
   { id: 1, name: 'Пельмени', categoryKey: 'pelmeni' },
@@ -30,7 +58,129 @@ export interface AdminState {
   searchQuery: string;
   selectedCategory: number | null;
   deletedBaseCategoryIds: number[];
+  loading: boolean;
+  error: string | null;
 }
+
+export const createProductOnServer = createAsyncThunk(
+  'admin/createProductOnServer',
+  async ({ 
+    productData, 
+    imageFile 
+  }: { 
+    productData: Omit<Product, 'id'>;
+    imageFile?: File;
+  }, { rejectWithValue, dispatch }) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      
+      let imageBase64 = '';
+      
+      if (imageFile) {
+        console.log('Начинаю конвертацию файла в base64...');
+        const startTime = Date.now();
+        imageBase64 = await convertFileToBase64(imageFile);
+        const convertTime = Date.now() - startTime;
+        console.log(`Конвертация заняла ${convertTime}ms`);
+      }
+
+      const backendProductData: any = {
+        name: productData.name || "Новый продукт",
+        about: productData.description || "Описание продукта",
+        price: productData.price || 0,
+        calories: productData.weight || "",
+        category: productData.category || "pelmeni",
+        stock: productData.quantity || 0,
+        image: null,
+      };
+
+      if (imageBase64) {
+        backendProductData.imageBase64 = imageBase64;
+      }
+
+      console.log('Отправляю запрос на сервер...');
+      
+      const response = await fetch('/api/admin/product', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(backendProductData),
+      });
+
+      console.log('Статус ответа:', response.status);
+
+      const responseText = await response.text();
+      console.log('Ответ сервера:', responseText);
+
+      if (!response.ok) {
+        let errorMessage = `Ошибка ${response.status}: `;
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage += errorData.message || errorData.error || response.statusText;
+        } catch {
+          errorMessage += responseText || response.statusText;
+        }
+        throw new Error(errorMessage);
+      }
+
+      const createdProduct = JSON.parse(responseText);
+      console.log('Продукт успешно создан:', createdProduct);
+      
+      // ВАЖНО: Используйте такое же преобразование, как в productSlice
+      return {
+        id: createdProduct.id,
+        name: createdProduct.name,
+        price: createdProduct.price,
+        quantity: createdProduct.stock || 0,
+        description: createdProduct.about,
+        category: createdProduct.category?.name || createdProduct.category,
+        weight: createdProduct.calories,
+        // Ключевое изменение: используйте поле 'image', а не создавайте 'imageUrl'
+        // И добавляйте полный URL, как в productSlice
+        image: createdProduct.image, // ← Используйте image, а не imageUrl
+      } as Product; // Приводим к типу Product
+      
+    } catch (error) {
+      console.error('Полная ошибка при создании продукта:', error);
+      return rejectWithValue(error instanceof Error ? error.message : 'Неизвестная ошибка при создании продукта');
+    }
+  }
+);
+
+export const deleteProductOnServer = createAsyncThunk(
+  'admin/deleteProductOnServer',
+  async (id: string, { rejectWithValue, dispatch }) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      
+      console.log('Удаление продукта с ID:', id);
+
+      const response = await fetch(`/api/admin/product/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      console.log('Статус ответа при удалении:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Ошибка удаления: ${errorText}`);
+      }
+
+      // После успешного удаления на сервере, обновляем локальный список
+      dispatch(fetchProducts());
+      
+      return id; // Возвращаем ID для локального удаления
+    } catch (error) {
+      console.error('Ошибка при удалении:', error);
+      return rejectWithValue(error instanceof Error ? error.message : 'Ошибка удаления продукта');
+    }
+  }
+);
 
 // Функция для загрузки данных из localStorage
 const loadAdminStateFromStorage = (): Partial<AdminState> | null => {
@@ -93,6 +243,8 @@ const initialState: AdminState = {
   searchQuery: '',
   selectedCategory: null,
   deletedBaseCategoryIds: deletedBaseCategoryIds,
+  loading: false,
+  error: null,
 };
 
 const adminSlice = createSlice({
@@ -164,6 +316,37 @@ const adminSlice = createSlice({
     setSelectedCategory: (state, action: PayloadAction<number | null>) => {
       state.selectedCategory = action.payload;
     },
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createProductOnServer.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createProductOnServer.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products.push(action.payload);
+      })
+      .addCase(createProductOnServer.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteProductOnServer.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(deleteProductOnServer.fulfilled, (state, action) => {
+      state.loading = false;
+      // Удаляем продукт из локального состояния
+      state.products = state.products.filter(p => p.id !== action.payload);
+    })
+    .addCase(deleteProductOnServer.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
   },
 });
 
@@ -178,6 +361,7 @@ export const {
   deleteCategory,
   setSearchQuery,
   setSelectedCategory,
+  clearError,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

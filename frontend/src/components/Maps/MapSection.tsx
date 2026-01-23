@@ -1,49 +1,74 @@
 import { Map, Placemark, YMaps } from '@pbe/react-yandex-maps';
+import { Box, Container, Typography } from '@mui/material';
 import React from 'react';
+import { addressesData } from '../../constants/addressesData';
 
 const MapSection: React.FC = () => {
-  // Массив точек магазинов
-const locations = [
+  const locations = [
     {
-    id: 1,
-    name: 'ВИНЕГРЕТ – Центральный рынок',
-    coords: [45.0393, 38.9787],
-    address: 'г. Краснодар, ул. Северная, 325',
+      id: 1,
+      name: 'ВИНЕГРЕТ',
+      coords: [44.691977, 37.760306],
+      address: addressesData[0].address,
     },
     {
-    id: 2,
-    name: 'ВИНЕГРЕТ – ул. Московская',
-    coords: [45.0355, 39.0914],
-    address: 'г. Краснодар, ул. Московская, 64',
+      id: 2,
+      name: 'ВИНЕГРЕТ',
+      coords: [44.680980, 37.791729],
+      address: addressesData[1].address,
     },
-    {
-    id: 3,
-    name: 'ВИНЕГРЕТ – ТЦ Галерея',
-    coords: [45.0359, 38.9762],
-    address: 'г. Краснодар, ул. Красная, 131',
-    },
-];
+  ];
 
-return (
-    <section
-    id="contacts"
-    className="bg-[#F5FCE8] py-16 border-t border-green-200"
+  const mapCenter: [number, number] = [44.70625, 37.76635];
+
+  return (
+    <Box
+      component="section"
+      id="contacts"
+      sx={{
+        backgroundColor: '#F5FCE8',
+        py: 8,
+        borderTop: '1px solid #c8e6c9',
+      }}
     >
-    <div className="container mx-auto px-6 text-center mb-10">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-green-900 mb-4">
+      <Container maxWidth="lg" sx={{ textAlign: 'center', mb: 5 }}>
+        <Typography
+          variant="h2"
+          component="h2"
+          sx={{
+            fontSize: { xs: '2rem', md: '2.5rem' },
+            fontWeight: 800,
+            color: '#064e3b',
+            mb: 2,
+          }}
+        >
           Наши магазины
-        </h2>
-        <p className="text-green-800/80 text-lg">
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            color: 'rgba(6, 78, 59, 0.8)',
+            fontSize: '1.125rem',
+          }}
+        >
           Найдите ближайший «ВИНЕГРЕТ» на карте
-        </p>
-      </div>
+        </Typography>
+      </Container>
 
-      <div className="container mx-auto rounded-3xl overflow-hidden shadow-lg border border-green-100">
+      <Container
+        maxWidth="lg"
+        sx={{
+          borderRadius: '24px',
+          overflow: 'hidden',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+          border: '1px solid #c8e6c9',
+        }}
+      >
         <YMaps query={{ lang: 'ru_RU', apikey: 'ВАШ_API_КЛЮЧ_ЯНДЕКС' }}>
           <Map
             defaultState={{
-              center: [45.0393, 38.9787],
-              zoom: 12,
+              center: mapCenter,
+              zoom: 13,
               controls: ['zoomControl', 'fullscreenControl'],
             }}
             modules={['control.ZoomControl', 'control.FullscreenControl']}
@@ -65,8 +90,8 @@ return (
             ))}
           </Map>
         </YMaps>
-      </div>
-    </section>
+      </Container>
+    </Box>
   );
 };
 
