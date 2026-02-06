@@ -1,4 +1,3 @@
-// types/product.ts
 export interface Product {
   id: string;
   name: string;
@@ -7,6 +6,6 @@ export interface Product {
   description?: string;
   category: string;
   weight?: string;
-  image?: string;  // ← Должно быть image, а не imageUrl
-  imageUrl?: string; // ← Если нужно оставить для обратной совместимости
+  image?: string;  
+  imageUrl?: string; 
 }

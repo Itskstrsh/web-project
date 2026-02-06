@@ -56,7 +56,6 @@ const AddCategoryForm: React.FC = () => {
       id: Date.now(),
     };
     dispatch(addCategory(newCategory));
-    // Обновляем товары на лендинге (для синхронизации категорий)
     dispatch(fetchProducts());
     navigate('/admin');
   };
@@ -67,7 +66,7 @@ const AddCategoryForm: React.FC = () => {
         <Button
           startIcon={<ArrowBackIcon />}
           onClick={() => navigate('/admin')}
-          sx={{ 
+          sx={{
             color: '#826C5C',
             textTransform: 'none',
           }}
@@ -98,15 +97,15 @@ const AddCategoryForm: React.FC = () => {
         />
 
         <Button
-            type="submit"
-            variant="contained"
-            sx={{
-              mt: 2,
-              alignSelf: 'center',
-              textTransform: 'none',
-              px: 4,
-              py: 1.5,
-            }}
+          type="submit"
+          variant="contained"
+          sx={{
+            mt: 2,
+            alignSelf: 'center',
+            textTransform: 'none',
+            px: 4,
+            py: 1.5,
+          }}
         >
           Сохранить
         </Button>

@@ -1,4 +1,3 @@
-// store/slices/cartSlice.ts
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 export interface ICartItem {
@@ -13,7 +12,7 @@ export interface ICartItem {
 interface CartState {
   items: ICartItem[];
   isOpen: boolean;
-  total: number; // Добавляем поле total
+  total: number; 
 }
 
 const loadCartFromStorage = (): { items: ICartItem[], total: number } => {
@@ -22,7 +21,6 @@ const loadCartFromStorage = (): { items: ICartItem[], total: number } => {
   const saved = localStorage.getItem('cart');
   if (saved) {
     const parsed = JSON.parse(saved);
-    // Если в сохраненных данных нет total, вычисляем его
     if (parsed.total !== undefined) {
       return parsed;
     } else {
@@ -42,7 +40,6 @@ const initialState: CartState = {
   total: savedCart.total,
 };
 
-// Функция для вычисления суммы корзины
 const calculateTotal = (items: ICartItem[]): number => {
   return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 };
@@ -61,7 +58,6 @@ const cartSlice = createSlice({
         state.items.push({ ...product, quantity: 1 });
       }
       
-      // Пересчитываем сумму
       state.total = calculateTotal(state.items);
       localStorage.setItem('cart', JSON.stringify(state));
     },

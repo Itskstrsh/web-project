@@ -18,7 +18,6 @@ const HeroImage: React.FC = () => (
       justifyContent: 'center',
     }}
   >
-    {/* Декоративная рамка */}
     <Box
       sx={{
         position: 'absolute',
@@ -29,7 +28,6 @@ const HeroImage: React.FC = () => (
       }}
     />
 
-    {/* Основное изображение */}
     <Box
       component="img"
       src={cat}
@@ -44,7 +42,6 @@ const HeroImage: React.FC = () => (
       }}
     />
 
-    {/* Декоративные элементы */}
     <Box sx={{ position: 'absolute', bottom: -24, left: -24, width: 96, height: 96, bgcolor: '#facc15', borderRadius: 4, opacity: 0.2 }} />
     <Box sx={{ position: 'absolute', top: -24, right: -24, width: 80, height: 80, bgcolor: '#86efac', borderRadius: 4, opacity: 0.3 }} />
   </MotionBox>

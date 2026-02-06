@@ -17,7 +17,6 @@ const AllReviewsPage: React.FC = () => {
     const [onlyWithPhotos, setOnlyWithPhotos] = useState(false);
     const reviewsPerPage = 10;
 
-    // Парсинг даты
     const parseDate = (dateStr: string): Date => {
         const months: Record<string, number> = {
             'января': 0, 'февраля': 1, 'марта': 2, 'апреля': 3, 'мая': 4, 'июня': 5,
@@ -25,12 +24,11 @@ const AllReviewsPage: React.FC = () => {
         };
         const [day, monthStr, year] = dateStr.split(' ');
         const month = months[monthStr?.toLowerCase()];
-        return (!isNaN(+day) && month !== undefined && !isNaN(+year)) 
-            ? new Date(+year, month, +day) 
+        return (!isNaN(+day) && month !== undefined && !isNaN(+year))
+            ? new Date(+year, month, +day)
             : new Date(0);
     };
 
-    // Рандомизация для сохранения порядка при 'random'
     const shuffledReviews = useMemo(() => {
         const shuffled = [...reviewsData];
         for (let i = shuffled.length - 1; i > 0; i--) {
@@ -57,7 +55,6 @@ const AllReviewsPage: React.FC = () => {
     const totalPages = Math.ceil(filteredAndSortedReviews.length / reviewsPerPage);
     const currentReviews = filteredAndSortedReviews.slice((currentPage - 1) * reviewsPerPage, currentPage * reviewsPerPage);
 
-    // Скролл вверх при загрузке страницы и при смене страницы
     useEffect(() => window.scrollTo({ top: 0, behavior: 'smooth' }), [currentPage]);
     useEffect(() => setCurrentPage(1), [sortType, onlyWithPhotos]);
 

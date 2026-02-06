@@ -26,7 +26,6 @@ export const fetchProducts = createAsyncThunk(
       
       const products = await response.json();
       
-      // Преобразуем данные с сервера
       return products.map((product: any) => ({
         id: product.id,
         name: product.name,
@@ -35,8 +34,7 @@ export const fetchProducts = createAsyncThunk(
         description: product.about,
         category: product.category?.name || product.category || 'pelmeni',
         weight: product.calories,
-        // Используйте поле image, которое приходит с сервера
-        image: product.image, // ← Важно: используйте то же поле
+        image: product.image, 
       }));
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Ошибка загрузки');

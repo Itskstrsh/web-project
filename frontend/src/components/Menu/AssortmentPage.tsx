@@ -1,4 +1,3 @@
-// components/Menu/AssortmentPage.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
@@ -8,26 +7,21 @@ import { fetchProducts, setCurrentCategory } from '../../store/slices/productSli
 import Cart from '../Cart/Cart';
 import CartIcon from '../Cart/CartIcon';
 
-// Функция для получения полного URL изображения
 const getFullImageUrl = (imagePath?: string): string => {
   if (!imagePath) return '/images/placeholder.jpg';
-  
-  // Если URL уже полный (http:// или https://)
+
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
-  
-  // Если путь начинается с /uploads/, добавляем базовый URL бэкенда
+
   if (imagePath.startsWith('/uploads/')) {
     return `http://188.225.39.129${imagePath}`;
   }
-  
-  // Если другой путь, начинающийся с /
+
   if (imagePath.startsWith('/')) {
     return `http://188.225.39.129${imagePath}`;
   }
-  
-  // В остальных случаях возвращаем как есть (скорее всего это placeholder)
+
   return imagePath;
 };
 
@@ -43,23 +37,19 @@ const ProductCard: React.FC<{ product: any }> = ({ product }) => {
       name: product.name,
       price: product.price || 0,
       weight: product.weight,
-      imageUrl: product.image, // Используем поле image с сервера
+      imageUrl: product.image,
     }));
   };
 
-  // Получаем путь к изображению из product.image (серверное поле)
-  // или из product.imageUrl (для обратной совместимости)
   const imagePath = product.image || product.imageUrl;
-  
-  // Получаем полный URL для изображения
+
   const fullImageSrc = getFullImageUrl(imagePath);
-  
-  // Для отладки (можно удалить после проверки)
+
   console.log(`Product: ${product.name}, Image path: ${imagePath}, Full URL: ${fullImageSrc}`);
 
   return (
     <article className="group bg-white rounded-3xl shadow-lg border border-green-100 p-6 hover:shadow-xl transition-shadow">
-      
+
       <div className="w-full h-48 mb-4 overflow-hidden rounded-2xl bg-green-50">
         <img
           src={fullImageSrc}
@@ -95,11 +85,10 @@ const ProductCard: React.FC<{ product: any }> = ({ product }) => {
 
         <button
           onClick={handleAddToCart}
-          className={`px-4 py-2 rounded-xl font-semibold transition-colors ${
-            inCart
+          className={`px-4 py-2 rounded-xl font-semibold transition-colors ${inCart
               ? 'bg-green-100 text-green-800'
               : 'bg-green-500 text-white hover:bg-green-600'
-          }`}
+            }`}
         >
           {inCart ? '✓ В корзине' : 'В корзину'}
         </button>
@@ -115,11 +104,10 @@ const CategoryButton: React.FC<{
 }> = ({ category, isActive, onClick }) => (
   <button
     onClick={onClick}
-    className={`px-6 py-3 rounded-2xl font-semibold transition-all ${
-      isActive
+    className={`px-6 py-3 rounded-2xl font-semibold transition-all ${isActive
         ? 'bg-green-500 text-white shadow-lg'
         : 'bg-green-100 text-green-800 hover:bg-green-200'
-    }`}
+      }`}
   >
     {category.name}
   </button>
@@ -190,7 +178,6 @@ const AssortmentPage: React.FC = () => {
     return categories.find(c => c.id === activeFilter)?.name;
   }, [activeFilter, categories]);
 
-  // Для отладки: посмотреть структуру продуктов
   useEffect(() => {
     if (products.length > 0) {
       console.log('Продукты в AssortmentPage:', products.map(p => ({

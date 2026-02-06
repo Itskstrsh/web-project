@@ -12,7 +12,6 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Async thunk для авторизации
 export const loginAdmin = createAsyncThunk(
   'auth/loginAdmin',
   async (password: string, { rejectWithValue }) => {

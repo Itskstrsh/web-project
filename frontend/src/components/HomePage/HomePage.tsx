@@ -1,4 +1,3 @@
-// pages/HomePage.tsx
 import React from 'react';
 import FAQ from '../../screen/FaqScreen';
 import HeroBanner from '../../screen/HeroBanner';
@@ -11,7 +10,7 @@ const HomePage: React.FC = () => {
     <main>
       <HeroBanner />
       <HowItWorks />
-      <Map/>
+      <Map />
       <ReviewsScreen />
       <FAQ />
     </main>

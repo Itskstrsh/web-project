@@ -63,17 +63,15 @@ const AddProductForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [conversionProgress, setConversionProgress] = useState(0);
   const [validationErrors, setValidationErrors] = useState<Partial<FormData>>({});
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Очищаем ошибки при размонтировании
   useEffect(() => {
     return () => {
       dispatch(clearError());
     };
   }, [dispatch]);
 
-  // Обработчик для TextField
   const handleInputChange = (field: keyof FormData) => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -82,8 +80,7 @@ const AddProductForm: React.FC = () => {
       ...prev,
       [field]: value,
     }));
-    
-    // Очищаем ошибку валидации при изменении поля
+
     if (validationErrors[field]) {
       setValidationErrors(prev => ({
         ...prev,
@@ -92,14 +89,13 @@ const AddProductForm: React.FC = () => {
     }
   };
 
-  // Обработчик для Select
   const handleSelectChange = (event: SelectChangeEvent) => {
     const value = event.target.value;
     setFormData((prev) => ({
       ...prev,
       category: value,
     }));
-    
+
     if (validationErrors.category) {
       setValidationErrors(prev => ({
         ...prev,
@@ -108,17 +104,14 @@ const AddProductForm: React.FC = () => {
     }
   };
 
-  // Обработчик выбора файла
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Проверяем тип файла
       if (!file.type.startsWith('image/')) {
         alert('Пожалуйста, выберите файл изображения (JPEG, PNG, GIF, WebP)');
         return;
       }
 
-      // Проверяем размер файла (до 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('Размер файла не должен превышать 5MB');
         return;
@@ -126,7 +119,6 @@ const AddProductForm: React.FC = () => {
 
       setImageFile(file);
 
-      // Создаем превью
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -143,16 +135,15 @@ const AddProductForm: React.FC = () => {
     }
   };
 
-  // Функция конвертации файла в base64 с прогрессом
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onloadstart = () => {
         console.log('Начало конвертации файла');
         setConversionProgress(0);
       };
-      
+
       reader.onprogress = (event) => {
         if (event.lengthComputable) {
           const percent = (event.loaded / event.total) * 100;
@@ -160,23 +151,22 @@ const AddProductForm: React.FC = () => {
           console.log(`Прогресс конвертации: ${percent.toFixed(1)}%`);
         }
       };
-      
+
       reader.onload = () => {
         setConversionProgress(100);
         console.log('Конвертация завершена');
         resolve(reader.result as string);
       };
-      
+
       reader.onerror = () => {
         console.error('Ошибка конвертации файла');
         reject(new Error('Ошибка чтения файла'));
       };
-      
+
       reader.readAsDataURL(file);
     });
   };
 
-  // Валидация формы
   const validateForm = (): boolean => {
     const errors: Partial<FormData> = {};
 
@@ -196,11 +186,9 @@ const AddProductForm: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Обработчик отправки формы
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
-    // Валидация
+
     if (!validateForm()) {
       return;
     }
@@ -216,17 +204,16 @@ const AddProductForm: React.FC = () => {
       console.log('Файл изображения:', imageFile ? `${imageFile.name} (${imageFile.size} байт)` : 'нет');
 
       let imageBase64 = '';
-      
-      // Конвертация файла в base64
+
       if (imageFile) {
         try {
           console.log('Начинаю конвертацию изображения...');
           setUploadStage('converting');
-          
+
           const startTime = Date.now();
           imageBase64 = await convertFileToBase64(imageFile);
           const convertTime = Date.now() - startTime;
-          
+
           console.log(`Конвертация завершена за ${convertTime}мс`);
           console.log(`Длина base64: ${imageBase64.length} символов`);
         } catch (convertError) {
@@ -239,7 +226,6 @@ const AddProductForm: React.FC = () => {
         }
       }
 
-      // Подготавливаем данные для отправки
       const productData = {
         name: formData.name,
         category: formData.category,
@@ -255,7 +241,6 @@ const AddProductForm: React.FC = () => {
       setUploadStage('uploading');
       setUploadProgress(50);
 
-      // Отправляем запрос на сервер
       const result = await dispatch(createProductOnServer({
         productData,
         imageFile: imageFile || undefined,
@@ -264,28 +249,23 @@ const AddProductForm: React.FC = () => {
       console.log('Результат dispatch:', result);
 
       if (createProductOnServer.fulfilled.match(result)) {
-        // Успешно создано
         console.log('Товар успешно создан:', result.payload);
         setUploadStage('complete');
         setUploadProgress(100);
-        
-        // Небольшая задержка для UX
+
         await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Показываем диалог успеха
+
         setShowSuccessDialog(true);
-        
-        // Обновляем список продуктов (в фоне)
+
         dispatch(fetchProducts());
-        
+
       } else if (createProductOnServer.rejected.match(result)) {
-        // Ошибка
         console.error('Ошибка при создании товара:', result.payload);
         setUploadStage('idle');
         setErrorMessage(result.payload as string || 'Произошла ошибка при создании товара');
         setShowErrorDialog(true);
       }
-      
+
     } catch (error) {
       console.error('Непредвиденная ошибка:', error);
       setUploadStage('idle');
@@ -296,20 +276,17 @@ const AddProductForm: React.FC = () => {
     }
   };
 
-  // Закрытие диалога успеха
   const handleSuccessClose = () => {
     setShowSuccessDialog(false);
     navigate('/admin');
   };
 
-  // Закрытие диалога ошибки
   const handleErrorClose = () => {
     setShowErrorDialog(false);
     setErrorMessage('');
     dispatch(clearError());
   };
 
-  // Сброс формы
   const handleResetForm = () => {
     setFormData({
       name: '',
@@ -326,7 +303,6 @@ const AddProductForm: React.FC = () => {
     }
   };
 
-  // Обработчик для клика по области загрузки
   const handleUploadAreaClick = () => {
     if (!imagePreview && fileInputRef.current) {
       fileInputRef.current.click();
@@ -352,7 +328,6 @@ const AddProductForm: React.FC = () => {
         </Typography>
       </Box>
 
-      {/* Индикатор загрузки */}
       {(uploadStage !== 'idle' || isSubmitting) && (
         <Box sx={{ mb: 3, p: 2, bgcolor: 'white', borderRadius: 2, boxShadow: 1 }}>
           <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -375,23 +350,23 @@ const AddProductForm: React.FC = () => {
               </>
             )}
           </Typography>
-          
-          <LinearProgress 
-            variant="determinate" 
+
+          <LinearProgress
+            variant="determinate"
             value={uploadProgress}
-            sx={{ 
-              height: 8, 
+            sx={{
+              height: 8,
               borderRadius: 4,
-              mb: 1 
+              mb: 1
             }}
           />
-          
+
           {uploadStage === 'converting' && conversionProgress > 0 && (
             <Typography variant="caption" color="text.secondary">
               Конвертация: {conversionProgress.toFixed(0)}%
             </Typography>
           )}
-          
+
           {uploadStage === 'uploading' && (
             <Typography variant="caption" color="text.secondary">
               Отправка: {uploadProgress}%
@@ -400,9 +375,7 @@ const AddProductForm: React.FC = () => {
         </Box>
       )}
 
-      {/* Форма */}
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' } }}>
-        {/* Блок для изображения */}
         <Box sx={{ flex: '0 0 300px' }}>
           <Card
             sx={{
@@ -490,10 +463,9 @@ const AddProductForm: React.FC = () => {
           )}
         </Box>
 
-        {/* Форма данных товара */}
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <FormControl 
-            fullWidth 
+          <FormControl
+            fullWidth
             sx={{ bgcolor: 'white', borderRadius: 2 }}
             error={!!validationErrors.category}
             disabled={isSubmitting}
@@ -543,8 +515,8 @@ const AddProductForm: React.FC = () => {
               error={!!validationErrors.price}
               helperText={validationErrors.price}
               InputProps={{
-                inputProps: { 
-                  min: 0, 
+                inputProps: {
+                  min: 0,
                   step: 0.01,
                   placeholder: "0.00"
                 }
@@ -584,7 +556,7 @@ const AddProductForm: React.FC = () => {
             >
               Очистить форму
             </Button>
-            
+
             <Button
               type="button"
               variant="outlined"
@@ -594,7 +566,7 @@ const AddProductForm: React.FC = () => {
             >
               Отмена
             </Button>
-            
+
             <Button
               type="submit"
               variant="contained"
@@ -627,9 +599,8 @@ const AddProductForm: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Диалог успеха */}
-      <Dialog 
-        open={showSuccessDialog} 
+      <Dialog
+        open={showSuccessDialog}
         onClose={handleSuccessClose}
         maxWidth="sm"
         fullWidth
@@ -652,8 +623,8 @@ const AddProductForm: React.FC = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button 
-            onClick={handleSuccessClose} 
+          <Button
+            onClick={handleSuccessClose}
             variant="contained"
             autoFocus
             sx={{ textTransform: 'none' }}
@@ -663,9 +634,8 @@ const AddProductForm: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Диалог ошибки */}
-      <Dialog 
-        open={showErrorDialog} 
+      <Dialog
+        open={showErrorDialog}
         onClose={handleErrorClose}
         maxWidth="sm"
         fullWidth
@@ -692,18 +662,18 @@ const AddProductForm: React.FC = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button 
-            onClick={handleErrorClose} 
+          <Button
+            onClick={handleErrorClose}
             color="primary"
             sx={{ textTransform: 'none' }}
           >
             Закрыть
           </Button>
-          <Button 
+          <Button
             onClick={() => {
               handleErrorClose();
               handleSubmit(new Event('submit') as any);
-            }} 
+            }}
             variant="contained"
             sx={{ textTransform: 'none' }}
           >
@@ -712,15 +682,14 @@ const AddProductForm: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar для ошибок из Redux */}
       <Snackbar
         open={!!error && !showErrorDialog}
         autoHideDuration={6000}
         onClose={() => dispatch(clearError())}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert 
-          severity="error" 
+        <Alert
+          severity="error"
           onClose={() => dispatch(clearError())}
           sx={{ width: '100%' }}
         >

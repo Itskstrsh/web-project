@@ -1,18 +1,15 @@
-// store/index.ts
 import { configureStore, type Middleware } from '@reduxjs/toolkit';
 import type { AdminState } from './slices/adminSlice';
 import adminReducer from './slices/adminSlice';
 import authReducer from './slices/authSlice';
-import cartReducer from './slices/cartSlice'; // Добавляем импорт корзины
+import cartReducer from './slices/cartSlice'; 
 import menuReducer from './slices/menuSlice';
 import orderReducer from './slices/orderSlice';
 import productsReducer from './slices/productSlice';
 
-// Middleware для сохранения admin state в localStorage
 const adminPersistenceMiddleware: Middleware = (store) => (next) => (action) => {
   const result = next(action);
   
-  // Сохраняем только если действие относится к admin slice
   if ((action as any)?.type?.startsWith('admin/')) {
     const state = store.getState();
     const adminState: AdminState = state.admin;
@@ -38,7 +35,7 @@ export const store = configureStore({
     menu: menuReducer,
     admin: adminReducer,
     auth: authReducer,
-    cart: cartReducer, // Добавляем корзину здесь
+    cart: cartReducer, 
     order: orderReducer,
   },
   middleware: (getDefaultMiddleware) =>

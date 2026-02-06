@@ -24,11 +24,11 @@ interface ProductListProps {
   error?: string;
 }
 
-const ProductList: React.FC<ProductListProps> = ({ 
-  products, 
-  onEdit, 
+const ProductList: React.FC<ProductListProps> = ({
+  products,
+  onEdit,
   loading = false,
-  error 
+  error
 }) => {
   const dispatch = useAppDispatch();
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
@@ -37,7 +37,6 @@ const ProductList: React.FC<ProductListProps> = ({
     if (window.confirm(`Вы уверены, что хотите удалить товар "${name}"?`)) {
       try {
         await dispatch(deleteProductOnServer(id)).unwrap();
-        // Можно добавить уведомление об успешном удалении
       } catch (error) {
         alert(`Ошибка при удалении: ${error}`);
       }
@@ -55,27 +54,23 @@ const ProductList: React.FC<ProductListProps> = ({
     setImageErrors(prev => ({ ...prev, [productId]: true }));
   };
 
-  // Функция для получения полного URL изображения
-const getImageUrl = (imagePath?: string) => {
-  if (!imagePath) return null;
-  
-  console.log(`Обработка imagePath: ${imagePath}`);
-  
-  // Если путь начинается с /uploads, добавляем базовый URL бэкенда
-  if (imagePath.startsWith('/uploads/')) {
-    const fullUrl = `${imagePath}`;
-    console.log(`Преобразовано в: ${fullUrl}`);
-    return fullUrl;
-  }
-  
-  // Если URL уже полный
-  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-    return imagePath;
-  }
-  
-  // Если просто имя файла (без /uploads/)
-  return `/uploads/${imagePath}`;
-};
+  const getImageUrl = (imagePath?: string) => {
+    if (!imagePath) return null;
+
+    console.log(`Обработка imagePath: ${imagePath}`);
+
+    if (imagePath.startsWith('/uploads/')) {
+      const fullUrl = `${imagePath}`;
+      console.log(`Преобразовано в: ${fullUrl}`);
+      return fullUrl;
+    }
+
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+
+    return `/uploads/${imagePath}`;
+  };
 
   if (error) {
     return (
@@ -115,11 +110,10 @@ const getImageUrl = (imagePath?: string) => {
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 3 }}>
       {products.map((product) => {
-        // ВАЖНО: Используем поле 'image' из ответа сервера, а не 'imageUrl'
         const imagePath = product.image || product.imageUrl;
         const fullImageUrl = getImageUrl(imagePath);
         const hasImageError = imageErrors[product.id];
-        
+
         console.log(`Продукт: ${product.name}, Image path: ${imagePath}, Full URL: ${fullImageUrl}`);
 
         return (
@@ -139,7 +133,6 @@ const getImageUrl = (imagePath?: string) => {
               },
             }}
           >
-            {/* Изображение продукта */}
             <Box sx={{ position: 'relative', height: 200, overflow: 'hidden', bgcolor: '#f5f5f5' }}>
               {fullImageUrl && !hasImageError ? (
                 <>
@@ -213,7 +206,6 @@ const getImageUrl = (imagePath?: string) => {
 
             <CardContent sx={{ flexGrow: 1, p: 2 }}>
               <Stack spacing={1}>
-                {/* Название и категория */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                   <Typography variant="h6" sx={{ fontWeight: 600, color: '#5C4A37' }}>
                     {product.name}
@@ -231,7 +223,6 @@ const getImageUrl = (imagePath?: string) => {
                   )}
                 </Box>
 
-                {/* Описание */}
                 {product.description && (
                   <Typography
                     variant="body2"
@@ -248,14 +239,12 @@ const getImageUrl = (imagePath?: string) => {
                   </Typography>
                 )}
 
-                {/* Вес/калории */}
                 {product.weight && (
                   <Typography variant="caption" color="text.secondary">
                     Вес: {product.weight}
                   </Typography>
                 )}
 
-                {/* Цена и количество */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
                   <Typography variant="h6" color="primary" sx={{ fontWeight: 700 }}>
                     {product.price} ₽

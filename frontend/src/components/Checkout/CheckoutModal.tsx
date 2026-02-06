@@ -1,4 +1,3 @@
-// components/Checkout/CheckoutModal.tsx
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { clearCart, closeCart } from '../../store/slices/cartSlice';
@@ -12,9 +11,9 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ onClose }) => {
   const dispatch = useAppDispatch();
   const { items: cartItems } = useAppSelector(state => state.cart);
   const { loading: orderLoading } = useAppSelector(state => state.order);
-  
+
   const cartTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  
+
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     phone: '',
@@ -24,15 +23,15 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ onClose }) => {
     comments: '',
     paymentMethod: 'cash' as 'cash' | 'card' | 'online',
   });
-  
+
   const deliveryPrice = formData.deliveryType === 'courier' ? 200 : 0;
   const finalTotal = cartTotal + deliveryPrice;
-  
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const handleNextStep = () => {
     if (step === 1 && !formData.phone) {
       alert('Пожалуйста, введите номер телефона');
@@ -40,48 +39,47 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ onClose }) => {
     }
     setStep(step + 1);
   };
-  
+
   const handlePrevStep = () => {
     setStep(step - 1);
   };
-  
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
 
-  const orderData = {
-    items: cartItems,
-    customer: {
-      phone: formData.phone,
-      name: formData.name || undefined,
-    },
-    delivery: {
-      type: formData.deliveryType,
-      address: formData.deliveryType === 'courier' ? formData.address : undefined,
-      price: deliveryPrice,
-    },
-    total: finalTotal,
-    comments: formData.comments || undefined,
-    paymentMethod: formData.paymentMethod,
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const orderData = {
+      items: cartItems,
+      customer: {
+        phone: formData.phone,
+        name: formData.name || undefined,
+      },
+      delivery: {
+        type: formData.deliveryType,
+        address: formData.deliveryType === 'courier' ? formData.address : undefined,
+        price: deliveryPrice,
+      },
+      total: finalTotal,
+      comments: formData.comments || undefined,
+      paymentMethod: formData.paymentMethod,
+    };
+
+    try {
+      await dispatch(createOrder(orderData)).unwrap();
+
+      dispatch(clearCart());
+      dispatch(closeCart());
+      onClose();
+
+    } catch (error) {
+      console.error('Ошибка оформления заказа:', error);
+
+      dispatch(clearCart());
+      dispatch(closeCart());
+      onClose();
+    }
   };
 
-  try {
-    await dispatch(createOrder(orderData)).unwrap();
 
-    dispatch(clearCart());
-    dispatch(closeCart());
-    onClose();
-
-  } catch (error) {
-    console.error('❌ Ошибка оформления заказа:', error);
-
-    // даже при ошибке ботa заказ сохранён локально
-    dispatch(clearCart());
-    dispatch(closeCart());
-    onClose();
-  }
-};
-
-  
   const handleClose = () => {
     onClose();
   };
@@ -93,11 +91,11 @@ const handleSubmit = async (e: React.FormEvent) => {
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 transition-opacity duration-300"
       onClick={handleOverlayClick}
     >
-      <div 
+      <div
         className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform transition-all duration-300"
         onClick={(e) => e.stopPropagation()}
       >
@@ -111,8 +109,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               ✕
             </button>
           </div>
-          
-          {/* Шаги */}
+
           <div className="flex mb-8">
             {[1, 2, 3].map((num) => (
               <div key={num} className="flex items-center flex-1">
@@ -131,13 +128,12 @@ const handleSubmit = async (e: React.FormEvent) => {
               </div>
             ))}
           </div>
-          
+
           <form onSubmit={handleSubmit}>
-            {/* Шаг 1: Контакты */}
             {step === 1 && (
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold mb-4">Контактная информация</h3>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Телефон *
@@ -152,7 +148,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Имя (необязательно)
@@ -166,7 +162,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
-                
+
                 <button
                   type="button"
                   onClick={handleNextStep}
@@ -176,12 +172,11 @@ const handleSubmit = async (e: React.FormEvent) => {
                 </button>
               </div>
             )}
-            
-            {/* Шаг 2: Доставка */}
+
             {step === 2 && (
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold mb-4">Способ получения</h3>
-                
+
                 <div className="space-y-3">
                   <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-green-50">
                     <input
@@ -199,7 +194,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     </div>
                     <div className="font-semibold">Бесплатно</div>
                   </label>
-                  
+
                   <label className="flex items-center p-4 border rounded-lg cursor-pointer hover:bg-green-50">
                     <input
                       type="radio"
@@ -216,7 +211,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     <div className="font-semibold">200 ₽</div>
                   </label>
                 </div>
-                
+
                 {formData.deliveryType === 'courier' && (
                   <div className="mt-4">
                     <label className="block text-sm font-medium mb-2">
@@ -233,7 +228,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     />
                   </div>
                 )}
-                
+
                 <div className="flex gap-3 mt-6">
                   <button
                     type="button"
@@ -252,12 +247,11 @@ const handleSubmit = async (e: React.FormEvent) => {
                 </div>
               </div>
             )}
-            
-            {/* Шаг 3: Оплата и итоги */}
+
             {step === 3 && (
               <div className="space-y-6">
                 <h3 className="text-lg font-semibold mb-4">Оплата и подтверждение</h3>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-3">
                     Способ оплаты
@@ -278,7 +272,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       <div className="font-medium">Наличные</div>
                       <div className="text-sm text-gray-600">Курьеру или в точке</div>
                     </label>
-                    
+
                     <label className={`
                       p-4 border rounded-lg cursor-pointer text-center
                       ${formData.paymentMethod === 'card' ? 'border-green-500 bg-green-50' : 'hover:bg-gray-50'}
@@ -296,7 +290,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     </label>
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Комментарий к заказу (необязательно)
@@ -309,8 +303,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent h-24"
                   />
                 </div>
-                
-                {/* Итоги */}
+
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <div className="space-y-2">
                     <div className="flex justify-between">
@@ -327,7 +320,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-3">
                   <button
                     type="button"
@@ -344,7 +337,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     {orderLoading ? 'Отправка...' : 'Подтвердить заказ'}
                   </button>
                 </div>
-                
+
                 <p className="text-sm text-gray-600 text-center">
                   Нажимая "Подтвердить заказ", вы соглашаетесь с условиями обработки персональных данных
                 </p>

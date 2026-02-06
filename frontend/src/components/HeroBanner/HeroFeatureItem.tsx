@@ -17,7 +17,7 @@ const HeroFeatureItem: React.FC<FeatureItemProps> = ({ color, text }) => (
       borderRadius: 3,
       border: '1px solid #dcfce7',
       bgcolor: 'white',
-      width: '100%', // Занимает всю ячейку grid
+      width: '100%',
       position: 'relative',
       zIndex: 1,
     }}
@@ -39,8 +39,8 @@ const HeroFeatureItem: React.FC<FeatureItemProps> = ({ color, text }) => (
     >
       ✓
     </Box>
-    <Typography 
-      fontWeight={700} 
+    <Typography
+      fontWeight={700}
       color="#064e3b"
       sx={{
         fontSize: { xs: '0.8rem', sm: '0.9rem' },

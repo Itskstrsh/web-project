@@ -10,11 +10,9 @@ describe('Адаптивность сайта', () => {
         cy.viewport(width, height)
         cy.visit('/')
         
-        // Проверяем что основные элементы видны
         cy.contains('ВИНЕГРЕТ').should('be.visible')
         cy.contains('МАГАЗИН – КУЛИНАРИЯ').should('be.visible')
         
-        // Делаем скриншот для визуальной проверки
         cy.screenshot(`${device}-layout`)
       })
     })

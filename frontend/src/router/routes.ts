@@ -1,4 +1,3 @@
-// router/routes.ts
 export const routes = [
   {
     path: '/',

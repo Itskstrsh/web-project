@@ -43,7 +43,6 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
   };
 
   const handleSave = () => {
-    // Сохраняем quantity из исходного продукта, если оно не было изменено
     const updatedProduct: Product = {
       ...formData,
       quantity: formData.quantity !== undefined ? formData.quantity : (product.quantity || 0),

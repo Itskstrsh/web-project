@@ -1,4 +1,3 @@
-// store/slices/menuSlice.test.ts
 import menuReducer, { toggleMenu, setMenuOpen } from './menuSlice';
 
 describe('menuSlice', () => {

@@ -55,52 +55,51 @@ const HeroText: React.FC = () => (
       Откройте для себя мир изысканных вкусов и кулинарных шедевров
     </Typography>
 
-        <Button
-  component={RouterLink}
-  to="/assortment"
-  variant="contained"
-  sx={{
-    background: 'linear-gradient(to right, #16a34a, #059669)',
-    borderRadius: 3,
-    px: 5,
-    py: 1.5,
-    fontSize: '1.2rem',
-    fontWeight: 700,
-    boxShadow: 4,
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      background: 'linear-gradient(to right, #15803d, #047857)',
-      transform: 'scale(1.05)',
-      boxShadow: 6,
-    },
-  }}
->
-  АССОРТИМЕНТ
-</Button>
+    <Button
+      component={RouterLink}
+      to="/assortment"
+      variant="contained"
+      sx={{
+        background: 'linear-gradient(to right, #16a34a, #059669)',
+        borderRadius: 3,
+        px: 5,
+        py: 1.5,
+        fontSize: '1.2rem',
+        fontWeight: 700,
+        boxShadow: 4,
+        transition: 'all 0.3s ease',
+        '&:hover': {
+          background: 'linear-gradient(to right, #15803d, #047857)',
+          transform: 'scale(1.05)',
+          boxShadow: 6,
+        },
+      }}
+    >
+      АССОРТИМЕНТ
+    </Button>
 
-    <Box 
-  sx={{ 
-    display: 'grid',
-    gridTemplateColumns: { 
-      xs: 'repeat(2, 1fr)',
-      md: 'repeat(3, 1fr)'
-    },
-    gap: 2,
-    mt: 6,
-    position: 'relative',
-    zIndex: 1,
-    // На маленьких экранах третий элемент занимает всю ширину
-    '& > *:nth-of-type(3)': {
-      gridColumn: { xs: '1 / -1', md: 'auto' },
-      justifySelf: { xs: 'center', md: 'auto' },
-      maxWidth: { xs: 200, md: '100%' },
-    }
-  }}
->
-  {features.map((f) => (
-    <HeroFeatureItem key={f.text} color={f.color} text={f.text} />
-  ))}
-</Box>
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: {
+          xs: 'repeat(2, 1fr)',
+          md: 'repeat(3, 1fr)'
+        },
+        gap: 2,
+        mt: 6,
+        position: 'relative',
+        zIndex: 1,
+        '& > *:nth-of-type(3)': {
+          gridColumn: { xs: '1 / -1', md: 'auto' },
+          justifySelf: { xs: 'center', md: 'auto' },
+          maxWidth: { xs: 200, md: '100%' },
+        }
+      }}
+    >
+      {features.map((f) => (
+        <HeroFeatureItem key={f.text} color={f.color} text={f.text} />
+      ))}
+    </Box>
   </MotionBox>
 );
 

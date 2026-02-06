@@ -57,15 +57,12 @@ const AdminPage: React.FC = () => {
     if (selectedCategory !== null) {
       const category = categories.find((c) => c.id === selectedCategory);
       if (category) {
-        // Используем единую функцию для генерации ключа категории
         const categoryKey = getCategoryKey(category);
         filtered = filtered.filter((product) => product.category === categoryKey);
       } else {
-        // Если категория не найдена, не показываем продукты
         filtered = [];
       }
     }
-    // Если selectedCategory === null, показываем все товары
 
     return filtered;
   }, [products, searchQuery, selectedCategory, categories]);
@@ -82,7 +79,6 @@ const AdminPage: React.FC = () => {
 
   const handleCategoryDelete = (categoryId: number) => {
     dispatch(deleteCategory(categoryId));
-    // Обновляем товары на лендинге (для синхронизации категорий)
     dispatch(fetchProducts());
   };
 
@@ -95,7 +91,6 @@ const AdminPage: React.FC = () => {
 
   const handleCategorySave = (updatedCategory: AdminCategory) => {
     dispatch(updateCategory(updatedCategory));
-    // Обновляем товары на лендинге (для синхронизации категорий)
     dispatch(fetchProducts());
     setEditingCategory(null);
   };
@@ -107,10 +102,10 @@ const AdminPage: React.FC = () => {
           placeholder="Поиск"
           value={searchQuery}
           onChange={handleSearchChange}
-          sx={{ 
+          sx={{
             width: '400px',
             bgcolor: 'white',
-              borderRadius: 2,
+            borderRadius: 2,
             '& .MuiOutlinedInput-root': {
               borderRadius: 2,
             }
@@ -152,66 +147,65 @@ const AdminPage: React.FC = () => {
       </Box>
 
       <Grid container spacing={2} sx={{ mb: 4 }}>
-          <Box
-              sx={{
-                  gridColumn: { xs: 'span 12', sm: 'span 6', md: 'span 4' }
-              }}
-          >
-              <CategoryCard
-                  category={{ id: null, name: 'Все категории' }}
-                  isSelected={selectedCategory === null}
-                  onClick={() => handleCategoryClick(null)}
-                  showEdit={false}
-                  showDelete={false}
-              />
-          </Box>
+        <Box
+          sx={{
+            gridColumn: { xs: 'span 12', sm: 'span 6', md: 'span 4' }
+          }}
+        >
+          <CategoryCard
+            category={{ id: null, name: 'Все категории' }}
+            isSelected={selectedCategory === null}
+            onClick={() => handleCategoryClick(null)}
+            showEdit={false}
+            showDelete={false}
+          />
+        </Box>
         {categories.map((category) => (
-            <Box
-                key={category.id}
-                sx={{
-                    gridColumn: { xs: 'span 12', sm: 'span 6', md: 'span 4' }
-                }}
-            >
-              <CategoryCard
-                category={category}
-                isSelected={selectedCategory === category.id}
-                onClick={() => handleCategoryClick(category.id)}
-                onDelete={handleCategoryDelete}
-                onEdit={handleCategoryEdit}
-                showDelete={true}
-                showEdit={true}
-              />
-            </Box>
+          <Box
+            key={category.id}
+            sx={{
+              gridColumn: { xs: 'span 12', sm: 'span 6', md: 'span 4' }
+            }}
+          >
+            <CategoryCard
+              category={category}
+              isSelected={selectedCategory === category.id}
+              onClick={() => handleCategoryClick(category.id)}
+              onDelete={handleCategoryDelete}
+              onEdit={handleCategoryEdit}
+              showDelete={true}
+              showEdit={true}
+            />
+          </Box>
         ))}
       </Grid>
 
-      {/* Products List */}
-          <Box>
-            <Typography
-              variant="h5" 
-              sx={{ 
-                mb: 4,
-                px: 1,
-                fontWeight: 700,
-                color: '#5C4A37',
-                fontSize: '1.5rem',
-              }}
-            >
-              Все товары
-            </Typography>
-            <ProductList products={filteredProducts} />
-          </Box>
+      <Box>
+        <Typography
+          variant="h5"
+          sx={{
+            mb: 4,
+            px: 1,
+            fontWeight: 700,
+            color: '#5C4A37',
+            fontSize: '1.5rem',
+          }}
+        >
+          Все товары
+        </Typography>
+        <ProductList products={filteredProducts} />
+      </Box>
 
-          {editingCategory && (
-            <EditCategoryDialog
-              category={editingCategory}
-              open={!!editingCategory}
-              onClose={() => setEditingCategory(null)}
-              onSave={handleCategorySave}
-            />
-          )}
-        </Container>
-      );
-    };
+      {editingCategory && (
+        <EditCategoryDialog
+          category={editingCategory}
+          open={!!editingCategory}
+          onClose={() => setEditingCategory(null)}
+          onSave={handleCategorySave}
+        />
+      )}
+    </Container>
+  );
+};
 
-    export default AdminPage;
+export default AdminPage;

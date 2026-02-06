@@ -20,46 +20,44 @@ const HeroBanner: React.FC = () => {
       <HeroBackground />
 
       <Box
-  sx={{
-    display: 'flex',
-    flexDirection: { xs: 'column', lg: 'row' },
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 4,
-    position: 'relative',
-    zIndex: 10,
-    px: { xs: 3, sm: 6, md: 10 },
-    py: { xs: 6, md: 12 },
-    maxWidth: 1600,
-    mx: 'auto',
-  }}
->
-  {/* Левая часть */}
-  <Box
-    sx={{
-      width: { xs: '100%', lg: '50%' },
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: { xs: 'center', lg: 'flex-start' },
-      textAlign: { xs: 'center', lg: 'left' },
-    }}
-  >
-    <HeroText />
-  </Box>
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', lg: 'row' },
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 4,
+          position: 'relative',
+          zIndex: 10,
+          px: { xs: 3, sm: 6, md: 10 },
+          py: { xs: 6, md: 12 },
+          maxWidth: 1600,
+          mx: 'auto',
+        }}
+      >
+        <Box
+          sx={{
+            width: { xs: '100%', lg: '50%' },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: { xs: 'center', lg: 'flex-start' },
+            textAlign: { xs: 'center', lg: 'left' },
+          }}
+        >
+          <HeroText />
+        </Box>
 
-  {/* Правая часть */}
-  <Box
-    sx={{
-      width: { xs: '100%', lg: '50%' },
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: { xs: 'center', lg: 'flex-end' },
-      mt: { xs: 4, lg: 0 },
-    }}
-  >
-    <HeroImage />
-  </Box>
-</Box>
+        <Box
+          sx={{
+            width: { xs: '100%', lg: '50%' },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: { xs: 'center', lg: 'flex-end' },
+            mt: { xs: 4, lg: 0 },
+          }}
+        >
+          <HeroImage />
+        </Box>
+      </Box>
     </Box>
   );
 };

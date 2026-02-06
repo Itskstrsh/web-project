@@ -21,8 +21,7 @@ const convertFileToBase64 = (file: File): Promise<string> => {
     reader.onload = () => {
       const base64String = reader.result as string;
       
-      // Проверяем размер base64
-      if (base64String.length > 7 * 1024 * 1024) { // ~5MB оригинал
+      if (base64String.length > 7 * 1024 * 1024) { 
         reject(new Error('Размер изображения слишком большой (максимум ~5MB)'));
       } else {
         resolve(base64String);
@@ -47,7 +46,6 @@ const baseCategoriesConfig = [
   { id: 7, name: 'ПИЦЦА', categoryKey: 'pizza' },
 ];
 
-// Вспомогательная функция для получения ключа категории
 export const getCategoryKey = (category: AdminCategory): string => {
   return category.categoryKey || category.name.toLowerCase().replace(/\s+/g, '-');
 };
@@ -128,7 +126,6 @@ export const createProductOnServer = createAsyncThunk(
       const createdProduct = JSON.parse(responseText);
       console.log('Продукт успешно создан:', createdProduct);
       
-      // ВАЖНО: Используйте такое же преобразование, как в productSlice
       return {
         id: createdProduct.id,
         name: createdProduct.name,
@@ -137,10 +134,8 @@ export const createProductOnServer = createAsyncThunk(
         description: createdProduct.about,
         category: createdProduct.category?.name || createdProduct.category,
         weight: createdProduct.calories,
-        // Ключевое изменение: используйте поле 'image', а не создавайте 'imageUrl'
-        // И добавляйте полный URL, как в productSlice
-        image: createdProduct.image, // ← Используйте image, а не imageUrl
-      } as Product; // Приводим к типу Product
+        image: createdProduct.image, 
+      } as Product; 
       
     } catch (error) {
       console.error('Полная ошибка при создании продукта:', error);
@@ -171,10 +166,9 @@ export const deleteProductOnServer = createAsyncThunk(
         throw new Error(`Ошибка удаления: ${errorText}`);
       }
 
-      // После успешного удаления на сервере, обновляем локальный список
       dispatch(fetchProducts());
       
-      return id; // Возвращаем ID для локального удаления
+      return id; 
     } catch (error) {
       console.error('Ошибка при удалении:', error);
       return rejectWithValue(error instanceof Error ? error.message : 'Ошибка удаления продукта');
@@ -182,7 +176,6 @@ export const deleteProductOnServer = createAsyncThunk(
   }
 );
 
-// Функция для загрузки данных из localStorage
 const loadAdminStateFromStorage = (): Partial<AdminState> | null => {
   try {
     const savedState = localStorage.getItem('adminState');
@@ -195,10 +188,8 @@ const loadAdminStateFromStorage = (): Partial<AdminState> | null => {
   return null;
 };
 
-// Загружаем сохраненные данные
 const savedState = loadAdminStateFromStorage();
 
-// Функция для получения базовых категорий
 const getBaseCategories = (): AdminCategory[] => {
   return baseCategoriesConfig.map((cat) => ({
     id: cat.id,
@@ -207,11 +198,8 @@ const getBaseCategories = (): AdminCategory[] => {
   }));
 };
 
-// Создаем базовые категории с правильными типами
 const baseCategories: AdminCategory[] = getBaseCategories();
 
-// Объединяем базовые категории с сохраненными
-// Исключаем базовые категории, которые были удалены
 const deletedBaseCategoryIds = savedState?.deletedBaseCategoryIds || [];
 const activeBaseCategories = baseCategories.filter(
   cat => !deletedBaseCategoryIds.includes(cat.id)
@@ -223,17 +211,14 @@ if (savedState?.categories && Array.isArray(savedState.categories)) {
   const savedCategories = savedState.categories as AdminCategory[];
   const savedCategoryIds = new Set<number>(savedCategories.map(c => c.id));
   
-  // Сначала добавляем сохраненные категории (они имеют приоритет - включают переименования)
   mergedCategories = [...savedCategories];
   
-  // Затем добавляем базовые категории, которых нет в сохраненных (новые базовые категории)
   activeBaseCategories.forEach(baseCat => {
     if (!savedCategoryIds.has(baseCat.id)) {
       mergedCategories.push(baseCat);
     }
   });
 } else {
-  // Если нет сохраненных данных, используем только базовые категории
   mergedCategories = [...activeBaseCategories];
 }
 
@@ -274,14 +259,11 @@ const adminSlice = createSlice({
     },
     addCategory: (state, action: PayloadAction<AdminCategory>) => {
       const newCategory = action.payload;
-      // Проверяем, не пытаемся ли мы добавить базовую категорию, которая была удалена
       const baseCats = getBaseCategories();
       const isBaseCategory = baseCats.some(c => c.id === newCategory.id);
       if (isBaseCategory && state.deletedBaseCategoryIds.includes(newCategory.id)) {
-        // Если это удаленная базовая категория, восстанавливаем её
         state.deletedBaseCategoryIds = state.deletedBaseCategoryIds.filter(id => id !== newCategory.id);
       }
-      // Проверяем, нет ли уже такой категории
       if (!state.categories.some(c => c.id === newCategory.id)) {
         state.categories.push(newCategory);
       }
@@ -290,7 +272,6 @@ const adminSlice = createSlice({
       const updatedCategory = action.payload;
       const index = state.categories.findIndex((c) => c.id === updatedCategory.id);
       if (index !== -1) {
-        // Если categoryKey не указан, генерируем его из названия
         if (!updatedCategory.categoryKey) {
           updatedCategory.categoryKey = getCategoryKey(updatedCategory);
         }
@@ -303,7 +284,6 @@ const adminSlice = createSlice({
       if (state.selectedCategory === categoryId) {
         state.selectedCategory = null;
       }
-      // Если удаляется базовая категория, добавляем её ID в список удаленных
       const baseCats = getBaseCategories();
       const isBaseCategory = baseCats.some(c => c.id === categoryId);
       if (isBaseCategory && !state.deletedBaseCategoryIds.includes(categoryId)) {
@@ -340,7 +320,6 @@ const adminSlice = createSlice({
     })
     .addCase(deleteProductOnServer.fulfilled, (state, action) => {
       state.loading = false;
-      // Удаляем продукт из локального состояния
       state.products = state.products.filter(p => p.id !== action.payload);
     })
     .addCase(deleteProductOnServer.rejected, (state, action) => {

@@ -13,9 +13,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
-    # наружу порт БД не нужен:
-    # ports:
-    #   - "5433:5432"
+
 
   app:
     build: ./backend

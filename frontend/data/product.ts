@@ -1,4 +1,3 @@
-// data/products.ts
 import type { Product } from '../src/types/product';
 
 import croissantImg from '/images/croissant-chocolate.jpg.webp';
