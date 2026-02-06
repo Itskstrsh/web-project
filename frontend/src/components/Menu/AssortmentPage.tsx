@@ -19,12 +19,12 @@ const getFullImageUrl = (imagePath?: string): string => {
   
   // Если путь начинается с /uploads/, добавляем базовый URL бэкенда
   if (imagePath.startsWith('/uploads/')) {
-    return `http://localhost:8080${imagePath}`;
+    return `http://188.225.39.129${imagePath}`;
   }
   
   // Если другой путь, начинающийся с /
   if (imagePath.startsWith('/')) {
-    return `http://localhost:8080${imagePath}`;
+    return `http://188.225.39.129${imagePath}`;
   }
   
   // В остальных случаях возвращаем как есть (скорее всего это placeholder)
