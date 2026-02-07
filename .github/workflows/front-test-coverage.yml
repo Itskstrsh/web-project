@@ -52,13 +52,12 @@ jobs:
           module.exports = CustomJSDOMEnvironment;
           EOF
 
-      - name: Add Jest/Babel transformers (if missing)
+      - name: Add Jest/Babel transformers
         working-directory: frontend
         run: |
           npm i -D @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript \
                  babel-jest jest-environment-jsdom identity-obj-proxy @testing-library/jest-dom
           
-          # Определяем setup-файл, если есть
           if [ -f jest.setup.ts ]; then
             SETUP_LINE="setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],"
           elif [ -f jest.setup.js ]; then
@@ -72,42 +71,39 @@ jobs:
           mkdir -p __mocks__
           echo "module.exports = 'file-mock';" > __mocks__/fileMock.js
           
-          cat > jest.ci.config.cjs <<EOF
-          const path = require('path');
-          
-          module.exports = {
-            rootDir: path.resolve(__dirname),
-            testEnvironment: path.resolve(__dirname, 'jest-environment.cjs'),
-            transform: {
-              '^.+\\\\.(t|j)sx?$': ['babel-jest', {
-                presets: [
-                  ['@babel/preset-env', { targets: { node: 'current' }, modules: 'commonjs' }],
-                  ['@babel/preset-react', { runtime: 'automatic' }],
-                  ['@babel/preset-typescript', { allowDeclareFields: true }],
-                ],
-              }],
-            },
-            moduleFileExtensions: ['ts','tsx','js','jsx','json'],
-            moduleNameMapper: {
-              '\\\\.(css|less|sass|scss)$': 'identity-obj-proxy',
-              '\\\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
-            },
-            \${SETUP_LINE}
-          
-            collectCoverage: true,
-            collectCoverageFrom: [
-              'src/**/*.{ts,tsx,js,jsx}',
-              '!**/*.d.ts',
-              '!**/*.test.*',
-              '!**/__tests__/**'
-            ],
-            coverageDirectory: 'coverage/unit',
-            coverageReporters: ['text','lcov','html'],
-            coverageThreshold: { global: { lines: 40 } }
-          };
-          EOF
+          printf '%s\n' "const path = require('path');" \
+            "" \
+            "module.exports = {" \
+            "  rootDir: path.resolve(__dirname)," \
+            "  testEnvironment: path.resolve(__dirname, 'jest-environment.cjs')," \
+            "  transform: {" \
+            "    '^.+\\\\.(t|j)sx?$': ['babel-jest', {" \
+            "      presets: [" \
+            "        ['@babel/preset-env', { targets: { node: 'current' }, modules: 'commonjs' }]," \
+            "        ['@babel/preset-react', { runtime: 'automatic' }]," \
+            "        ['@babel/preset-typescript', { allowDeclareFields: true }]," \
+            "      ]," \
+            "    }]," \
+            "  }," \
+            "  moduleFileExtensions: ['ts','tsx','js','jsx','json']," \
+            "  moduleNameMapper: {" \
+            "    '\\\\.(css|less|sass|scss)$': 'identity-obj-proxy'," \
+            "    '\\\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js'," \
+            "  }," \
+            "  ${SETUP_LINE}" \
+            "  collectCoverage: true," \
+            "  collectCoverageFrom: [" \
+            "    'src/**/*.{ts,tsx,js,jsx}'," \
+            "    '!**/*.d.ts'," \
+            "    '!**/*.test.*'," \
+            "    '!**/__tests__/**'" \
+            "  ]," \
+            "  coverageDirectory: 'coverage/unit'," \
+            "  coverageReporters: ['text','lcov','html']," \
+            "  coverageThreshold: { global: { lines: 40 } }" \
+            "};" > jest.ci.config.cjs
 
-      - name: Run unit tests with coverage (fails <80%)
+      - name: Run unit tests with coverage
         run: npx jest --config jest.ci.config.cjs --runInBand
 
       - name: Upload coverage report
