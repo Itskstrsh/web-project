@@ -10,6 +10,7 @@ module.exports = {
           jsx: 'react-jsx',
           esModuleInterop: true,
           allowSyntheticDefaultImports: true,
+          types: ['jest', 'node', '@testing-library/jest-dom']
         }
       }
     ],

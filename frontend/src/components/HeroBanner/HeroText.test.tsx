@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import HeroText from './HeroText';
 
 jest.mock('./HeroFeatureItem', () => ({
@@ -12,12 +13,16 @@ jest.mock('./HeroFeatureItem', () => ({
 }));
 
 describe('HeroText', () => {
+  const renderWithRouter = (component: React.ReactElement) => {
+    return render(<MemoryRouter>{component}</MemoryRouter>);
+  };
+
   it('renders without crashing', () => {
-    render(<HeroText />);
+    renderWithRouter(<HeroText />);
   });
 
   it('displays main heading', () => {
-    render(<HeroText />);
+    renderWithRouter(<HeroText />);
     
     const heading = screen.getByText(/вкус меняет/i);
     expect(heading).toBeInTheDocument();
@@ -25,29 +30,29 @@ describe('HeroText', () => {
   });
 
   it('displays gradient text for "НАСТРОЕНИЕ"', () => {
-    render(<HeroText />);
+    renderWithRouter(<HeroText />);
     
     const gradientText = screen.getByText('НАСТРОЕНИЕ');
     expect(gradientText).toBeInTheDocument();
   });
 
   it('displays subtitle text', () => {
-    render(<HeroText />);
+    renderWithRouter(<HeroText />);
     
     const subtitle = screen.getByText(/откройте для себя мир изысканных вкусов/i);
     expect(subtitle).toBeInTheDocument();
   });
 
   it('displays call-to-action button', () => {
-    render(<HeroText />);
+    renderWithRouter(<HeroText />);
     
     const ctaButton = screen.getByText('АССОРТИМЕНТ');
     expect(ctaButton).toBeInTheDocument();
-    expect(ctaButton.closest('a')).toHaveAttribute('href', '#order');
+    expect(ctaButton.closest('a')).toHaveAttribute('href', '/assortment');
   });
 
   it('renders feature items', () => {
-    render(<HeroText />);
+    renderWithRouter(<HeroText />);
     
     const featureItems = screen.getAllByTestId('hero-feature-item');
     expect(featureItems).toHaveLength(3);
@@ -58,7 +63,7 @@ describe('HeroText', () => {
   });
 
   it('has correct heading structure', () => {
-    render(<HeroText />);
+    renderWithRouter(<HeroText />);
     
     const mainHeading = screen.getByRole('heading', { level: 1 });
     expect(mainHeading).toBeInTheDocument();
@@ -66,24 +71,24 @@ describe('HeroText', () => {
   });
 
   it('applies correct styling to main heading', () => {
-    render(<HeroText />);
+    renderWithRouter(<HeroText />);
     
     const mainHeading = screen.getByRole('heading', { level: 1 });
     expect(mainHeading).toHaveStyle({
-      fontWeight: 900,
+      fontWeight: '900',
       color: '#4e0606ff'
     });
   });
 
   it('has button with correct styling', () => {
-    render(<HeroText />);
+    renderWithRouter(<HeroText />);
     
     const button = screen.getByText('АССОРТИМЕНТ');
     expect(button).toHaveClass('MuiButton-contained');
   });
 
   it('renders features in grid layout', () => {
-    render(<HeroText />);
+    renderWithRouter(<HeroText />);
     
     const featuresContainer = screen.getByText('ПОЛУФАБРИКАТЫ').closest('.MuiBox-root');
     expect(featuresContainer).toBeInTheDocument();

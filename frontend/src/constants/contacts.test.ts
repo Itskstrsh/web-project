@@ -12,10 +12,10 @@ describe('contacts', () => {
     expect(contacts.phone).toContain('+7');
   });
 
-  it('should have address', () => {
-    expect(contacts).toHaveProperty('address');
-    expect(typeof contacts.address).toBe('string');
-    expect(contacts.address.length).toBeGreaterThan(0);
+  it('should have addresses array', () => {
+    expect(contacts).toHaveProperty('addresses');
+    expect(Array.isArray(contacts.addresses)).toBe(true);
+    expect(contacts.addresses.length).toBeGreaterThan(0);
   });
 
   it('should have email', () => {
@@ -25,16 +25,16 @@ describe('contacts', () => {
   });
 
   it('should have social links', () => {
-    expect(contacts).toHaveProperty('social');
-    expect(typeof contacts.social).toBe('object');
-    expect(contacts.social).toHaveProperty('instagram');
-    expect(contacts.social).toHaveProperty('telegram');
-    expect(contacts.social).toHaveProperty('whatsapp');
+    expect(contacts).toHaveProperty('socialLinks');
+    expect(typeof contacts.socialLinks).toBe('object');
+    expect(contacts.socialLinks).toHaveProperty('instagram');
+    expect(contacts.socialLinks).toHaveProperty('telegram');
+    expect(contacts.socialLinks).toHaveProperty('whatsapp');
   });
 
   it('should have valid social URLs', () => {
-    expect(contacts.social.instagram).toContain('instagram.com');
-    expect(contacts.social.telegram).toContain('t.me');
-    expect(contacts.social.whatsapp).toContain('wa.me');
+    expect(contacts.socialLinks.instagram).toContain('instagram.com');
+    expect(contacts.socialLinks.telegram).toContain('t.me');
+    expect(contacts.socialLinks.whatsapp).toContain('wa.me');
   });
 });
