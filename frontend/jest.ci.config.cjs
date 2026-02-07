@@ -3,6 +3,8 @@ const path = require('path');
 module.exports = {
   rootDir: path.resolve(__dirname),
   testEnvironment: 'jest-environment-jsdom',
+  setupFiles: ['<rootDir>/src/setupImportMeta.cjs'],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   transform: {
     '^.+\\.(t|j)sx?$': ['babel-jest', {
       presets: [
