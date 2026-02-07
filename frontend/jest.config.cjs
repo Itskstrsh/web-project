@@ -1,7 +1,6 @@
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'jsdom',
-  setupFiles: ['<rootDir>/src/setupPolyfills.ts'],
+  testEnvironment: '<rootDir>/jest-environment.js',
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   transform: {
     '^.+\\.(ts|tsx)$': [
