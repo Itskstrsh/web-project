@@ -21,6 +21,10 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
+    '^../store/slices/orderSlice$': '<rootDir>/src/__mocks__/orderSliceMock.ts',
+    '^../../store/slices/orderSlice$': '<rootDir>/src/__mocks__/orderSliceMock.ts',
+    '^./HeaderNav$': '<rootDir>/src/__mocks__/HeaderNavMock.tsx',
+    '^../Header/HeaderNav$': '<rootDir>/src/__mocks__/HeaderNavMock.tsx',
   },
 
   collectCoverage: true,
