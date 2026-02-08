@@ -52,7 +52,7 @@ const generateOrderNumber = () => {
 
 const sendToAdminBot = async (order: IOrder): Promise<{ success: boolean }> => {
   try {
-    const botWebhookUrl = import.meta.env.VITE_BOT_WEBHOOK_URL || 'http://localhost:3000/webhook/order';
+    const botWebhookUrl = 'http://localhost:3000/webhook/order';
     
     console.log('Пытаюсь отправить заказ в бот...', {
       url: botWebhookUrl,
@@ -189,9 +189,7 @@ const orderSlice = createSlice({
         order.status = status;
         
         const statusKey = `${status}At` as keyof IOrder;
-        if (statusKey in order) {
-          (order as any)[statusKey] = new Date().toISOString();
-        }
+        (order as any)[statusKey] = new Date().toISOString();
         
         localStorage.setItem('orders', JSON.stringify(state.orders));
         

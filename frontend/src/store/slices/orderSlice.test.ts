@@ -94,7 +94,8 @@ describe('orderSlice', () => {
       );
 
       expect(state.orders[0].status).toBe('confirmed');
-      expect(state.orders[0].confirmedAt).toBeDefined();
+      // confirmedAt добавляется динамически через (order as any)[statusKey]
+      expect((state.orders[0] as any).confirmedAt).toBeDefined();
     });
 
     it('should handle addTestOrder', () => {

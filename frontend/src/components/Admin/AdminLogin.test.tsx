@@ -121,10 +121,9 @@ describe('AdminLogin', () => {
 
     render(<AdminLogin />);
 
-    const form = screen.getByRole('form') || document.querySelector('form');
-    if (form) {
-      fireEvent.submit(form);
-    }
+    // Проверяем, что кнопка отключена при пустом пароле
+    const submitButton = screen.getByRole('button', { name: /войти/i });
+    expect(submitButton).toBeDisabled();
 
     expect(loginAdmin).not.toHaveBeenCalled();
   });
