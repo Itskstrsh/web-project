@@ -5,7 +5,6 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import ProtectedRoute from './ProtectedRoute';
 import HomePage from '../components/HomePage/HomePage';
 import AssortmentPage from '../components/Menu/AssortmentPage';
-import AllReviewsPage from '../components/Reviews/AllReviewsPage';
 
 const LazyAllReviewsPage = React.lazy(() => import('../components/Reviews/AllReviewsPage'));
 const LazyAdminPage = React.lazy(() => import('../components/Admin/AdminPage'));

@@ -95,7 +95,7 @@ describe('orderSlice', () => {
 
       expect(state.orders[0].status).toBe('confirmed');
       // confirmedAt добавляется динамически через (order as any)[statusKey]
-      expect((state.orders[0] as any).confirmedAt).toBeDefined();
+      expect((state.orders[0] as { confirmedAt?: string }).confirmedAt).toBeDefined();
     });
 
     it('should handle addTestOrder', () => {
@@ -185,14 +185,14 @@ describe('orderSlice', () => {
         json: () => Promise.resolve({ success: true }),
       });
 
-      const getState = () => ({ order: { orders: [order] } }) as any;
+      const getState = () => ({ order: { orders: [order] } }) as unknown as () => { order: { orders: IOrder[] } };
       const action = await resendOrderToBot('1')(jest.fn(), getState, undefined);
 
       expect(action.type).toBe('order/resendToBot/fulfilled');
     });
 
     it('should handle resendOrderToBot rejected when order not found', async () => {
-      const getState = () => ({ order: { orders: [] } }) as any;
+      const getState = () => ({ order: { orders: [] } }) as unknown as () => { order: { orders: IOrder[] } };
       const action = await resendOrderToBot('1')(jest.fn(), getState, undefined);
 
       expect(action.type).toBe('order/resendToBot/rejected');

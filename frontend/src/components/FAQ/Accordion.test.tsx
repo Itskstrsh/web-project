@@ -14,8 +14,8 @@ const mockItems = [
 ];
 
 describe('Accordion', () => {
-  const mockExpanded = jest.fn((id: string) => false);
-  const mockOnChange = jest.fn((panel: string) => () => {});
+  const mockExpanded = jest.fn(() => false);
+  const mockOnChange = jest.fn(() => () => {});
 
   it('renders without crashing', () => {
     renderWithTheme(

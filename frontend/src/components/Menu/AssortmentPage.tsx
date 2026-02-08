@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { getCategoryKey } from '../../store/slices/adminSlice';
 import { addToCart } from '../../store/slices/cartSlice';
 import { fetchProducts, setCurrentCategory } from '../../store/slices/productSlice';
+import type { Product } from '../../types/product';
 import Cart from '../Cart/Cart';
 import CartIcon from '../Cart/CartIcon';
 
@@ -25,7 +26,7 @@ const getFullImageUrl = (imagePath?: string): string => {
   return imagePath;
 };
 
-const ProductCard: React.FC<{ product: any }> = ({ product }) => {
+const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const dispatch = useAppDispatch();
   const { items: cartItems } = useAppSelector(state => state.cart);
 
@@ -36,7 +37,7 @@ const ProductCard: React.FC<{ product: any }> = ({ product }) => {
       id: product.id,
       name: product.name,
       price: product.price || 0,
-      weight: product.weight,
+      weight: product.weight ? parseInt(product.weight, 10) : undefined,
       imageUrl: product.image,
     }));
   };
@@ -68,7 +69,7 @@ const ProductCard: React.FC<{ product: any }> = ({ product }) => {
       </h3>
 
       <p className="text-green-700 mb-4 text-sm line-clamp-3">
-        {product.description || product.about}
+        {product.description}
       </p>
 
       <div className="flex items-center justify-between mt-4">
@@ -98,7 +99,7 @@ const ProductCard: React.FC<{ product: any }> = ({ product }) => {
 };
 
 const CategoryButton: React.FC<{
-  category: any;
+  category: { id: string; name: string; categoryKey: string };
   isActive: boolean;
   onClick: () => void;
 }> = ({ category, isActive, onClick }) => (

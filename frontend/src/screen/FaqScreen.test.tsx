@@ -13,6 +13,7 @@ jest.mock('../../data/FaqData', () => ({
 
 jest.mock('../components/FAQ/Accordion', () => ({
   __esModule: true,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ items }: { items: any[] }) => (
     <div data-testid="accordion">{items.length}</div>
   ),

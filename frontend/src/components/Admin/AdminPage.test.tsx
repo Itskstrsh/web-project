@@ -35,6 +35,7 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('./CategoryCard', () => ({
   __esModule: true,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ category, isSelected, onClick, onDelete, onEdit, showDelete, showEdit }: any) => (
     <div data-testid={`category-${category.id || 'all'}`} data-selected={isSelected}>
       <span>{category.name}</span>
@@ -47,8 +48,10 @@ jest.mock('./CategoryCard', () => ({
 
 jest.mock('./ProductList', () => ({
   __esModule: true,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ products }: any) => (
     <div data-testid="product-list">
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       {products.map((p: any) => (
         <div key={p.id} data-testid={`product-${p.id}`}>{p.name}</div>
       ))}
@@ -58,6 +61,7 @@ jest.mock('./ProductList', () => ({
 
 jest.mock('./EditCategoryDialog', () => ({
   __esModule: true,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ category, open, onClose, onSave }: any) =>
     open ? (
       <div data-testid="edit-dialog">
@@ -88,6 +92,7 @@ describe('AdminPage', () => {
     (useAppDispatch as unknown as jest.Mock).mockReturnValue(mockDispatch);
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         admin: {
@@ -169,6 +174,7 @@ describe('AdminPage', () => {
   });
 
   it('filters products by category', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         admin: {
@@ -189,6 +195,7 @@ describe('AdminPage', () => {
   });
 
   it('filters products by search query', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         admin: {
@@ -219,6 +226,7 @@ describe('AdminPage', () => {
   });
 
   it('handles category click for deselection', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         admin: {

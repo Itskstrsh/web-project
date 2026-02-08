@@ -3,7 +3,9 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { clearCart, closeCart, removeFromCart, updateQuantity } from '../../store/slices/cartSlice';
 import CheckoutModal from '../Checkout/CheckoutModal';
 
-const CartItem: React.FC<{ item: any }> = React.memo(({ item }) => {
+import type { ICartItem } from '../../store/slices/cartSlice';
+
+const CartItem: React.FC<{ item: ICartItem }> = React.memo(({ item }) => {
   const dispatch = useAppDispatch();
   
   const handleQuantityChange = (newQuantity: number) => {

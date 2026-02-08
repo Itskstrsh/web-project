@@ -16,8 +16,12 @@ import adminReducer, {
   type AdminCategory,
 } from './adminSlice';
 
+declare const global: {
+  fetch: jest.Mock;
+};
+
 const mockFetch = jest.fn();
-(global as any).fetch = mockFetch;
+global.fetch = mockFetch;
 
 describe('adminSlice', () => {
   const initialState = {

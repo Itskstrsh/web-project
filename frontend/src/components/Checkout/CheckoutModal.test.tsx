@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import CheckoutModal from './CheckoutModal';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
@@ -36,6 +37,8 @@ describe('CheckoutModal', () => {
   });
 
   it('renders without crashing', () => {
+     
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -49,6 +52,8 @@ describe('CheckoutModal', () => {
   });
 
   it('renders step 1 with contact information', () => {
+     
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -64,6 +69,7 @@ describe('CheckoutModal', () => {
   });
 
   it('updates phone input', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -79,6 +85,7 @@ describe('CheckoutModal', () => {
   });
 
   it('updates name input', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -94,6 +101,7 @@ describe('CheckoutModal', () => {
   });
 
   it('proceeds to step 2 when phone is entered', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -111,6 +119,7 @@ describe('CheckoutModal', () => {
   });
 
   it('shows alert when phone is empty and trying to proceed', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -125,6 +134,7 @@ describe('CheckoutModal', () => {
   });
 
   it('renders step 2 with delivery options', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -145,6 +155,7 @@ describe('CheckoutModal', () => {
   });
 
   it('selects courier delivery and shows address field', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -165,6 +176,7 @@ describe('CheckoutModal', () => {
   });
 
   it('navigates back from step 2 to step 1', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -183,6 +195,7 @@ describe('CheckoutModal', () => {
   });
 
   it('proceeds to step 3 from step 2', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -201,6 +214,7 @@ describe('CheckoutModal', () => {
   });
 
   it('renders step 3 with payment options', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -221,6 +235,7 @@ describe('CheckoutModal', () => {
   });
 
   it('updates payment method', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -242,6 +257,7 @@ describe('CheckoutModal', () => {
   });
 
   it('updates comments', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -263,6 +279,7 @@ describe('CheckoutModal', () => {
   });
 
   it('closes modal on X button click', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -277,6 +294,7 @@ describe('CheckoutModal', () => {
   });
 
   it('closes modal on overlay click', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -292,6 +310,7 @@ describe('CheckoutModal', () => {
   });
 
   it('submits order successfully', async () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -325,6 +344,7 @@ describe('CheckoutModal', () => {
   });
 
   it('shows loading state during submission', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -345,6 +365,7 @@ describe('CheckoutModal', () => {
   });
 
   it('calculates correct total with delivery', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },
@@ -369,6 +390,7 @@ describe('CheckoutModal', () => {
   });
 
   it('displays cart summary correctly', () => {
+ 
     (useAppSelector as unknown as jest.Mock).mockImplementation((selector: any) => {
       const state = {
         cart: { items: mockCartItems },

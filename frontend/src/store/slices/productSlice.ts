@@ -26,13 +26,13 @@ export const fetchProducts = createAsyncThunk(
       
       const products = await response.json();
       
-      return products.map((product: any) => ({
+      return products.map((product: { id: string; name: string; price: number; stock?: number; about?: string; category?: { name?: string } | string; calories?: string; image?: string }) => ({
         id: product.id,
         name: product.name,
         price: product.price,
         quantity: product.stock || 0,
         description: product.about,
-        category: product.category?.name || product.category || 'pelmeni',
+        category: typeof product.category === 'object' ? product.category?.name || 'pelmeni' : product.category || 'pelmeni',
         weight: product.calories,
         image: product.image, 
       }));

@@ -2,7 +2,8 @@ import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
 
 // Polyfill для TextEncoder/TextDecoder (нужен для react-router)
-global.TextEncoder = TextEncoder;
+global.TextEncoder = TextEncoder as unknown as typeof globalThis.TextEncoder;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 global.TextDecoder = TextDecoder as any;
 
 // Правильный мок для matchMedia

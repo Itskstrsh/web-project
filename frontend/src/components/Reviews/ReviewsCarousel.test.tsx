@@ -7,6 +7,7 @@ import { theme } from '../../theme/theme';
 // Mock ReviewCard
 jest.mock('./ReviewCard', () => ({
   __esModule: true,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ review }: { review: any }) => (
     <div data-testid="review-card">{review.authorName}</div>
   ),
