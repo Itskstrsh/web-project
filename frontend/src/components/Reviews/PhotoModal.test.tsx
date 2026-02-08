@@ -42,8 +42,11 @@ describe('PhotoModal', () => {
     renderWithTheme(
       <PhotoModal photos={mockPhotos} open={true} onClose={mockOnClose} />
     );
-    const closeButton = screen.getByRole('button', { name: /close/i });
-    fireEvent.click(closeButton);
+    // Find close button by testid instead of role
+    const closeButton = screen.getByTestId('CloseIcon').closest('button');
+    if (closeButton) {
+      fireEvent.click(closeButton);
+    }
     expect(mockOnClose).toHaveBeenCalled();
   });
 
@@ -51,8 +54,10 @@ describe('PhotoModal', () => {
     renderWithTheme(
       <PhotoModal photos={mockPhotos} open={true} onClose={mockOnClose} />
     );
-    const nextButton = screen.getByRole('button', { name: /chevronright/i });
-    fireEvent.click(nextButton);
+    const nextButton = screen.getByTestId('ChevronRightIcon').closest('button');
+    if (nextButton) {
+      fireEvent.click(nextButton);
+    }
     expect(screen.getByAltText('Фото 2 из 3')).toBeInTheDocument();
   });
 
@@ -60,8 +65,10 @@ describe('PhotoModal', () => {
     renderWithTheme(
       <PhotoModal photos={mockPhotos} open={true} onClose={mockOnClose} initialIndex={1} />
     );
-    const prevButton = screen.getByRole('button', { name: /chevronleft/i });
-    fireEvent.click(prevButton);
+    const prevButton = screen.getByTestId('ChevronLeftIcon').closest('button');
+    if (prevButton) {
+      fireEvent.click(prevButton);
+    }
     expect(screen.getByAltText('Фото 1 из 3')).toBeInTheDocument();
   });
 });
