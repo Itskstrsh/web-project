@@ -10,10 +10,10 @@ describe('Навигация по сайту ВИНЕГРЕТ', () => {
   })
 
   it('должен отображать навигационное меню', () => {
-    cy.contains('Часто покупают').should('be.visible')
+    cy.contains('О нас').should('be.visible')
     cy.contains('Ассортимент').should('be.visible')
-    cy.contains('Доставка').should('be.visible')
-    cy.contains('Контакты').should('be.visible')
+    cy.contains('Отзывы').should('be.visible')
+    cy.contains('Корзина').should('be.visible')
   })
 
   it('должен отображать телефонный номер', () => {
@@ -22,15 +22,17 @@ describe('Навигация по сайту ВИНЕГРЕТ', () => {
   })
 
   it('должен отображать главный баннер', () => {
-    cy.contains('ВКУС МЕНЯЕТ НАСТРОЕНИЕ!').should('be.visible')
-    cy.contains('ДОМАШНЯЯ ЕДА БЕЗ ИЗЖОГИ И ТЯЖЕСТИ В ЖЕЛУДКЕ').should('be.visible')
-    cy.contains('Посмотреть ассортимент').should('be.visible')
+    cy.contains('ВКУС МЕНЯЕТ').should('be.visible')
+    cy.contains('НАСТРОЕНИЕ').should('be.visible')
+    cy.contains('Откройте для себя мир изысканных вкусов').should('be.visible')
+    cy.contains('АССОРТИМЕНТ').should('be.visible')
   })
 
   it('должен отображать преимущества', () => {
-    cy.contains('БЕЗ ГМО И КОНСЕРВАНТОВ').should('be.visible')
-    cy.contains('ДЛЯ САМЫХ МАЛЕНЬКИХ').should('be.visible')
-    cy.contains('ДЛЯ ТЕХ КТО СЧИТАЕТ БЖУ').should('be.visible')
+    cy.contains('КАК ВСЁ УСТРОЕНО').should('be.visible')
+    cy.contains('ПОЛУФАБРИКАТЫ').should('be.visible')
+    cy.contains('ВЫПЕЧКА').should('be.visible')
+    cy.contains('ГОТОВАЯ ЕДА').should('be.visible')
   })
 
   // 👇 временно отключённые тесты
@@ -43,10 +45,11 @@ describe('Навигация по сайту ВИНЕГРЕТ', () => {
   })
 
   it.skip('должен открывать мобильное меню на маленьких экранах', () => {
+    // @ts-expect-error - Cypress viewport types issue
     cy.viewport('iphone-6')
-    cy.get('button').contains('☰').should('be.visible')
-    cy.get('button').contains('☰').click()
-    cy.contains('Часто покупают').should('be.visible')
-    cy.contains('Контакты').should('be.visible')
+    cy.get('button').first().should('be.visible')
+    cy.get('button').first().click()
+    cy.contains('О нас').should('be.visible')
+    cy.contains('Отзывы').should('be.visible')
   })
 })
