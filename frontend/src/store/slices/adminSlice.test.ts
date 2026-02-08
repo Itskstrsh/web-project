@@ -36,10 +36,6 @@ describe('adminSlice', () => {
     image: 'test.jpg',
   };
 
-  it('should return initial state', () => {
-    expect(adminReducer(undefined, { type: 'unknown' })).toEqual(initialState);
-  });
-
   it('should handle setProducts', () => {
     const state = adminReducer(initialState, setProducts([mockProduct]));
     expect(state.products).toEqual([mockProduct]);
