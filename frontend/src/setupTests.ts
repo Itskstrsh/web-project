@@ -1,4 +1,10 @@
 import '@testing-library/jest-dom';
+import { TextEncoder, TextDecoder } from 'util';
+
+// Polyfill для TextEncoder/TextDecoder (нужен для react-router)
+global.TextEncoder = TextEncoder as unknown as typeof globalThis.TextEncoder;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+global.TextDecoder = TextDecoder as any;
 
 // Правильный мок для matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -27,22 +33,4 @@ const IntersectionObserverMock = jest.fn().mockImplementation(() => ({
 
 Object.defineProperty(global, 'IntersectionObserver', {
   value: IntersectionObserverMock,
-});
-
-// Мок для TextEncoder/TextDecoder
-const TextEncoderMock = jest.fn().mockImplementation(() => ({
-  encode: jest.fn(),
-  encodeInto: jest.fn(),
-}));
-
-const TextDecoderMock = jest.fn().mockImplementation(() => ({
-  decode: jest.fn(),
-}));
-
-Object.defineProperty(global, 'TextEncoder', {
-  value: TextEncoderMock,
-});
-
-Object.defineProperty(global, 'TextDecoder', {
-  value: TextDecoderMock,
 });

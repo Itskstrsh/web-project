@@ -33,7 +33,7 @@ export const theme = createTheme({
       700: '#15803d',
       800: '#166534',
       900: '#14532d',
-    } as any,
+    } as unknown as import('@mui/material').PaletteColor,
   },
   typography: {
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',

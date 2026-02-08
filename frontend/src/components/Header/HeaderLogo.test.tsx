@@ -1,11 +1,15 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
 import { HeaderLogo } from './HeaderLogo';
+import { theme } from '../../theme/theme';
 
 const MockedHeaderLogo: React.FC = () => (
   <MemoryRouter>
-    <HeaderLogo />
+    <ThemeProvider theme={theme}>
+      <HeaderLogo />
+    </ThemeProvider>
   </MemoryRouter>
 );
 

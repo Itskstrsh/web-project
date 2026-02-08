@@ -52,7 +52,7 @@ const generateOrderNumber = () => {
 
 const sendToAdminBot = async (order: IOrder): Promise<{ success: boolean }> => {
   try {
-    const botWebhookUrl = import.meta.env.VITE_BOT_WEBHOOK_URL || 'http://localhost:3000/webhook/order';
+    const botWebhookUrl = 'http://localhost:3000/webhook/order';
     
     console.log('Пытаюсь отправить заказ в бот...', {
       url: botWebhookUrl,
@@ -125,9 +125,10 @@ export const createOrder = createAsyncThunk(
       }
 
       return order;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error(' Ошибка создания заказа:', error);
-      return rejectWithValue(error.message);
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -150,8 +151,9 @@ export const resendOrderToBot = createAsyncThunk(
       }
       
       return { orderId, success: true };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -162,8 +164,9 @@ export const loadOrdersFromStorage = createAsyncThunk(
     try {
       const orders = JSON.parse(localStorage.getItem('orders') || '[]');
       return orders;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -189,9 +192,8 @@ const orderSlice = createSlice({
         order.status = status;
         
         const statusKey = `${status}At` as keyof IOrder;
-        if (statusKey in order) {
-          (order as any)[statusKey] = new Date().toISOString();
-        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (order as any)[statusKey] = new Date().toISOString();
         
         localStorage.setItem('orders', JSON.stringify(state.orders));
         

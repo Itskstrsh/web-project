@@ -68,7 +68,7 @@ export const createProductOnServer = createAsyncThunk(
   }: { 
     productData: Omit<Product, 'id'>;
     imageFile?: File;
-  }, { rejectWithValue, dispatch }) => {
+  }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('adminToken');
       
@@ -82,7 +82,7 @@ export const createProductOnServer = createAsyncThunk(
         console.log(`Конвертация заняла ${convertTime}ms`);
       }
 
-      const backendProductData: any = {
+      const backendProductData: Record<string, unknown> = {
         name: productData.name || "Новый продукт",
         about: productData.description || "Описание продукта",
         price: productData.price || 0,

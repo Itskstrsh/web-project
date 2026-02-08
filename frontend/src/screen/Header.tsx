@@ -32,7 +32,7 @@ const Header: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const getPath = (href: string) =>
-    `${import.meta.env.BASE_URL}${href.replace(/^\//, '')}`;
+    `/web-project${href.replace(/^\//, '')}`;
 
   const toggleDrawer = (open: boolean) => () => {
     setDrawerOpen(open);

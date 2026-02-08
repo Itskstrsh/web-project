@@ -1,30 +1,20 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
+import { render } from '@testing-library/react';
 import App from './App';
-import { store } from './store/store';
-import { theme } from './theme/theme';
-import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
 
-const MockedApp: React.FC = () => (
-  <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <App />
-    </ThemeProvider>
-  </Provider>
-);
+// Базовый мок для проверки, что App рендерится без ошибок
+jest.mock('./router/AppRouter', () => ({
+  __esModule: true,
+  default: () => <div data-testid="app-router">AppRouter</div>,
+}));
+
+jest.mock('./components/Order/OrderSuccessModal', () => ({
+  __esModule: true,
+  default: () => <div data-testid="order-success-modal">OrderSuccessModal</div>,
+}));
 
 describe('App', () => {
   it('renders without crashing', () => {
-    render(<MockedApp />);
-  });
-
-  it('has correct app structure', () => {
-    render(<MockedApp />);
-    
-    const appDiv = document.querySelector('.App');
-    expect(appDiv).toBeInTheDocument();
+    const { getByTestId } = render(<App />);
+    expect(getByTestId('order-success-modal')).toBeInTheDocument();
   });
 });

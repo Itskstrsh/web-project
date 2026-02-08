@@ -10,7 +10,7 @@ import productsReducer from './slices/productSlice';
 const adminPersistenceMiddleware: Middleware = (store) => (next) => (action) => {
   const result = next(action);
   
-  if ((action as any)?.type?.startsWith('admin/')) {
+  if ((action as { type?: string }).type?.startsWith('admin/')) {
     const state = store.getState();
     const adminState: AdminState = state.admin;
     

@@ -43,7 +43,7 @@ interface FormData {
 const AddProductForm: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { categories, loading: reduxLoading, error } = useAppSelector((state) => state.admin);
+  const { categories, error } = useAppSelector((state) => state.admin);
 
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -672,7 +672,7 @@ const AddProductForm: React.FC = () => {
           <Button
             onClick={() => {
               handleErrorClose();
-              handleSubmit(new Event('submit') as any);
+              handleSubmit(new Event('submit') as unknown as React.FormEvent);
             }}
             variant="contained"
             sx={{ textTransform: 'none' }}

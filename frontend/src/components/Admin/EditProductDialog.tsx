@@ -33,9 +33,10 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
   const [formData, setFormData] = useState<Product>(product);
 
   const handleChange = (field: keyof Product) => (
-    event: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    event: any
   ) => {
-    const value = 'target' in event ? event.target.value : event.value;
+    const value = event.target.value;
     setFormData((prev) => ({
       ...prev,
       [field]: field === 'price' ? Number(value) : value,
@@ -59,7 +60,7 @@ const EditProductDialog: React.FC<EditProductDialogProps> = ({
             <InputLabel>Категория</InputLabel>
             <Select
               value={formData.category || ''}
-              onChange={(e) => handleChange('category')(e as any)}
+              onChange={(e) => handleChange('category')(e as React.ChangeEvent<HTMLInputElement>)}
               label="Категория"
             >
               {categories.map((category) => {

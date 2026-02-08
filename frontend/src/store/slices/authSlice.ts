@@ -37,7 +37,7 @@ export const loginAdmin = createAsyncThunk(
       localStorage.setItem('adminAuth', 'true');
       
       return data;
-    } catch (error) {
+    } catch {
       return rejectWithValue('Ошибка подключения к серверу');
     }
   }

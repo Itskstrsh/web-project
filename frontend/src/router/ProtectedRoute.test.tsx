@@ -3,17 +3,18 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 
-jest.mock('../hooks/redux', () => ({
-  useAppSelector: jest.fn()
-}));
-
-const mockUseAppSelector = jest.requireMock('../hooks/redux').useAppSelector;
-
 const MockedProtectedRoute: React.FC<{ initialEntries?: string[]; isAuthenticated?: boolean }> = ({ 
   initialEntries = ['/'], 
   isAuthenticated = false 
 }) => {
-  mockUseAppSelector.mockReturnValue({ isAuthenticated });
+  // Setup localStorage based on isAuthenticated
+  if (isAuthenticated) {
+    localStorage.setItem('adminAuth', 'true');
+    localStorage.setItem('adminToken', 'some-token');
+  } else {
+    localStorage.removeItem('adminAuth');
+    localStorage.removeItem('adminToken');
+  }
   
   return (
     <MemoryRouter initialEntries={initialEntries}>
@@ -26,7 +27,11 @@ const MockedProtectedRoute: React.FC<{ initialEntries?: string[]; isAuthenticate
 
 describe('ProtectedRoute', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   it('renders without crashing', () => {
@@ -45,17 +50,24 @@ describe('ProtectedRoute', () => {
     expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
   });
 
-  it('calls useAppSelector with auth state selector', () => {
-    render(<MockedProtectedRoute isAuthenticated={true} />);
+  it('redirects when only adminAuth is set but no token', () => {
+    localStorage.setItem('adminAuth', 'true');
+    // adminToken не установлен
     
-    expect(mockUseAppSelector).toHaveBeenCalledWith(expect.any(Function));
-    const selectorFn = mockUseAppSelector.mock.calls[0][0];
-    const mockState = { auth: { isAuthenticated: true } };
-    expect(selectorFn(mockState)).toEqual({ isAuthenticated: true });
+    render(
+      <MemoryRouter>
+        <ProtectedRoute>
+          <div data-testid="protected-content">Protected Content</div>
+        </ProtectedRoute>
+      </MemoryRouter>
+    );
+    
+    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
   });
 
-  it('handles missing auth state gracefully', () => {
-    mockUseAppSelector.mockReturnValue({ isAuthenticated: false });
+  it('redirects when only token is set but adminAuth is not true', () => {
+    localStorage.setItem('adminToken', 'some-token');
+    localStorage.setItem('adminAuth', 'false');
     
     render(
       <MemoryRouter>

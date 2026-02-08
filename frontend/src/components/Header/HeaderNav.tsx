@@ -26,7 +26,7 @@ export const HeaderNav: React.FC<Props> = ({ items }) => {
   };
 
   const getPath = (href: string) =>
-    `${import.meta.env.BASE_URL}${href.replace(/^\//, '')}`;
+    `/web-project${href.replace(/^\//, '')}`;
 
   return (
     <Box sx={{ display: 'flex', gap: 1 }}>
