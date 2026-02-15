@@ -42,8 +42,8 @@ const baseCategoriesConfig = [
   { id: 3, name: 'Выпечка', categoryKey: 'bakery' },
   { id: 4, name: 'Десерты', categoryKey: 'desserts' },
   { id: 5, name: 'Полуфабрикаты', categoryKey: 'polupoker' },
-  { id: 6, name: 'ГОТОВАЯ ЕДА', categoryKey: 'ready' },
-  { id: 7, name: 'ПИЦЦА', categoryKey: 'pizza' },
+  { id: 6, name: 'Готовая еда', categoryKey: 'ready' },
+  { id: 7, name: 'Пицца', categoryKey: 'pizza' },
 ];
 
 export const getCategoryKey = (category: AdminCategory): string => {
