@@ -24,7 +24,7 @@ const MapSection: React.FC = () => {
           io.disconnect();
         }
       },
-      { root: null, threshold: 0.15, rootMargin: '200px' } // подгрузит чуть заранее
+      { root: null, threshold: 0.15, rootMargin: '200px' }
     );
 
     io.observe(el);
@@ -84,7 +84,6 @@ const MapSection: React.FC = () => {
 
 export default MapSection;
 
-// --- ВАЖНО: карта грузится только когда showMap=true ---
 const LazyYandexMap: React.FC<{
   locations: { id: number; name: string; coords: [number, number]; address: string }[];
   mapCenter: [number, number];
