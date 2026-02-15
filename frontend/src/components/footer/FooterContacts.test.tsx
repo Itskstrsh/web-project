@@ -36,6 +36,6 @@ describe('FooterContacts', () => {
 
   it('displays all addresses', () => {
     renderWithTheme(<FooterContacts />);
-    expect(screen.getByText(/Новороссийск.*МЫсхакское Шоссе/i)).toBeInTheDocument();
+    expect(screen.getByText(/Новороссийск.*Мысхакское Шоссе/i)).toBeInTheDocument();
   });
 });

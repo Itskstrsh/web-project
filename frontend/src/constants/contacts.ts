@@ -18,7 +18,7 @@ export const contacts: ContactInfo = {
     email: 'order@vinegret.ru',
     addresses: [
         {
-            address: 'г. Новороссийск ул. МЫсхакское Шоссе 71А',
+            address: 'г. Новороссийск ул. Мысхакское Шоссе 71А',
             hours: 'ПТ - ПН с 9:00 до 19:30'
         },
         {
